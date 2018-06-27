@@ -23,7 +23,6 @@
     "fs": "0.0.1-security",
     "hbs": "^4.0.1",
     "import-env": "^1.1.1",
-    "nodemon": "^1.17.5",
-    "save": "^2.3.2"
+    "nodemon": "^1.17.5"
   }
 }
