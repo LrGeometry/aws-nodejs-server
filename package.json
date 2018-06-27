@@ -1,0 +1,29 @@
+{
+  "name": "aws-nodejs-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HERCone/aws-nodejs-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HERCone/aws-nodejs-server/issues"
+  },
+  "homepage": "https://github.com/HERCone/aws-nodejs-server#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "fs": "0.0.1-security",
+    "hbs": "^4.0.1",
+    "import-env": "^1.1.1",
+    "nodemon": "^1.17.5",
+    "save": "^2.3.2"
+  }
+}
