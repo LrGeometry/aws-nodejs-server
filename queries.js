@@ -7,8 +7,16 @@ var options = {
 var pgp = require('pg-promise')(options);
 // var DATABASE_URL = "postgres://localhost:5432/hercules_node";
 var DATABASE_URL = process.env.DATABASE_URL;
-var db = pgp(DATABASE_URL);
-console.log(DATABASE_URL);
+const cn = {
+    host: process.env.DB_HOST,
+    port: 5432,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    ssl: true
+};
+
+const db = pgp(cn);
 
 function getAllPuppies(req, res, next) {
   db.any('select * from pups')
