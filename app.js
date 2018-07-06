@@ -14,7 +14,6 @@ app.set('view engine', 'hbs');
 app.use(express.static('public'));
 
 
-
 app.get('/', function(req, res){
   response = '';
   res.render('index.hbs', {'response':response});

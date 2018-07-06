@@ -1,13 +1,14 @@
 var promise = require('bluebird');
-
 var options = {
   // Initialization Options
   promiseLib: promise
 };
 
 var pgp = require('pg-promise')(options);
-var DATABASE_URL = "postgres://localhost:5432/hercules_node";
+// var DATABASE_URL = "postgres://localhost:5432/hercules_node";
+var DATABASE_URL = process.env.DATABASE_URL;
 var db = pgp(DATABASE_URL);
+console.log(DATABASE_URL);
 
 function getAllPuppies(req, res, next) {
   db.any('select * from pups')
