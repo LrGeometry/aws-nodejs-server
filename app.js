@@ -11,11 +11,24 @@ app.use(body_parser.urlencoded({extended: false}));
 app.set('view engine', 'hbs');
 app.use(express.static('public'));
 
+
 app.get('/', function(req, res){
-  matrix = 'hello' || '';
-  distance = 'world' || '';
-  res.render('index.hbs', {'matrix':matrix, 'distance': distance});
+  response = '';
+  res.render('index.hbs', {'response':response});
 });
+
+app.get('/post/:slug', function (req, res) {
+  // for links like /post/julie
+  var slug = request.params.slug;
+  response.send('Post About: ' + slug);
+});
+
+app.get('/hello', function (req, res) {
+  //for links like /hello?name=julie
+  var name = request.query.name || 'World';
+  response.send('Hello ' + name);
+});
+
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
