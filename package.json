@@ -20,10 +20,12 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "fs": "0.0.1-security",
     "hbs": "^4.0.1",
     "import-env": "^1.1.1",
-    "nodemon": "^1.17.5"
+    "nodemon": "^1.17.5",
+    "pg-promise": "^8.4.5"
   }
 }

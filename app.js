@@ -1,10 +1,24 @@
+require('dotenv').load();
 var express = require ('express')
 var app = express()
 var fs = require('fs')
 var axios = require ('axios')
 const body_parser = require('body-parser');
-const importEnv = require('import-env')
+const importEnv = require('import-env');
+
+var DB = process.env.DATABASE_URL || "{database:'tasks'}"
+const pgp = require('pg-promise')();
+// var DB = process.env.DATABASE_URL
+const db = pgp(DB);
 const port = process.env.PORT || 8000;
+
+db.connect()
+    .then(obj => {
+        obj.done(); // success, release the connection;
+    })
+    .catch(error => {
+        console.log('ERROR:', error.message || error);
+    });
 
 app.use(body_parser.urlencoded({extended: false}));
 
