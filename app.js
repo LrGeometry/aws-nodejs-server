@@ -72,6 +72,8 @@ app.put('/api/puppies/:id', db.updatePuppy);
 app.delete('/api/puppies/:id', db.removePuppy);
 
 app.get('/api/identities', db.getAllIdentities);
+app.get('/api/identities/:id', db.getSingleIdentity);
+app.post('/api/identities', db.createIdentity);
 
 
 app.get('/post/:slug', function (req, res) {

@@ -37,8 +37,8 @@ function getAllIdentities(req, res, next) {
 }
 
 function getSingleIdentity(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  db.one('select * from identity where id = $1', pupID)
+  var identityID = parseInt(req.params.id);
+  db.one('select * from identity where id = $1', identityID)
     .then(function (data) {
       res.status(200)
         .json({
