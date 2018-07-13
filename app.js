@@ -6,7 +6,6 @@ var axios = require ('axios')
 const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
-var db = require('./queries');
 
 // const { Client } = require('pg');
 //
@@ -25,27 +24,25 @@ var db = require('./queries');
 //   client.end();
 // });
 
-// var environment;
-// if (app.get('env') === 'development') {
-//   // no stacktraces leaked to user
-//   /* TEST WITH COMMAND
-//   NODE_ENV=production PORT=5000 node app.js
-//   */
-//   /* Setting the environment variable to dictate which DB */
-//   environment = {environment: 'development'};
-//   app.use(function(err, req, res, next) {
-//     res.status( err.code || 500 )
-//     .json({
-//       status: 'error',
-//       message: err
-//     });
-//   });
-// } else {
-//   environment = {environment: 'production'};
-// }
-const environment = {environment: 'production'};
-
-console.log(environment)
+if (app.get('env') === 'development') {
+  // no stacktraces leaked to user
+  /* TEST WITH COMMAND
+  NODE_ENV=production PORT=5000 node app.js
+  */
+  /* Setting the environment variable to dictate which DB */
+  environment = {environment: 'development'};
+  app.use(function(err, req, res, next) {
+    res.status( err.code || 500 )
+    .json({
+      status: 'error',
+      message: err
+    });
+  });
+} else {
+  environment = {environment: 'production'};
+}
+module.exports.environment = app.get('env');
+var db = require('./queries');
 
 /* Date Time Conversion */
 var now = new Date()
@@ -94,5 +91,3 @@ app.get('/hello', function (req, res) {
 app.listen(port, function(){
   console.log('listening on port ' + port)
 });
-
-module.exports.environment = environment;

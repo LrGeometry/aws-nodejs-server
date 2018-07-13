@@ -1,6 +1,6 @@
 var promise = require('bluebird');
-let julie = require('./app');
-console.log("ITCROWD", julie)
+let env = require('./app');
+console.log("ITCROWD", env.environment)
 var options = {
   // Initialization Options
   promiseLib: promise
@@ -18,7 +18,11 @@ const cn = {
     ssl: true
 };
 
-const db = pgp(DATABASE_URL);
+if (env.environment === 'development'){
+  const db = pgp(DATABASE_URL);
+} else {
+  const db = pgp(cn);
+}
 
 
 function getAllIdentities(req, res, next) {
