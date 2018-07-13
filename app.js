@@ -45,11 +45,15 @@ module.exports.environment = app.get('env');
 var db = require('./queries');
 
 /* Date Time Conversion */
-var now = new Date()
-console.log("Time is: ", now)
+var regularTimestamp = new Date()
+console.log("Time is: ", regularTimestamp)
 var time = "2018-07-13T00:02:59.781Z" //sample format of Date()
-console.log(Date.parse(now));//converts into epoch time aka unixTime
+console.log("Parsed regularTimestamp: ",Date.parse(time));//converts into Unix epoch
 
+var epochTimestamp = Date.now()//returns time in milliseconds from Unix epoch
+console.log("epoch time: ", epochTimestamp)
+var d = new Date(epochTimestamp)
+console.log("Converted epochTimestamp to regularTimestamp",d)
 
 app.use(body_parser.urlencoded({extended: false}));
 app.set('view engine', 'hbs');

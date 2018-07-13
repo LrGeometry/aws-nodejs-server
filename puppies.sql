@@ -25,8 +25,8 @@ CREATE TABLE identity (
   city VARCHAR(255),
   state VARCHAR(255),
   ssn4 INTEGER,
-  date_received TIMESTAMP(4)
+  date_received timestamp without time zone default (now() at time zone 'utc')
 );
 
-INSERT INTO identity (edge_account, first_name, last_name, address, zip_code, date_received)
-  VALUES ('hercstack', 'JOHN', 'SMITH', '222333 PEACHTREE PLACE', 30318, '2005-05-13 07:15:31.123456789');
+INSERT INTO identity (edge_account, first_name, last_name, address, zip_code)
+  VALUES ('hercstack', 'JOHN', 'SMITH', '222333 PEACHTREE PLACE', 30318);
