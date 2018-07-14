@@ -19,11 +19,10 @@ const cn = {
 };
 
 if (env.environment === 'development'){
-  const db = pgp(DATABASE_URL);
+  var db = pgp(DATABASE_URL);
 } else {
-  const db = pgp(cn);
+  var db = pgp(cn);
 }
-
 
 function getAllIdentities(req, res, next) {
   db.any('select * from identity')
@@ -59,12 +58,21 @@ function getSingleIdentity(req, res, next) {
 
 function createIdentity(req, res, next) {
   /* TEST WITH CURL
-  $ curl --data "name=Whisky&breed=annoying&age=3&sex=f" \
-  http://127.0.0.1:3000/api/puppies
+  $ curl --data-urlencode  "edge_account=juliepeace&first_name=whisky&last_name=annoying&&address=222333\PEACHTREE\PLACE&zip_code=77006" -X POST http://127.0.0.1:8000/api/identities
+
+    // 'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code}, '+ Date.now() + ')',
   */
-  req.body.age = parseInt(req.body.age);
-  db.none('insert into identity((edge_account, first_name, last_name, address, zip_code, date_received)' +
-      'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code}, ${date_received})',
+  // req.body.zip_code = parseInt(req.body.zip_code);
+  // var data = {edge_account: req.body.edge_account}
+  // var query = "INSERT INTO identity \
+  //         VALUES (default, ${edge_account}) RETURNING id"
+  // db.result(query, data)
+  //   .then(results =>{
+  //     console.log(results)
+  //   })
+  //   .catch(next);
+  db.none('insert into identity(edge_account, first_name, last_name, address, zip_code, epochTimestamp)' +
+      'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code},'+ Date.now() +')',
     req.body)
     .then(function () {
       res.status(200)
@@ -116,7 +124,7 @@ function getSinglePuppy(req, res, next) {
 function createPuppy(req, res, next) {
   /* TEST WITH CURL
   $ curl --data "name=Whisky&breed=annoying&age=3&sex=f" \
-  http://127.0.0.1:3000/api/puppies
+  http://127.0.0.1:8000/api/puppies
   */
   req.body.age = parseInt(req.body.age);
   db.none('insert into pups(name, breed, age, sex)' +
