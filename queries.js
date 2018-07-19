@@ -7,15 +7,14 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-var DATABASE_URL = "postgres://localhost:5432/hercules_node";
+var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
 
-const cn = {
-    host: process.env.DB_HOST,
-    port: 5432,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    ssl: true
+var config = {
+    host: '127.0.0.1',
+    database: 'hercules_node',
+    user: 'postgres',
+    password: 'secret',
+    port: 5432
 };
 
 if (env.environment === 'development'){
@@ -23,6 +22,7 @@ if (env.environment === 'development'){
 } else {
   var db = pgp(cn);
 }
+
 
 function getAllIdentities(req, res, next) {
   db.any('select * from identity')
@@ -38,6 +38,7 @@ function getAllIdentities(req, res, next) {
       return next(err);
     });
 }
+
 
 function getSingleIdentity(req, res, next) {
   var identityID = parseInt(req.params.id);
@@ -56,23 +57,69 @@ function getSingleIdentity(req, res, next) {
 }
 
 
-function createIdentity(req, res, next) {
-  /* TEST WITH CURL
-  $ curl --data-urlencode  "edge_account=juliepeace&first_name=whisky&last_name=annoying&&address=222333\PEACHTREE\PLACE&zip_code=77006" -X POST http://127.0.0.1:8000/api/identities
+/*
+*
+* IDology
+*
+* TODO: Write a function that iterates through array, append to a string
+*
+*/
+var axios = require('axios');
+var USERNAME = process.env.USERNAME;
+var PASSWORD = process.env.PASSWORD;
+var data = {
+      'username' : USERNAME, //YOUR ExpectID USERNAME (16)
+      'password' : PASSWORD, //YOUR ExpectID PASSWORD
+      'invoice': '', //YOUR INVOICE OR ORDER NUMBER (30)
+      'amount': '', //ORDER AMOUNT
+      'shipping': '', //SHIPPING AMOUNT
+      'tax': '',//TAX AMOUNT
+      'total': '',//TOTAL AMOUNT(SUM OF THE ABOVE)
+      'idType': '',//TYPE OF ID PROVIDED
+      'idIssuer': '',//ISSUING AGENCY OF ID
+      'idNumber': '',//NUMBER ON ID
+      'paymentMethod': '',//PAYMENT METHOD
+      'firstName' : 'john',
+      'lastName' : 'smith',
+      'address': '222333 peachtree place', //STREET ADDRESS
+      'city': '',
+      'state': '', //STATE (2)
+      'zip' : '30318', //5-DIGIT ZIP CODE (5)
+      'ssnLast4': '',//LAST 4 DIGITS OF SSN(4)
+      'ssn': '', //FULL SSN
+      'dobMonth': '',//MONTH OF BIRTH (2)
+      'dobDay': '',//DAY OF BIRTH (2)
+      'dobYear': '', //YEAR OF BIRTH (4)
+      'ipAddress': '',//IP ADDRESS E.G. 11.111.111.11
+      'email': '',//EMAIL ADDRESS
+      'telephone': '', //PHONE NUMBER
+      'sku': '',
+      'uid': '', //USER ID (EXTERNAL APPLICATION)
+      'altAddress': '',
+      'altCity': '',
+      'altState': '',
+      'altZip': '',
+    }
 
-    // 'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code}, '+ Date.now() + ')',
-  */
-  // req.body.zip_code = parseInt(req.body.zip_code);
-  // var data = {edge_account: req.body.edge_account}
-  // var query = "INSERT INTO identity \
-  //         VALUES (default, ${edge_account}) RETURNING id"
-  // db.result(query, data)
-  //   .then(results =>{
-  //     console.log(results)
-  //   })
-  //   .catch(next);
-  db.none('insert into identity(edge_account, first_name, last_name, address, zip_code, epochTimestamp)' +
-      'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code},'+ Date.now() +')',
+
+function createIdentity(req, res, next) {
+  console.log(req.body);
+
+  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=john&lastName=smith&address=${data.address}&zip=30318`)
+    .then (res => {
+      console.log(res.data)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  // var data = {edge_account: 12312213}
+
+
+  // db.none('insert into identity(edge_account, first_name, last_name, address, zip_code, epochTimestamp)' +
+  //     'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code},'+ Date.now() +')',
+
+  db.none('insert into identity(firstName, lastName, address, zipCode, epochTimestamp)' +
+      'values(${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
     req.body)
     .then(function () {
       res.status(200)
@@ -84,6 +131,19 @@ function createIdentity(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
+// return req.body;
+  /* TEST WITH CURL
+  $ curl --data "edge_account=f&first_name=julie&last_name=mei&address=234 peace&zip_code=77006" http://127.0.0.1:8000/api/identities
+  */
+  // req.body.zip_code = parseInt(req.body.zip_code);
+  // var data = {edge_account: req.body.edge_account}
+  // var query = "INSERT INTO identity \
+  //         VALUES (default, ${edge_account}) RETURNING id"
+  // db.result(query, data)
+  //   .then(results =>{
+  //     console.log(results)
+  //   })
+  //   .catch(next);
 }
 
 
