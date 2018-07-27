@@ -16,7 +16,7 @@ INSERT INTO pups (name, breed, age, sex)
 
 CREATE TABLE identity (
   ID SERIAL PRIMARY KEY,
-  -- edge_account VARCHAR(255) NOT NULL,
+  edgeAccount VARCHAR(255) NOT NULL,
   firstName VARCHAR(255) NOT NULL,
   lastName VARCHAR(255) NOT NULL,
   address VARCHAR(255) NOT NULL,
@@ -29,5 +29,5 @@ CREATE TABLE identity (
   epochTimestamp VARCHAR
 );
 
-INSERT INTO identity (firstName, lastName, address, zipCode)
-  VALUES ('JOHN', 'SMITH', '222333 PEACHTREE PLACE', 30318);
+INSERT INTO identity (edgeAccount, firstName, lastName, address, zipCode)
+  VALUES ('EDGE_ACCOUNT','JOHN', 'SMITH', '222333 PEACHTREE PLACE', 30318);

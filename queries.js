@@ -105,7 +105,7 @@ var data = {
 function createIdentity(req, res, next) {
   console.log(req.body);
 
-  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=john&lastName=smith&address=${data.address}&zip=30318`)
+  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
     .then (res => {
       console.log(res.data)
     })
@@ -118,8 +118,8 @@ function createIdentity(req, res, next) {
   // db.none('insert into identity(edge_account, first_name, last_name, address, zip_code, epochTimestamp)' +
   //     'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code},'+ Date.now() +')',
 
-  db.none('insert into identity(firstName, lastName, address, zipCode, epochTimestamp)' +
-      'values(${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
+  db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
+      'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
     req.body)
     .then(function () {
       res.status(200)
