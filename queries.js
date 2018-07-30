@@ -1,6 +1,13 @@
 var promise = require('bluebird');
 let env = require('./app');
-console.log("ITCROWD", env.environment)
+var util = require('util');
+var parseString = require('xml2js').parseString;
+
+var ApiKeys = require('./firebase')
+var firebase = require('firebase')
+firebase.initializeApp(ApiKeys.FirebaseConfig);
+const rootRef = firebase.database().ref();
+
 var options = {
   // Initialization Options
   promiseLib: promise
@@ -79,17 +86,17 @@ var data = {
       'idIssuer': '',//ISSUING AGENCY OF ID
       'idNumber': '',//NUMBER ON ID
       'paymentMethod': '',//PAYMENT METHOD
-      'firstName' : 'john',
-      'lastName' : 'smith',
+      'firstName' : 'JOHN',
+      'lastName' : 'SMITH',
       'address': '222333 peachtree place', //STREET ADDRESS
       'city': '',
       'state': '', //STATE (2)
       'zip' : '30318', //5-DIGIT ZIP CODE (5)
-      'ssnLast4': '',//LAST 4 DIGITS OF SSN(4)
-      'ssn': '', //FULL SSN
-      'dobMonth': '',//MONTH OF BIRTH (2)
-      'dobDay': '',//DAY OF BIRTH (2)
-      'dobYear': '', //YEAR OF BIRTH (4)
+      'ssnLast4': '3333',//LAST 4 DIGITS OF SSN(4)
+      'ssn': '112-22-3333', //FULL SSN
+      'dobMonth': '02',//MONTH OF BIRTH (2)
+      'dobDay': '28',//DAY OF BIRTH (2)
+      'dobYear': '1975', //YEAR OF BIRTH (4)
       'ipAddress': '',//IP ADDRESS E.G. 11.111.111.11
       'email': '',//EMAIL ADDRESS
       'telephone': '', //PHONE NUMBER
@@ -104,19 +111,16 @@ var data = {
 
 function createIdentity(req, res, next) {
   console.log(req.body);
-
-  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
+  //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
+  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zipCode}`)
+  // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
     .then (res => {
       console.log(res.data)
     })
     .catch(error => {
       console.log(error)
     })
-  // var data = {edge_account: 12312213}
-
-
-  // db.none('insert into identity(edge_account, first_name, last_name, address, zip_code, epochTimestamp)' +
-  //     'values(${edge_account}, ${first_name}, ${last_name}, ${address}, ${zip_code},'+ Date.now() +')',
+  writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
 
   db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
       'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
@@ -131,21 +135,25 @@ function createIdentity(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
-// return req.body;
-  /* TEST WITH CURL
-  $ curl --data "edge_account=f&first_name=julie&last_name=mei&address=234 peace&zip_code=77006" http://127.0.0.1:8000/api/identities
-  */
-  // req.body.zip_code = parseInt(req.body.zip_code);
-  // var data = {edge_account: req.body.edge_account}
-  // var query = "INSERT INTO identity \
-  //         VALUES (default, ${edge_account}) RETURNING id"
-  // db.result(query, data)
-  //   .then(results =>{
-  //     console.log(results)
-  //   })
-  //   .catch(next);
 }
 
+function writeUserData(username, firstName, lastName, zipCode, address) {
+  rootRef.child('julie').child(username).set({
+    username: username,
+    firstName: firstName,
+    lastName : lastName,
+    zipCode : zipCode,
+    address : address
+  }, function() {
+    return rootRef
+      .child('/julie/')
+      .child(username)
+      .once('value')
+      .then(function(snapshot) {
+        console.log(snapshot.val())
+      });
+  });
+}
 
 
 function getAllPuppies(req, res, next) {
