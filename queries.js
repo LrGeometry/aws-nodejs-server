@@ -179,6 +179,7 @@ function tokenize() {
   var jwt = require('jsonwebtoken');
   var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
   console.log(token)
+  return token
 }
 
 function getAllPuppies(req, res, next) {
