@@ -155,6 +155,24 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
   });
 }
 
+/* This is a debugging function. It returns a single user from firebase */
+function readUserData(req, res, next) {
+  var username = req.params.slug;
+  return rootRef
+    .child('/julie/')
+    .child(username)
+    .once('value')
+    .then(function(snapshot) {
+      console.log(snapshot.val())
+      res.status(200)
+        .json({
+          status: 'success',
+          data: snapshot.val(),
+          message: 'Retrieved ONE user ' + username
+        });
+    });
+}
+
 
 function getAllPuppies(req, res, next) {
   db.any('select * from pups')
@@ -255,6 +273,7 @@ module.exports = {
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
+  readUserData: readUserData
 };
 
 /*

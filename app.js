@@ -76,7 +76,7 @@ app.delete('/api/puppies/:id', db.removePuppy);
 app.get('/api/identities', db.getAllIdentities);
 app.get('/api/identities/:id', db.getSingleIdentity);
 app.post('/api/identities', db.createIdentity);
-
+app.get('/api/firebase/:slug', db.readUserData)
 
 app.get('/post/:slug', function (req, res) {
   /* TEST WITH http://localhost:8000/post/julie
