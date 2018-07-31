@@ -138,7 +138,7 @@ function createIdentity(req, res, next) {
 }
 
 function writeUserData(username, firstName, lastName, zipCode, address) {
-  rootRef.child('julie').child(username).set({
+  rootRef.child('idology').child(username).set({
     username: username,
     firstName: firstName,
     lastName : lastName,
@@ -146,7 +146,7 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
     address : address
   }, function() {
     return rootRef
-      .child('/julie/')
+      .child('idology')
       .child(username)
       .once('value')
       .then(function(snapshot) {
@@ -159,7 +159,7 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
 function readUserData(req, res, next) {
   var username = req.params.slug;
   return rootRef
-    .child('/julie/')
+    .child('idology')
     .child(username)
     .once('value')
     .then(function(snapshot) {
