@@ -27,6 +27,7 @@
     "fs": "0.0.1-security",
     "hbs": "^4.0.1",
     "import-env": "^1.1.1",
+    "jsonwebtoken": "^8.3.0",
     "nodemon": "^1.17.5",
     "pg": "^7.4.3",
     "pg-promise": "^8.4.5",

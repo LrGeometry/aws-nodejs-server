@@ -76,21 +76,8 @@ app.delete('/api/puppies/:id', db.removePuppy);
 app.get('/api/identities', db.getAllIdentities);
 app.get('/api/identities/:id', db.getSingleIdentity);
 app.post('/api/identities', db.createIdentity);
-app.get('/api/firebase/:slug', db.readUserData)
-
-app.get('/post/:slug', function (req, res) {
-  /* TEST WITH http://localhost:8000/post/julie
-  */
-  var slug = request.params.slug;
-  response.send('Post About: ' + slug);
-});
-
-app.get('/hello', function (req, res) {
-  /* TEST WITH http://localhost:8000/hello?name=julie
-  */
-  var name = request.query.name || 'World';
-  response.send('Hello ' + name);
-});
+app.get('/api/firebase/:slug', db.readUserData);
+app.get('/api/jwt', db.tokenize);
 
 
 app.listen(port, function(){

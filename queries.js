@@ -66,8 +66,6 @@ function getSingleIdentity(req, res, next) {
 
 /*
 *
-* IDology
-*
 * TODO: Write a function that iterates through array, append to a string
 *
 */
@@ -137,13 +135,15 @@ function createIdentity(req, res, next) {
     });
 }
 
+
 function writeUserData(username, firstName, lastName, zipCode, address) {
   rootRef.child('idology').child(username).set({
     username: username,
     firstName: firstName,
     lastName : lastName,
     zipCode : zipCode,
-    address : address
+    address : address,
+    epochTimestamp: Date.now()
   }, function() {
     return rootRef
       .child('idology')
@@ -154,6 +154,7 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
       });
   });
 }
+
 
 /* This is a debugging function. It returns a single user from firebase */
 function readUserData(req, res, next) {
@@ -173,6 +174,12 @@ function readUserData(req, res, next) {
     });
 }
 
+
+function tokenize() {
+  var jwt = require('jsonwebtoken');
+  var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
+  console.log(token)
+}
 
 function getAllPuppies(req, res, next) {
   db.any('select * from pups')
@@ -273,7 +280,8 @@ module.exports = {
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
-  readUserData: readUserData
+  readUserData: readUserData,
+  tokenize: tokenize
 };
 
 /*
