@@ -108,8 +108,36 @@ var data = {
 
 
 function createIdentity(req, res, next) {
+
+  var parseString = require('xml2js').parseString;
+  var xml = "<response><id-number>2979183</id-number><summary-result><key>id.failure</key><message>Fail</message> </summary-result><results> <key>result.match</key><message>ID Located</message></results><qualifiers><qualifier><key>resultcode.yob.does.not.match</key><message>YOB not a match</message> </qualifier></qualifiers><questions><question><prompt>Which of the following address numbers do you relate to the residence associated with STILLWOOD DR?</prompt> <type>street.number</type> <answer>1333</answer> <answer>1212</answer> <answer>8629</answer><answer>518</answer> <answer>1811</answer> <answer>None of the above</answer></question><question><prompt>When you were associated with the city of ATLANTA, in which of the counties below was that location?</prompt><type>county</type> <answer>HUNTERDON</answer> <answer>DEKALB</answer> <answer>CONECUH</answer> <answer>DE SOTO</answer> <answer>MARSHALL</answer> <answer>None of the above</answer></question><question><prompt>When you were associated with the residence on CASTLE FALLS DR, in which of the cities below was this address?</prompt><type>city.of.residence</type> <answer>CANYONDAM</answer> <answer>ASPEN</answer> <answer>PIMA</answer> <answer>LUPTON</answer> <answer>ATLANTA</answer> <answer>None of the above</answer></question> </questions></response>"
+  parseString(xml, function (err, result) {
+      // console.log(util.inspect(result, false, null))
+      var resultKey = result.response.results.key
+      var summaryResults = result.response['summary-result'].key
+      var qualifier = result.response.qualifiers[0].qualifier[0].key[0]
+      var question = result.response.questions[0].question
+      console.log(question)
+      var differentiatorQuestion = result.response['differentiator-questions']
+      if (differentiatorQuestion) {
+        console.log('YES differentiatorQuestion')
+        /*
+        Send differentiator question and answers to Frontend.
+        Post response to https://web.idologylive.com/api/differentiator-answer.svc https://web.idologylive.com/api/differentiator-answer-iq.svc
+        refer to "API Guide - ExpectID IQ(3).pdf"
+        */
+      } else {
+        console.log('No differentiatorQuestion')
+      }
+      if (question) {
+        console.log('YES questions')
+        //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
+      } else {
+        console.log('NO questions')
+      }
+  });
+
   console.log(req.body);
-  //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
   axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zipCode}`)
   // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
     .then (res => {
@@ -175,114 +203,21 @@ function readUserData(req, res, next) {
 }
 
 
-function tokenize() {
+function token(req, res, next) {
   var jwt = require('jsonwebtoken');
   var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
   console.log(token)
-  return token
+  res.status(200)
+    .json(token);
 }
 
-function getAllPuppies(req, res, next) {
-  db.any('select * from pups')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL puppies'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function getSinglePuppy(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  db.one('select * from pups where id = $1', pupID)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ONE puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function createPuppy(req, res, next) {
-  /* TEST WITH CURL
-  $ curl --data "name=Whisky&breed=annoying&age=3&sex=f" \
-  http://127.0.0.1:8000/api/puppies
-  */
-  req.body.age = parseInt(req.body.age);
-  db.none('insert into pups(name, breed, age, sex)' +
-      'values(${name}, ${breed}, ${age}, ${sex})',
-    req.body)
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Inserted one puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function updatePuppy(req, res, next) {
-  db.none('update pups set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
-    [req.body.name, req.body.breed, parseInt(req.body.age),
-      req.body.sex, parseInt(req.params.id)])
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Updated puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function removePuppy(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  db.result('delete from pups where id = $1', pupID)
-    .then(function (result) {
-      /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} puppy`
-        });
-      /* jshint ignore:end */
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
 
 module.exports = {
-  getAllPuppies: getAllPuppies,
-  getSinglePuppy: getSinglePuppy,
-  createPuppy: createPuppy,
-  updatePuppy: updatePuppy,
-  removePuppy: removePuppy,
-
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
   readUserData: readUserData,
-  tokenize: tokenize
+  token: token
 };
 
 /*
