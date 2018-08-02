@@ -2,7 +2,8 @@ var promise = require('bluebird');
 let env = require('./app');
 var util = require('util');
 var parseString = require('xml2js').parseString;
-
+var jwt = require('jsonwebtoken');
+var axios = require('axios');
 var ApiKeys = require('./firebase')
 var firebase = require('firebase')
 firebase.initializeApp(ApiKeys.FirebaseConfig);
@@ -69,7 +70,6 @@ function getSingleIdentity(req, res, next) {
 * TODO: Write a function that iterates through array, append to a string
 *
 */
-var axios = require('axios');
 var USERNAME = process.env.USERNAME;
 var PASSWORD = process.env.PASSWORD;
 var data = {
@@ -106,32 +106,63 @@ var data = {
       'altZip': '',
     }
 
+function parseXMLResponse(xml) {
+  var parseString = require('xml2js').parseString;
+  parseString(xml, function (err, result) {
+      // console.log(util.inspect(result, false, null))
+      var resultKey = result.response.results.key
+      var summaryResults = result.response['summary-result'].key
+      var qualifier = result.response.qualifiers[0].qualifier[0].key[0]
+      var question = result.response.questions[0].question
+      var differentiatorQuestion = result.response['differentiator-questions']
+      if (differentiatorQuestion) {
+        /*
+        Send differentiator question and answers to Frontend.
+        Post response to https://web.idologylive.com/api/differentiator-answer.svc https://web.idologylive.com/api/differentiator-answer-iq.svc
+        refer to "API Guide - ExpectID IQ(3).pdf"
+        */
+      }
+      if (question) {
+        //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
+      }
+  });
+}
 
 function createIdentity(req, res, next) {
-  console.log(req.body);
-  //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
-  axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zipCode}`)
-  // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-    .then (res => {
-      console.log(res.data)
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
-  db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
-      'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
-    req.body)
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Inserted one identity'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
+  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    // res.status(200).send(decoded);
+    console.log("Decoded: ", decoded);
+
+    parseXMLResponse(process.env.xml);
+
+    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`)
+    // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
+      .then (res => {
+        console.log(res.data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
+
+    db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
+        'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
+      req.body)
+      .then(function () {
+        res.status(200)
+          .json({
+            status: 'success',
+            message: 'Inserted one identity'
+          });
+      })
+      .catch(function (err) {
+        return next(err);
+      });
     });
 }
 
@@ -175,114 +206,33 @@ function readUserData(req, res, next) {
 }
 
 
-function tokenize() {
-  var jwt = require('jsonwebtoken');
-  var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
-  console.log(token)
-  return token
+function token(req, res, next) {
+  var username = req.params.username
+  var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
+    expiresIn: 86400 //expires in 24 hours
+  });
+  res.status(200).json(token);
+  // res.status(200).send({ auth: true, token: token });
 }
 
-function getAllPuppies(req, res, next) {
-  db.any('select * from pups')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL puppies'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
+function parseToken(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
+  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
-function getSinglePuppy(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  db.one('select * from pups where id = $1', pupID)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ONE puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function createPuppy(req, res, next) {
-  /* TEST WITH CURL
-  $ curl --data "name=Whisky&breed=annoying&age=3&sex=f" \
-  http://127.0.0.1:8000/api/puppies
-  */
-  req.body.age = parseInt(req.body.age);
-  db.none('insert into pups(name, breed, age, sex)' +
-      'values(${name}, ${breed}, ${age}, ${sex})',
-    req.body)
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Inserted one puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function updatePuppy(req, res, next) {
-  db.none('update pups set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
-    [req.body.name, req.body.breed, parseInt(req.body.age),
-      req.body.sex, parseInt(req.params.id)])
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Updated puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function removePuppy(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  db.result('delete from pups where id = $1', pupID)
-    .then(function (result) {
-      /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} puppy`
-        });
-      /* jshint ignore:end */
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+    res.status(200).send(decoded);
+  });
 }
 
 module.exports = {
-  getAllPuppies: getAllPuppies,
-  getSinglePuppy: getSinglePuppy,
-  createPuppy: createPuppy,
-  updatePuppy: updatePuppy,
-  removePuppy: removePuppy,
-
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
   readUserData: readUserData,
-  tokenize: tokenize
+  token: token,
+  parseToken: parseToken
 };
 
 /*
