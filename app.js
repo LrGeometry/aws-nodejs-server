@@ -58,7 +58,8 @@ app.get('/api/identities', db.getAllIdentities);
 app.get('/api/identities/:id', db.getSingleIdentity);
 app.post('/api/identities', db.createIdentity);
 app.get('/api/firebase/:slug', db.readUserData);
-app.get('/api/token', db.token);
+app.get('/api/token/:username', db.token);
+app.get('/api/parsetoken', db.parseToken);
 
 
 app.listen(port, function(){
