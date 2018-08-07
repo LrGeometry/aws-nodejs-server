@@ -6,18 +6,16 @@ var jwt = require('jsonwebtoken');
 var axios = require('axios');
 // var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
-var ApiKeys = {
-    FirebaseConfig: {
-        apiKey: process.env.FIREBASE_APIKEY,
-        authDomain: process.env.FIREBASE_AUTHDOMAIN,
-        databaseURL: process.env.FIREBASE_DBURL,
-        projectId: process.env.FIREBASE_PROJECTID,
-        storageBucket: process.env.FIREBASE_STORAGEBUCKET,
-        messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
+var config = {
+      apiKey: process.env.FIREBASE_APIKEY,
+      authDomain: process.env.FIREBASE_AUTHDOMAIN,
+      databaseURL: process.env.FIREBASE_DBURL,
+      projectId: process.env.FIREBASE_PROJECTID,
+      storageBucket: process.env.FIREBASE_STORAGEBUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
     }
-}
 var firebase = require('firebase')
-firebase.initializeApp(ApiKeys.FirebaseConfig);
+firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
 var options = {
