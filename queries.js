@@ -5,6 +5,10 @@ var parseString = require('xml2js').parseString;
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
 var ApiKeys = require('./firebase')
+const importEnv = require('import-env');
+
+var ApiKeys = process.env.ApiKeys
+
 var firebase = require('firebase')
 firebase.initializeApp(ApiKeys.FirebaseConfig);
 const rootRef = firebase.database().ref();
