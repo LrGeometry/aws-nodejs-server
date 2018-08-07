@@ -26,18 +26,10 @@ var options = {
 var pgp = require('pg-promise')(options);
 var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
 
-var config = {
-    host: '127.0.0.1',
-    database: 'hercules_node',
-    user: 'postgres',
-    password: 'secret',
-    port: 5432
-};
-
 if (environment.environment === 'development'){
   var db = pgp(DATABASE_URL);
 } else {
-  var db = pgp(cn);
+  var db = pgp(DATABASE_URL);
 }
 
 
