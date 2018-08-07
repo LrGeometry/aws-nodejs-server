@@ -1,14 +1,21 @@
 var promise = require('bluebird');
-let env = require('./app');
+let environment = require('./app');
 var util = require('util');
 var parseString = require('xml2js').parseString;
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
-var ApiKeys = require('./firebase')
+// var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
-
-var ApiKeys = process.env.ApiKeys
-
+var ApiKeys = {
+    FirebaseConfig: {
+        apiKey: process.env.FIREBASE_APIKEY,
+        authDomain: process.env.FIREBASE_AUTHDOMAIN,
+        databaseURL: process.env.FIREBASE_DBURL,
+        projectId: process.env.FIREBASE_PROJECTID,
+        storageBucket: process.env.FIREBASE_STORAGEBUCKET,
+        messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
+    }
+}
 var firebase = require('firebase')
 firebase.initializeApp(ApiKeys.FirebaseConfig);
 const rootRef = firebase.database().ref();
@@ -29,7 +36,7 @@ var config = {
     port: 5432
 };
 
-if (env.environment === 'development'){
+if (environment.environment === 'development'){
   var db = pgp(DATABASE_URL);
 } else {
   var db = pgp(cn);
