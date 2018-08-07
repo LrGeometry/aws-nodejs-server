@@ -150,15 +150,23 @@ function createIdentity(req, res, next) {
       })
     writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
 
+    var parseString = require('xml2js').parseString;
+    parseString(process.env.xml, function (err, result) {
+        var questions = result.response.questions[0].question
+        res.status(200)
+          .json({questions});
+      });
+
     db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
         'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
       req.body)
       .then(function () {
-        res.status(200)
-          .json({
-            status: 'success',
-            message: 'Inserted one identity'
-          });
+        console.log('Inserted on identity into PostgreSQL DB')
+        // res.status(200)
+        //   .json({
+        //     status: 'success',
+        //     message: 'Inserted one identity'
+        //   });
       })
       .catch(function (err) {
         return next(err);
@@ -205,6 +213,22 @@ function readUserData(req, res, next) {
     });
 }
 
+function sendQuestions(req, res, next){
+  var parseString = require('xml2js').parseString;
+  parseString(process.env.xml, function (err, result) {
+      // console.log(util.inspect(result, false, null))
+      var questions = result.response.questions[0].question
+      // console.log(questions, questions.length)
+      // var questionOne = result.response.questions[0].question[0]
+      // var promptOne = questionOne.prompt[0]
+      for (i = 0; i < questions.length; i++) {
+        console.log(questions[i], "number : ", i)
+      }
+      res.status(200)
+        .json({questions});
+    });
+}
+
 
 function token(req, res, next) {
   var username = req.params.username
@@ -232,7 +256,8 @@ module.exports = {
   createIdentity: createIdentity,
   readUserData: readUserData,
   token: token,
-  parseToken: parseToken
+  parseToken: parseToken,
+  sendQuestions: sendQuestions
 };
 
 /*

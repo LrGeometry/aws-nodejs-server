@@ -60,6 +60,7 @@ app.post('/api/identities', db.createIdentity);
 app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
+app.get('/api/questions', db.sendQuestions);
 
 
 app.listen(port, function(){
