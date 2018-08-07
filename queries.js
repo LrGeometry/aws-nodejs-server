@@ -29,7 +29,14 @@ var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
 if (environment.environment === 'development'){
   var db = pgp(DATABASE_URL);
 } else {
-  var db = pgp(DATABASE_URL);
+  var cn = {
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      port: 5432
+  };
+  var db = pgp(cn);
 }
 
 
