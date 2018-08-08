@@ -149,9 +149,9 @@ function createIdentity(req, res, next) {
     parseXMLResponse(process.env.xml);
 
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, proxy: {
+    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, { proxy: {
         host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
-      })
+      }})
       .then (res => {
         console.log(res.data)
       })
