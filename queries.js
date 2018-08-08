@@ -1,9 +1,10 @@
 var promise = require('bluebird');
-let environment = require('./app');
+var environment = require('./app');
 var util = require('util');
 var parseString = require('xml2js').parseString;
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
+var FIXIE_URL = process.env.FIXIE_URL;
 // var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
 var config = {
@@ -148,7 +149,21 @@ function createIdentity(req, res, next) {
 
     parseXMLResponse(process.env.xml);
 
-    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`)
+/*Using axios*/
+    var config = { proxy: { host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT } }
+      // axios.get(url, config)
+      // .then(result => {})
+      // .catch(error => {console.log(error)})
+
+/*Using requests*/
+    // const request = require('request')
+    // const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
+    //
+    // fixieRequest('http://www.example.com', (err, res, body) => {
+    //   console.log(`Got response: ${res.statusCode}`);
+    // });
+
+    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, config)
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
       .then (res => {
         console.log(res.data)
