@@ -161,6 +161,8 @@ function createIdentity(req, res, next) {
 
     fixieRequest(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, (err, res, body) => {
       console.log(`Got response: ${res.statusCode}`);
+      console.log(res)
+      console.log(body)
     });
 
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, config)
