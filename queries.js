@@ -26,19 +26,26 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
-
-if (environment.environment === 'development'){
-  var db = pgp(DATABASE_URL);
-} else {
-  var cn = {
-      host: process.env.DB_HOST,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      port: 5432
-  };
-  var db = pgp(cn);
-}
+var cn = {
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    port: 5432
+};
+var db = pgp(cn);
+// if (environment.environment === 'development'){
+//   var db = pgp(DATABASE_URL);
+// } else {
+//   var cn = {
+//       host: process.env.DB_HOST,
+//       database: process.env.DB_NAME,
+//       user: process.env.DB_USERNAME,
+//       password: process.env.DB_PASSWORD,
+//       port: 5432
+//   };
+//   var db = pgp(cn);
+// }
 
 
 function getAllIdentities(req, res, next) {
