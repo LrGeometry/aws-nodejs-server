@@ -148,28 +148,9 @@ function createIdentity(req, res, next) {
 
     parseXMLResponse(process.env.xml);
 
-    // console.log(FIXIE_URL_HOST, FIXIE_URL_PORT)
-    //   var config = {
-    //     proxy: {
-    //       host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
-    //     }
-    //   }
-
-/*Using requests*/
-    // const request = require('request')
-    // const fixieRequest = request.post({'proxy': process.env.FIXIE_URL});
-    //
-    // fixieRequest(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, (err, res, body) => {
-    //   console.log(`Got response: ${res.statusCode}`);
-    //   console.log(res)
-    //   console.log("===========================================")
-    //   console.log(body)
-    // });
-
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`,  proxy: {
-        host: process.env.FIXIE_URL_HOST,
-        port: process.env.FIXIE_URL_PORT
+    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, proxy: {
+        host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
       })
       .then (res => {
         console.log(res.data)
