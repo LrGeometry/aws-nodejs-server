@@ -144,33 +144,34 @@ function createIdentity(req, res, next) {
   jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
-    // res.status(200).send(decoded);
     console.log("Decoded: ", decoded);
 
     parseXMLResponse(process.env.xml);
 
-/*Using axios*/
-    var config = { proxy: { host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT } }
-      // axios.get(url, config)
-      // .then(result => {})
-      // .catch(error => {console.log(error)})
+    console.log(FIXIE_URL_HOST, FIXIE_URL_PORT)
+      var config = {
+        proxy: {
+          host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
+        }
+      }
 
 /*Using requests*/
-    // const request = require('request')
-    // const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
-    //
-    // fixieRequest('http://www.example.com', (err, res, body) => {
-    //   console.log(`Got response: ${res.statusCode}`);
-    // });
+    const request = require('request')
+    const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
 
-    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, config)
+    fixieRequest(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, (err, res, body) => {
+      console.log(`Got response: ${res.statusCode}`);
+    });
+
+    // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, config)
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-      .then (res => {
-        console.log(res.data)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+      // .then (res => {
+      //   console.log(res.data)
+      // })
+      // .catch(error => {
+      //   console.log(error)
+      // })
+
     writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
 
     var parseString = require('xml2js').parseString;
