@@ -157,11 +157,12 @@ function createIdentity(req, res, next) {
 
 /*Using requests*/
     const request = require('request')
-    const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
+    const fixieRequest = request.post({'proxy': process.env.FIXIE_URL});
 
     fixieRequest(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, (err, res, body) => {
       console.log(`Got response: ${res.statusCode}`);
       console.log(res)
+      console.log("===========================================")
       console.log(body)
     });
 
