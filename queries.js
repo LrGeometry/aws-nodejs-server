@@ -148,12 +148,12 @@ function createIdentity(req, res, next) {
 
     parseXMLResponse(process.env.xml);
 
-    console.log(FIXIE_URL_HOST, FIXIE_URL_PORT)
-      var config = {
-        proxy: {
-          host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
-        }
-      }
+    // console.log(FIXIE_URL_HOST, FIXIE_URL_PORT)
+    //   var config = {
+    //     proxy: {
+    //       host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
+    //     }
+    //   }
 
 /*Using requests*/
     const request = require('request')
