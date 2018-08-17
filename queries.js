@@ -5,6 +5,7 @@ var parseString = require('xml2js').parseString;
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
 var FIXIE_URL = process.env.FIXIE_URL;
+const uuidv4 = require('uuid/v4');
 // var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
 var config = {
@@ -194,7 +195,10 @@ function createIdentity(req, res, next) {
 
 
 function writeUserData(username, firstName, lastName, zipCode, address) {
+  var id = uuidv4()
+  console.log("UUID: ", id)
   rootRef.child('idology').child(username).set({
+    id: id,
     username: username,
     firstName: firstName,
     lastName : lastName,
@@ -236,15 +240,25 @@ function sendQuestions(req, res, next){
   parseString(process.env.xml, function (err, result) {
       // console.log(util.inspect(result, false, null))
       var questions = result.response.questions[0].question
-      // console.log(questions, questions.length)
-      // var questionOne = result.response.questions[0].question[0]
-      // var promptOne = questionOne.prompt[0]
       for (i = 0; i < questions.length; i++) {
         console.log(questions[i], "number : ", i)
       }
       res.status(200)
         .json({questions});
     });
+}
+
+function submitAnswers (req, res, next) {
+  console.log("======DEFCON-------",req.body)
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+
+  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    res.status(200).send(decoded);
+
+  });
 }
 
 
@@ -262,6 +276,7 @@ function parseToken(req, res, next) {
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
   jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    console.log("TOKEN: ", token)
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
     res.status(200).send(decoded);
@@ -275,7 +290,8 @@ module.exports = {
   readUserData: readUserData,
   token: token,
   parseToken: parseToken,
-  sendQuestions: sendQuestions
+  sendQuestions: sendQuestions,
+  submitAnswers: submitAnswers,
 };
 
 /*

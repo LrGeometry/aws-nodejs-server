@@ -61,6 +61,7 @@ app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
+app.post('/api/submitanswers', db.submitAnswers);
 
 
 app.listen(port, function(){
