@@ -2,27 +2,9 @@
 var express = require ('express')
 var app = express()
 var fs = require('fs')
-var axios = require ('axios')
 const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
-
-// const { Client } = require('pg');
-//
-// const client = new Client({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true,
-// });
-//
-// client.connect();
-//
-// client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-//   if (err) throw err;
-//   for (let row of res.rows) {
-//     console.log(JSON.stringify(row));
-//   }
-//   client.end();
-// });
 
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
@@ -62,7 +44,11 @@ app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
-
+app.get('/api/storj/upload', db.storjUploadFile);
+app.get('/api/storj/bucket/get', db.storjGetBucketId);
+app.get('/api/storj/bucket/list', db.storjListBuckets);
+app.get('/api/storj/bucket/create', db.storjCreateBucket);
+app.get('/api/storj/bucket/files', db.storjBucketListFiles);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)

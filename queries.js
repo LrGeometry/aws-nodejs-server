@@ -3,8 +3,8 @@ var environment = require('./app');
 var util = require('util');
 var parseString = require('xml2js').parseString;
 var jwt = require('jsonwebtoken');
-var axios = require('axios');
 var FIXIE_URL = process.env.FIXIE_URL;
+var request = require('request')
 const uuidv4 = require('uuid/v4');
 // var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
@@ -156,16 +156,25 @@ function createIdentity(req, res, next) {
 
     parseXMLResponse(process.env.xml);
 
+    request.post({
+      proxy: FIXIE_URL,
+      url: 'https://web.idologylive.com/api/idiq.svc',
+      form: data
+    }, function(error, response, body){
+      console.log(body)
+    });
+
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-    axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`, { proxy: {
-        host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT
-      }})
-      .then (res => {
-        console.log(res.data)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`,
+    //   { proxy:
+    //     { host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT }
+    //   })
+    //   .then (res => {
+    //     console.log(res.data)
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //   })
 
     writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
 
@@ -196,6 +205,7 @@ function createIdentity(req, res, next) {
 
 function writeUserData(username, firstName, lastName, zipCode, address) {
   var id = uuidv4()
+  /* TODO: Return the UUID to the front, store it in redux, encode it in the authToken */
   console.log("UUID: ", id)
   rootRef.child('idology').child(username).set({
     id: id,
@@ -249,7 +259,7 @@ function sendQuestions(req, res, next){
 }
 
 function submitAnswers (req, res, next) {
-  console.log("======DEFCON-------",req.body)
+  console.log("======SCRIPTY1",req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
@@ -257,6 +267,21 @@ function submitAnswers (req, res, next) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
     res.status(200).send(decoded);
+
+    // var data = {['4','3','1']:[]} /* NOTE: Looks like {['4','3','1']:[]}*/
+
+    request.post({
+      proxy: FIXIE_URL,
+      url: 'https://web.idologylive.com/api/idliveq-answers.svc',
+      form: data
+    }, function(error, response, body){
+      console.log(body)
+    });
+
+    /*
+    TODO: Make a post request to IDOLOGY: https://web.idologylive.com/api/idliveq-answers.svc
+    TODO: use decoded to grab UUID/username. update firebase with datetime of submission and boolean value
+    */
 
   });
 }
@@ -283,6 +308,148 @@ function parseToken(req, res, next) {
   });
 }
 
+
+function storjUploadFile(){
+  const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
+  var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
+  var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+
+  const storj = new Environment({
+    bridgeURL: 'https://api.storj.io',
+    bridgeUser: STORJ_BRIDGE_USER,
+    bridgePass: STORJ_BRIDGE_PASS,
+    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    logLevel: 4
+  });
+
+/* Testing API out */
+  var mnemonic = mnemonicGenerate(128);
+  console.log('Mnemonic geneator: ', mnemonic)
+  console.log('Mnemonic check: ', mnemonicCheck(mnemonic))
+  console.log('Time: ', utilTimestamp())
+
+  const bucketId = 'AC67BBD5A7A6E36DBDAFF71A';
+  const filePath = './handwriting_7_Awesome_5.data';
+  const julie = storj.getInfo(function(err, result) {
+    console.log(result)
+  })
+  const state = storj.storeFile(bucketId, filePath, {
+    filename: 'handwriting_7_Awesome_5.data',
+    progressCallback: function(progress, downloadedBytes, totalBytes) {
+      console.log('progress:', progress);
+    },
+    finishedCallback: function(err, fileId) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log('File complete:', fileId);
+    }
+  });
+}
+
+function storjGetBucketId () {
+  const { Environment } = require('storj');
+  var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
+  var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+
+  const storj = new Environment({
+    bridgeUrl: 'https://api.storj.io',
+    bridgeUser: STORJ_BRIDGE_USER,
+    bridgePass: STORJ_BRIDGE_PASS,
+    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    logLevel: 0
+  });
+
+  const testBucketName = 'test-bucket';
+  storj.getBucketId(testBucketName, function(err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('info.name:', result.name);
+    console.log('info.id:', result.id);
+    storj.destroy();
+  });
+}
+
+
+function storjListBuckets () {
+  const { Environment } = require('storj');
+  var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
+  var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+
+  const storj = new Environment({
+    bridgeUrl: 'https://api.storj.io',
+    bridgeUser: STORJ_BRIDGE_USER,
+    bridgePass: STORJ_BRIDGE_PASS,
+    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    logLevel: 0
+  });
+
+  storj.getInfo(function(err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('info:', result);
+
+    storj.getBuckets(function(err, result) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log('buckets:', result);
+      storj.destroy();
+    });
+  });
+}
+
+
+function storjCreateBucket () {
+  const { Environment } = require('storj');
+  var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
+  var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+
+  const storj = new Environment({
+    bridgeUrl: 'https://api.storj.io',
+    bridgeUser: STORJ_BRIDGE_USER,
+    bridgePass: STORJ_BRIDGE_PASS,
+    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    logLevel: 0
+  });
+
+  const testBucketName = 'test-' + Date.now();
+  storj.createBucket(testBucketName, function(err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('info:', result);
+    storj.destroy();
+  });
+}
+
+
+function storjBucketListFiles() {
+  const { Environment } = require('storj');
+  var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
+  var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+
+  const storj = new Environment({
+    bridgeUrl: 'https://api.storj.io',
+    bridgeUser: STORJ_BRIDGE_USER,
+    bridgePass: STORJ_BRIDGE_PASS,
+    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    logLevel: 0
+  });
+
+  var bucketID = "2443acd6222d73b373cbf18e"
+  storj.listFiles(bucketID, function(err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('Bucket Files:', result);
+    storj.destroy();
+  });
+}
+
+
 module.exports = {
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
@@ -292,6 +459,11 @@ module.exports = {
   parseToken: parseToken,
   sendQuestions: sendQuestions,
   submitAnswers: submitAnswers,
+  storjUploadFile: storjUploadFile,
+  storjGetBucketId: storjGetBucketId,
+  storjListBuckets: storjListBuckets,
+  storjCreateBucket: storjCreateBucket,
+  storjBucketListFiles: storjBucketListFiles
 };
 
 /*
