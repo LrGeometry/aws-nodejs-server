@@ -323,15 +323,18 @@ function storjUploadFile(){
   });
 
 /* Testing API out */
-  var mnemonic = mnemonicGenerate(128);
-  console.log('Mnemonic geneator: ', mnemonic)
-  console.log('Mnemonic check: ', mnemonicCheck(mnemonic))
-  console.log('Time: ', utilTimestamp())
+  // var mnemonic = mnemonicGenerate(128);
+  // console.log('Mnemonic geneator: ', mnemonic)
+  // console.log('Mnemonic check: ', mnemonicCheck(mnemonic))
+  // console.log('Time: ', utilTimestamp())
 
-  const bucketId = 'AC67BBD5A7A6E36DBDAFF71A';
+  const bucketId = '2443acd6222d73b373cbf18e';
   const filePath = './handwriting_7_Awesome_5.data';
   const julie = storj.getInfo(function(err, result) {
-    console.log(result)
+    if (err) {
+      return console.error(err);
+    }
+    console.log("GetInfo Function: ",result)
   })
   const state = storj.storeFile(bucketId, filePath, {
     filename: 'handwriting_7_Awesome_5.data',
@@ -450,6 +453,42 @@ function storjBucketListFiles() {
 }
 
 
+function csvParser() {
+  var id = uuidv4()
+  var Papa = require('papaparse');
+  const fs = require('fs');
+  var filename = "Gold-Reference-Chip-Average-Test-8-31-18.csv"; //TODO: Make this variable dynamic
+  const file = fs.createReadStream("csv-reports/" + filename );
+  Papa.parse(file, {
+  	complete: function(results) {
+      var dict = {};
+      var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
+      var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
+      var data = results.data
+      var dataKeys = data[0]
+      var dataValues = data[data.length - 1 ]
+      for (i = 0; i < dataKeys.length; i++){
+        if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
+          dict[dataKeys[i]] = dataValues[i]
+        }
+      }
+      // console.log("DICTIONARY: \n", dict)
+
+      rootRef.child('csvParser').child(id).set(dict, function() {
+        return rootRef
+          .child('csvParser')
+          .child(id)
+          .once('value')
+          .then(function(snapshot) {
+            console.log(snapshot.val())
+          });
+      });
+
+  	}
+  });
+}
+
+
 module.exports = {
   getAllIdentities: getAllIdentities,
   getSingleIdentity: getSingleIdentity,
@@ -463,7 +502,8 @@ module.exports = {
   storjGetBucketId: storjGetBucketId,
   storjListBuckets: storjListBuckets,
   storjCreateBucket: storjCreateBucket,
-  storjBucketListFiles: storjBucketListFiles
+  storjBucketListFiles: storjBucketListFiles,
+  csvParser: csvParser
 };
 
 /*

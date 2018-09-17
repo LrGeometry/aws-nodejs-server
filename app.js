@@ -49,6 +49,7 @@ app.get('/api/storj/bucket/get', db.storjGetBucketId);
 app.get('/api/storj/bucket/list', db.storjListBuckets);
 app.get('/api/storj/bucket/create', db.storjCreateBucket);
 app.get('/api/storj/bucket/files', db.storjBucketListFiles);
+app.get('/api/csv', db.csvParser);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
