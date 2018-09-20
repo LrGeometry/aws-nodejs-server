@@ -25,6 +25,7 @@ if (app.get('env') === 'development') {
 }
 module.exports.environment = app.get('env');
 var db = require('./queries');
+var storj = require('./storj');
 
 app.use(body_parser.urlencoded({extended: false}));
 app.set('view engine', 'hbs');
@@ -44,11 +45,11 @@ app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
-app.get('/api/storj/upload', db.storjUploadFile);
-app.get('/api/storj/bucket/get', db.storjGetBucketId);
-app.get('/api/storj/bucket/list', db.storjListBuckets);
-app.get('/api/storj/bucket/create', db.storjCreateBucket);
-app.get('/api/storj/bucket/files', db.storjBucketListFiles);
+app.get('/api/storj/upload', storj.storjUploadFile);
+app.get('/api/storj/bucket/get', storj.storjGetBucketId);
+app.get('/api/storj/bucket/list', storj.storjListBuckets);
+app.get('/api/storj/bucket/create', storj.storjCreateBucket);
+app.get('/api/storj/bucket/files', storj.storjBucketListFiles);
 app.get('/api/csv', db.csvParser);
 
 app.listen(port, function(){
