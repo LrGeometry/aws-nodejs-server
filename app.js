@@ -45,11 +45,15 @@ app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
+
 app.get('/api/storj/upload', storj.storjUploadFile);
+app.get('/api/storj/download', storj.storjDownloadFile);
+app.get('/api/storj/delete', storj.storjDeleteFile);
 app.get('/api/storj/bucket/get', storj.storjGetBucketId);
 app.get('/api/storj/bucket/list', storj.storjListBuckets);
 app.get('/api/storj/bucket/create', storj.storjCreateBucket);
 app.get('/api/storj/bucket/files', storj.storjBucketListFiles);
+app.get('/api/storj/bucket/delete/:id', storj.storjDeleteBucketId);
 app.get('/api/csv', db.csvParser);
 
 app.listen(port, function(){
