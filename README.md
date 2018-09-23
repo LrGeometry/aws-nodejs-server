@@ -1,7 +1,9 @@
 # Nodejs Server for backend throughput of data.
-`Data Management, API Calls, and GeoLocation`
+`KYC / AML, Data Management, API Calls, and GeoLocation`
 
 ## Use
+> - Idology for User Verification
+`KYC / AML Regulation Compliance
 > - IPFS for Data Metrics
 `The Only IPFS Node in the Carribean!`
 > - Storj Photo Bucket
