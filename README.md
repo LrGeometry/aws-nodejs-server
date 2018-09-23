@@ -5,7 +5,7 @@
 > - IPFS for Data Metrics
 `The Only IPFS Node in the Carribean!`
 > - Storj Photo Bucket
-`Constant contact with STORJ devs [here](https://community.storj.io)`
+`Constant contact with STORJ devs` [here](https://community.storj.io)
 > - Factom Node for Reference Hashes 
 `Constant contact with Factom on their discord`
 > - ShipStation for GeoSpacial Location 
