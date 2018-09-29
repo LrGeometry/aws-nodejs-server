@@ -27,6 +27,7 @@ module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
 var factom = require('./factom');
+var ipfs = require('./ipfs');
 
 app.use(body_parser.urlencoded({extended: false}));
 app.set('view engine', 'hbs');
@@ -58,6 +59,9 @@ app.get('/api/storj/bucket/files', storj.storjBucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.storjDeleteBucketId);
 
 app.get('/api/factom/add', factom.factomAddChain);
+
+app.get('/api/ipfs/get', ipfs.ipfsGetFile);
+app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
