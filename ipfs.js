@@ -36,7 +36,7 @@ fetch('http://10.0.3.2:3000/addfile',
        method: 'POST',
        headers: {
          'Accept': 'application/json',
-         'Content-Type': 'application/json'
+         'Content-Type': 'application/json'i
        },
        body: JSON.stringify(dataObject)
      })
