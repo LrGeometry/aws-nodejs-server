@@ -6,7 +6,6 @@ var jwt = require('jsonwebtoken');
 var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
-// var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
 var config = {
       apiKey: process.env.FIREBASE_APIKEY,
@@ -147,14 +146,12 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
         var d2 = Date.now()
         // var d3 = new Date(2018, 6, 1) // Uncomment this line if you want to test when numDaysBetween > 90
         if (numDaysBetween(d1, d2) < 90) {
-          console.log("true")
           res.status(200)
             .json({
               status: 'true',
               message: 'User, ' + decoded.username + ', is up-to-date.'
             });
         } else {
-          console.log("false")
           res.status(200)
             .json({
               status: 'false',
@@ -223,7 +220,7 @@ function sendQuestions(req, res, next){
 }
 
 function submitAnswers (req, res, next) {
-  console.log("======SCRIPTY1",req.body)
+  console.log("Request Body: ",req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
@@ -321,11 +318,3 @@ module.exports = {
   submitAnswers: submitAnswers,
   csvParser: csvParser
 };
-
-
-/*
-============
-  RESOURCES
-=============
-http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/
-*/
