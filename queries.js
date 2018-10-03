@@ -82,6 +82,7 @@ function parseXMLResponse(xml) {
 }
 
 function createIdentity(req, res, next) {
+  console.log(req.headers)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
@@ -241,6 +242,8 @@ function token(req, res, next) {
   var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
     expiresIn: 86400 //expires in 24 hours
   });
+  console.log("Made it into the Token: ", token)
+
   res.status(200).json(token);
   // res.status(200).send({ auth: true, token: token });
 }
@@ -297,6 +300,7 @@ function csvParser() {
 module.exports = {
   createIdentity: createIdentity,
   readUserData: readUserData,
+  checkIfUserSubmittedIdologyWithinLastThreeMonths: checkIfUserSubmittedIdologyWithinLastThreeMonths,
   token: token,
   parseToken: parseToken,
   sendQuestions: sendQuestions,

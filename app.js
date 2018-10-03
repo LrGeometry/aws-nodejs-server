@@ -43,6 +43,7 @@ app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
+app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 
 app.get('/api/storj/upload', storj.storjUploadFile);
 app.get('/api/storj/download', storj.storjDownloadFile);
