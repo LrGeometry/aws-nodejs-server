@@ -37,8 +37,6 @@ app.get('/', function(req, res){
   res.render('index.hbs', {'response':response});
 });
 
-app.get('/api/identities', db.getAllIdentities);
-app.get('/api/identities/:id', db.getSingleIdentity);
 app.post('/api/identities', db.createIdentity);
 app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);

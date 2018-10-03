@@ -20,72 +20,8 @@ var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
-var options = {
-  // Initialization Options
-  promiseLib: promise
-};
-
-var pgp = require('pg-promise')(options);
-var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
-var cn = {
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    port: 5432
-};
-var db = pgp(cn);
-// if (environment.environment === 'development'){
-//   var db = pgp(DATABASE_URL);
-// } else {
-//   var cn = {
-//       host: process.env.DB_HOST,
-//       database: process.env.DB_NAME,
-//       user: process.env.DB_USERNAME,
-//       password: process.env.DB_PASSWORD,
-//       port: 5432
-//   };
-//   var db = pgp(cn);
-// }
-
-
-function getAllIdentities(req, res, next) {
-  db.any('select * from identity')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL identities'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function getSingleIdentity(req, res, next) {
-  var identityID = parseInt(req.params.id);
-  db.one('select * from identity where id = $1', identityID)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ONE identity'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
 /*
-*
 * TODO: Write a function that iterates through array, append to a string
-*
 */
 var USERNAME = process.env.USERNAME;
 var PASSWORD = process.env.PASSWORD;
@@ -184,22 +120,35 @@ function createIdentity(req, res, next) {
         res.status(200)
           .json({questions});
       });
-
-    db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
-        'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
-      req.body)
-      .then(function () {
-        console.log('Inserted on identity into PostgreSQL DB')
-        // res.status(200)
-        //   .json({
-        //     status: 'success',
-        //     message: 'Inserted one identity'
-        //   });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
     });
+}
+
+function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+
+  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    console.log("TOKEN: ", token)
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    console.log("Decoded: ", decoded);
+
+    var username = require.params.slug;
+    return rootRef
+      .child('idology')
+      .child(username)
+      .once('value')
+      .then(function(snapshot) {
+        console.log(snapshot.val()) // TODO: parse out the "epochTimestamp". Compare it to Datetime.now. Ofc in Epochtime.
+        res.status(200)
+          .json({
+            status: 'success',
+            data: snapshot.val(),
+            message: 'Retrieved ONE user ' + username
+          });
+      });
+
+  });
 }
 
 
@@ -346,8 +295,6 @@ function csvParser() {
 
 
 module.exports = {
-  getAllIdentities: getAllIdentities,
-  getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
   readUserData: readUserData,
   token: token,
