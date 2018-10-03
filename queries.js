@@ -82,7 +82,6 @@ function parseXMLResponse(xml) {
 }
 
 function createIdentity(req, res, next) {
-  console.log(req.headers)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
@@ -124,29 +123,44 @@ function createIdentity(req, res, next) {
     });
 }
 
+function numDaysBetween(d1, d2){
+  var diff = Math.abs(d1 - d2);
+  console.log("Days in between.... ", diff / (1000 * 60 * 60 * 24));
+  return diff / (1000 * 60 * 60 * 24)
+}
+
 function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
   jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-    console.log("TOKEN: ", token)
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
     console.log("Decoded: ", decoded);
 
-    var username = require.params.slug;
-    return rootRef
+     return rootRef
       .child('idology')
-      .child(username)
+      .child(decoded.username)
       .once('value')
       .then(function(snapshot) {
-        console.log(snapshot.val()) // TODO: parse out the "epochTimestamp". Compare it to Datetime.now. Ofc in Epochtime.
-        res.status(200)
-          .json({
-            status: 'success',
-            data: snapshot.val(),
-            message: 'Retrieved ONE user ' + username
-          });
+        var d1 = snapshot.val().epochTimestamp
+        var d2 = Date.now()
+        // var d3 = new Date(2018, 6, 1) // Uncomment this line if you want to test when numDaysBetween > 90
+        if (numDaysBetween(d1, d2) < 90) {
+          console.log("true")
+          res.status(200)
+            .json({
+              status: 'true',
+              message: 'User, ' + decoded.username + ', is up-to-date.'
+            });
+        } else {
+          console.log("false")
+          res.status(200)
+            .json({
+              status: 'false',
+              message: 'User, ' + decoded.username + ', is not up-to-date.'
+            });
+        }
       });
 
   });
@@ -171,7 +185,7 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
       .child(username)
       .once('value')
       .then(function(snapshot) {
-        console.log(snapshot.val())
+        console.log("Wrote User Data: ", snapshot.val())
       });
   });
 }
