@@ -1,4 +1,3 @@
-var promise = require('bluebird');
 var environment = require('./app');
 var util = require('util');
 var parseString = require('xml2js').parseString;
