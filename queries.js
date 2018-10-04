@@ -6,7 +6,6 @@ var jwt = require('jsonwebtoken');
 var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
-// var ApiKeys = require('./firebase')
 const importEnv = require('import-env');
 var config = {
       apiKey: process.env.FIREBASE_APIKEY,
@@ -20,72 +19,8 @@ var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
-var options = {
-  // Initialization Options
-  promiseLib: promise
-};
-
-var pgp = require('pg-promise')(options);
-var DATABASE_URL = "postgres://127.0.0.1:5432/hercules_node";
-var cn = {
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    port: 5432
-};
-var db = pgp(cn);
-// if (environment.environment === 'development'){
-//   var db = pgp(DATABASE_URL);
-// } else {
-//   var cn = {
-//       host: process.env.DB_HOST,
-//       database: process.env.DB_NAME,
-//       user: process.env.DB_USERNAME,
-//       password: process.env.DB_PASSWORD,
-//       port: 5432
-//   };
-//   var db = pgp(cn);
-// }
-
-
-function getAllIdentities(req, res, next) {
-  db.any('select * from identity')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL identities'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
-function getSingleIdentity(req, res, next) {
-  var identityID = parseInt(req.params.id);
-  db.one('select * from identity where id = $1', identityID)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ONE identity'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
 /*
-*
 * TODO: Write a function that iterates through array, append to a string
-*
 */
 var USERNAME = process.env.USERNAME;
 var PASSWORD = process.env.PASSWORD;
@@ -184,22 +119,48 @@ function createIdentity(req, res, next) {
         res.status(200)
           .json({questions});
       });
-
-    db.none('insert into identity(edgeAccount, firstName, lastName, address, zipCode, epochTimestamp)' +
-        'values(${edgeAccount}, ${firstName}, ${lastName}, ${address}, ${zipCode},'+ Date.now() +')',
-      req.body)
-      .then(function () {
-        console.log('Inserted on identity into PostgreSQL DB')
-        // res.status(200)
-        //   .json({
-        //     status: 'success',
-        //     message: 'Inserted one identity'
-        //   });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
     });
+}
+
+function numDaysBetween(d1, d2){
+  var diff = Math.abs(d1 - d2);
+  console.log("Days in between.... ", diff / (1000 * 60 * 60 * 24));
+  return diff / (1000 * 60 * 60 * 24)
+}
+
+function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+
+  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    console.log("Decoded: ", decoded);
+
+     return rootRef
+      .child('idology')
+      .child(decoded.username)
+      .once('value')
+      .then(function(snapshot) {
+        var d1 = snapshot.val().epochTimestamp
+        var d2 = Date.now()
+        // var d3 = new Date(2018, 6, 1) // Uncomment this line if you want to test when numDaysBetween > 90
+        if (numDaysBetween(d1, d2) < 90) {
+          res.status(200)
+            .json({
+              status: 'true',
+              message: 'User, ' + decoded.username + ', is up-to-date.'
+            });
+        } else {
+          res.status(200)
+            .json({
+              status: 'false',
+              message: 'User, ' + decoded.username + ', is not up-to-date.'
+            });
+        }
+      });
+
+  });
 }
 
 
@@ -221,7 +182,7 @@ function writeUserData(username, firstName, lastName, zipCode, address) {
       .child(username)
       .once('value')
       .then(function(snapshot) {
-        console.log(snapshot.val())
+        console.log("Wrote User Data: ", snapshot.val())
       });
   });
 }
@@ -259,7 +220,7 @@ function sendQuestions(req, res, next){
 }
 
 function submitAnswers (req, res, next) {
-  console.log("======SCRIPTY1",req.body)
+  console.log("Request Body: ",req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
@@ -292,6 +253,8 @@ function token(req, res, next) {
   var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
     expiresIn: 86400 //expires in 24 hours
   });
+  console.log("Made it into the Token: ", token)
+
   res.status(200).json(token);
   // res.status(200).send({ auth: true, token: token });
 }
@@ -346,21 +309,12 @@ function csvParser() {
 
 
 module.exports = {
-  getAllIdentities: getAllIdentities,
-  getSingleIdentity: getSingleIdentity,
   createIdentity: createIdentity,
   readUserData: readUserData,
+  checkIfUserSubmittedIdologyWithinLastThreeMonths: checkIfUserSubmittedIdologyWithinLastThreeMonths,
   token: token,
   parseToken: parseToken,
   sendQuestions: sendQuestions,
   submitAnswers: submitAnswers,
   csvParser: csvParser
 };
-
-
-/*
-============
-  RESOURCES
-=============
-http://mherman.org/blog/2016/03/13/designing-a-restful-api-with-node-and-postgres/
-*/

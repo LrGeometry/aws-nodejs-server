@@ -1,4 +1,3 @@
-// require('dotenv').load();
 var express = require ('express')
 var app = express()
 var fs = require('fs')
@@ -37,14 +36,13 @@ app.get('/', function(req, res){
   res.render('index.hbs', {'response':response});
 });
 
-app.get('/api/identities', db.getAllIdentities);
-app.get('/api/identities/:id', db.getSingleIdentity);
 app.post('/api/identities', db.createIdentity);
 app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
 app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
+app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 
 app.get('/api/storj/upload', storj.storjUploadFile);
 app.get('/api/storj/download', storj.storjDownloadFile);
