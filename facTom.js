@@ -25,15 +25,17 @@ const cli = new FactomCli({
 //Chains and Entries
 
 ////     Starting with adding entries to the existing chain.
-////    I'll make a new Production Chain once testing is confirmed
+////    Asset Registration will create a unique chain for the asset
 
 function createChain(chainName) {
     const firstEntry = Entry.builder()
         // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
         .extId('first herc chain from server', 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
+        .extId('Can have as many of these as we want', 'utf8')
+        .extId(Date.now().toString())
         .content('The remote Herc chain creation', 'utf8')
         .build();
-    debugger
+
     const chain = new Chain(firstEntry);
     cli.add(chain, FCT_PUB_SIG)
         .then(console.log)
@@ -113,3 +115,15 @@ async function searchChain(entryHash, searchParam) {
 
 
 }
+
+module.exports = {
+
+    createChain: createChain,
+    createEntry: createEntry,
+    getEntry: getEntry,
+    getAllEntries: getAllEntries,
+    iterateChain: iterateChain,
+    searchChain: searchChain,
+
+
+};
