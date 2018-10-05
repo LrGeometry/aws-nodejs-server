@@ -5,6 +5,11 @@ const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
 
+var Web3 = require('web3');
+
+
+
+
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
@@ -13,6 +18,7 @@ if (app.get('env') === 'development') {
   /* Setting the environment variable to dictate which DB */
   environment = {environment: 'development'};
   app.use(function(err, req, res, next) {
+    Web3.setProvider(process.env.INFURA_ROPSTEN);
     res.status( err.code || 500 )
     .json({
       status: 'error',
@@ -20,11 +26,13 @@ if (app.get('env') === 'development') {
     });
   });
 } else {
+  Web3.setProvider(process.env.INFURA_MAIN);
   environment = {environment: 'production'};
 }
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
+var factom = require('./facTom');
 
 app.use(body_parser.urlencoded({extended: false}));
 app.set('view engine', 'hbs');
