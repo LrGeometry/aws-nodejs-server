@@ -88,7 +88,7 @@ function createIdentity(req, res, next) {
 
     console.log("Decoded: ", decoded);
 
-    parseXMLResponse(process.env.xml);
+    // parseXMLResponse(process.env.xml);
 
     request.post({
       proxy: FIXIE_URL,
@@ -136,11 +136,11 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
 
     console.log("Decoded: ", decoded);
 
-     return rootRef
+    return rootRef
       .child('idology')
       .child(decoded.username)
-      .once('value')
-      .then(function(snapshot) {
+      .once('value', function(snapshot) {
+      if (snapshot.exists()) {
         var d1 = snapshot.val().epochTimestamp
         var d2 = Date.now()
         // var d3 = new Date(2018, 6, 1) // Uncomment this line if you want to test when numDaysBetween > 90
@@ -157,7 +157,15 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
               message: 'User, ' + decoded.username + ', is not up-to-date.'
             });
         }
-      });
+      } else {
+        res.status(200)
+          .json({
+            status: 'false',
+            message: 'User, ' + decoded.username + ', is not up-to-date.'
+          });
+      }
+    });
+
 
   });
 }
