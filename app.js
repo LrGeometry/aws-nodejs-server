@@ -12,9 +12,9 @@ if (app.get('env') === 'development') {
   NODE_ENV=production PORT=5000 node app.js
   */
   /* Setting the environment variable to dictate which DB */
+  Web3.setProvider(process.env.INFURA_ROPSTEN);
   environment = { environment: 'development' };
   app.use(function(err, req, res, next) {
-    Web3.setProvider(process.env.INFURA_ROPSTEN);
     res.status( err.code || 500 )
     .json({
       status: 'error',
