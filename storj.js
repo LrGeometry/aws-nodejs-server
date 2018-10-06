@@ -12,7 +12,7 @@ const storj = new Environment({
 });
 
 
-function storjUploadFile(){
+function uploadFile(){
 /* Testing API out */
   // var mnemonic = mnemonicGenerate(128);
   // console.log('Mnemonic geneator: ', mnemonic)
@@ -42,7 +42,7 @@ function storjUploadFile(){
   });
 }
 
-function storjDownloadFile () {
+function downloadFile () {
   // Downloads a file, return state object
   var downloadFilePath = 'download-files/storj-test-download.data';
   var bucketId = '2443acd6222d73b373cbf18e';
@@ -67,7 +67,7 @@ function storjDownloadFile () {
 
 }
 
-function storjDeleteFile () {
+function deleteFile () {
   var bucketId = '2443acd6222d73b373cbf18e';
   var fileId = '63ABF516E1DCC5E5B337EACD';
   storj.deleteFile(bucketId, fileId, function(err, result) {
@@ -80,7 +80,7 @@ function storjDeleteFile () {
 }
 
 
-function storjGetBucketId () {
+function getBucketId () {
   var testBucketName = 'HERC-SUPPLYCHAIN';
   storj.getBucketId(testBucketName, function(err, result) {
     if (err) {
@@ -92,7 +92,7 @@ function storjGetBucketId () {
   });
 }
 
-function storjDeleteBucketId (req, res, next){
+function deleteBucketId (req, res, next){
   var bucketId = req.params.id;
   storj.deleteBucket(bucketId, function(err, result) {
     if (err) {
@@ -103,7 +103,7 @@ function storjDeleteBucketId (req, res, next){
 }
 
 
-function storjListBuckets () {
+function listBuckets () {
   storj.getInfo(function(err, result) {
     if (err) {
       return console.error(err);
@@ -121,7 +121,7 @@ function storjListBuckets () {
 }
 
 
-function storjCreateBucket () {
+function createBucket () {
   const testBucketName = 'test-' + Date.now();
   storj.createBucket(testBucketName, function(err, result) {
     if (err) {
@@ -133,7 +133,7 @@ function storjCreateBucket () {
 }
 
 
-function storjBucketListFiles() {
+function bucketListFiles() {
   var bucketID = "2443acd6222d73b373cbf18e"
   storj.listFiles(bucketID, function(err, result) {
     if (err) {
@@ -146,12 +146,12 @@ function storjBucketListFiles() {
 
 
 module.exports = {
-  storjUploadFile: storjUploadFile,
-  storjDownloadFile: storjDownloadFile,
-  storjGetBucketId: storjGetBucketId,
-  storjListBuckets: storjListBuckets,
-  storjCreateBucket: storjCreateBucket,
-  storjBucketListFiles: storjBucketListFiles,
-  storjDeleteBucketId: storjDeleteBucketId,
-  storjDeleteFile: storjDeleteFile
+  uploadFile: uploadFile,
+  downloadFile: downloadFile,
+  getBucketId: getBucketId,
+  listBuckets: listBuckets,
+  createBucket: createBucket,
+  bucketListFiles: bucketListFiles,
+  deleteBucketId: deleteBucketId,
+  deleteFile: deleteFile
 };
