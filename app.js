@@ -13,7 +13,7 @@ if (app.get('env') === 'development') {
   */
   /* Setting the environment variable to dictate which DB */
   web3 = new Web3(process.env.INFURA_ROPSTEN);
-  console.log(web3, "ropsten")
+  // console.log(web3, "ropsten")
   environment = { environment: 'development' };
   app.use(function (err, req, res, next) {
     res.status(err.code || 500)
