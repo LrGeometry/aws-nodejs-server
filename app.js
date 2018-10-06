@@ -1,9 +1,14 @@
-var express = require ('express')
+var express = require('express')
 var app = express()
 var fs = require('fs')
 const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
+
+var Web3 = require('web3');
+
+
+
 
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
@@ -11,29 +16,33 @@ if (app.get('env') === 'development') {
   NODE_ENV=production PORT=5000 node app.js
   */
   /* Setting the environment variable to dictate which DB */
-  environment = {environment: 'development'};
-  app.use(function(err, req, res, next) {
-    res.status( err.code || 500 )
-    .json({
-      status: 'error',
-      message: err
-    });
+  var web3 = new Web3(process.env.INFURA_ROPSTEN);
+  console.log(web3, "ropsten")
+  environment = { environment: 'development' };
+  app.use(function (err, req, res, next) {
+    res.status(err.code || 500)
+      .json({
+        status: 'error',
+        message: err
+      });
   });
 } else {
-  environment = {environment: 'production'};
+  var web3 = new Web3.setProvider(process.env.INFURA_MAIN);
+  environment = { environment: 'production' };
 }
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
+var factom = require('./facTom');
 
-app.use(body_parser.urlencoded({extended: false}));
+app.use(body_parser.urlencoded({ extended: false }));
 app.set('view engine', 'hbs');
 app.use(express.static('public'));
 
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   response = '';
-  res.render('index.hbs', {'response':response});
+  res.render('index.hbs', { 'response': response });
 });
 
 app.post('/api/identities', db.createIdentity);
@@ -54,6 +63,7 @@ app.get('/api/storj/bucket/files', storj.storjBucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.storjDeleteBucketId);
 app.get('/api/csv', db.csvParser);
 
-app.listen(port, function(){
+app.listen(port, function () {
   console.log('listening on port ' + port)
+  console.log('yeeyah', Web3)
 });
