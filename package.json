@@ -25,6 +25,7 @@
     "fs": "0.0.1-security",
     "hbs": "^4.0.1",
     "import-env": "^1.1.1",
+    "ipfs-api": "^24.0.2",
     "jsonwebtoken": "^8.3.0",
     "node-gyp": "^3.8.0",
     "nodemon": "^1.18.4",
