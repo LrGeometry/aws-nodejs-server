@@ -9,12 +9,12 @@ const port = process.env.PORT || 8000;
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
-  NODE_ENV=production PORT=5000 node app.js
+  NODE_ENV=production PORT=8000 node app.js
   */
   /* Setting the environment variable to dictate which DB */
-  Web3.setProvider(process.env.INFURA_ROPSTEN);
   environment = { environment: 'development' };
   app.use(function(err, req, res, next) {
+    Web3.setProvider(process.env.INFURA_ROPSTEN);
     res.status( err.code || 500 )
     .json({
       status: 'error',
@@ -59,7 +59,7 @@ app.get('/api/storj/bucket/create', storj.createBucket);
 app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
 
-app.get('/api/factom/chain/add', factom.createChain);
+app.post('/api/factom/chain/add', factom.createChain);
 app.get('/api/factom/entry/add', factom.createEntry);
 app.get('/api/factom/entry/get', factom.getEntry);
 app.get('/api/factom/entry/', factom.getAllEntries);
@@ -68,6 +68,7 @@ app.get('/api/factom/chain/search', factom.searchChain);
 
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
+app.get('/test', ipfs.testipfs);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)

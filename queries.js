@@ -110,7 +110,7 @@ function createIdentity(req, res, next) {
     //     console.log(error)
     //   })
 
-    writeUserData(req.body.edgeAccount, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
+    writeUserData(req.body.edgeAccount, req.body.organizationName, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
 
     var parseString = require('xml2js').parseString;
     parseString(process.env.xml, function (err, result) {
@@ -171,12 +171,13 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
 }
 
 
-function writeUserData(username, firstName, lastName, zipCode, address) {
+function writeUserData(username, organizationName, firstName, lastName, zipCode, address) {
   var id = uuidv4()
   /* TODO: Return the UUID to the front, store it in redux, encode it in the authToken */
   console.log("UUID: ", id)
   rootRef.child('idology').child(username).set({
     id: id,
+    organizationName: organizationName,
     username: username,
     firstName: firstName,
     lastName : lastName,
