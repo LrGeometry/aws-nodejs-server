@@ -44,7 +44,6 @@ function createChain(req, res, next) {
     const chain = new Chain(firstEntry);
     cli.add(chain, FCT_PUB_SIG)
         .then(response => {
-          console.log("2 factom response: ", response, "type: ", typeof(response))
           console.log("2 factom chainId: ", response.chainId)
           res.status(200)
             .json(response);
