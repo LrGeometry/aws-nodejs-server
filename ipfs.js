@@ -7,21 +7,23 @@ const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
 
 function ipfsGetFile(req, res, next) {
   let assets = [];
-  console.log("serverside IPFS Getaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-  // Getting the uploaded file via hash code.
-  // This hash is returned hash of addFile router.
-  const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
-  // const validCID = req.body.hash
-  ipfs.files.get(validCID, function (err, files) {
-   if(err){ console.log("error:" + err)}
-    
-    files.forEach((file) => {
-      console.log("hash path: ", file.path)
-      console.log(file.content.toString('utf8'))
-      console.log(JSON.parse(file.content))
 
-    })
-  }).then(res.send(assets))
+  console.log(JSON.stringify(req.body), "serverside IPFS Getaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+  // Getting the uploaded file via hash code.
+  // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
+  const validCID = JSON.stringify(req.body.hash)
+  ipfs.files.get(validCID, function (err, file) {
+    if (err) {
+      console.log("error:" + err);
+    }
+
+    // files.forEach((file) => {
+    // console.log("hash path: ", file.path)
+    // console.log(file.content.toString('utf8'))
+    // console.log(JSON.parse(file.content))
+    // assets.push(JSON.parse(file.content));
+  })
+    .then(res.send(assets))
 
 }
 
@@ -45,8 +47,8 @@ function testipfs(req, res, next) {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   }
-  var dataObject = {alpha: "cordelia"}
-  request.post({url: 'http://localhost:8000/api/ipfs/add', headers: headers, form: dataObject}, function (err, httpResponse, body) {
+  var dataObject = { alpha: "cordelia" }
+  request.post({ url: 'http://localhost:8000/api/ipfs/add', headers: headers, form: dataObject }, function (err, httpResponse, body) {
     console.log("IPFS test response: ", body)
     // var response = JSON.parse(body)
     // var hash = response[0].hash
