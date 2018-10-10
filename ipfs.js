@@ -11,6 +11,7 @@ function ipfsGetFile(req, res, next) {
   // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
   const validCID = 'QmZajmzgVQzAtYmPRLto2diZonUqgJ9bZpTPZv68RcFu1p'
   ipfs.files.get(validCID, function (err, files) {
+    
     files.forEach((file) => {
       console.log("hash path: ", file.path)
       console.log(file.content.toString('utf8'))

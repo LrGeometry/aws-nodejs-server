@@ -1,28 +1,31 @@
-var express = require ('express')
+var express = require('express')
 var app = express()
 var fs = require('fs')
 var Web3 = require('web3');
 const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
-
+var web3;
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
   NODE_ENV=production PORT=8000 node app.js
   */
   /* Setting the environment variable to dictate which DB */
+
+  web3 = new Web3(process.env.INFURA_ROPSTEN);
+  // console.log(web3, "ropsten")
   environment = { environment: 'development' };
-  app.use(function(err, req, res, next) {
-    Web3.setProvider(process.env.INFURA_ROPSTEN);
-    res.status( err.code || 500 )
-    .json({
-      status: 'error',
-      message: err
-    });
+  app.use(function (err, req, res, next) {
+    res.status(err.code || 500)
+      .json({
+        status: 'error',
+        message: err
+      });
+
   });
 } else {
-  Web3.setProvider(process.env.INFURA_MAIN);
+   web3 = new Web3.setProvider(process.env.INFURA_MAIN);
   environment = { environment: 'production' };
 }
 module.exports.environment = app.get('env');
@@ -31,14 +34,14 @@ var storj = require('./storj');
 var factom = require('./facTom');
 var ipfs = require('./ipfs');
 
-app.use(body_parser.urlencoded({extended: false}));
+app.use(body_parser.urlencoded({ extended: false }));
 app.set('view engine', 'hbs');
 app.use(express.static('public'));
 
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   response = '';
-  res.render('index.hbs', {'response':response});
+  res.render('index.hbs', { 'response': response });
 });
 
 app.post('/api/identities', db.createIdentity);
@@ -72,4 +75,5 @@ app.get('/test', ipfs.testipfs);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
+  console.log('yeeyah')
 });
