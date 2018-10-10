@@ -72,5 +72,5 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
-  console.log('yeeyah', web3)
+  // console.log('yeeyah', web3)
 });
