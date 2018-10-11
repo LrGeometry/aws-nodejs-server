@@ -12,7 +12,7 @@ const storj = new Environment({
 });
 
 
-function uploadFile(){
+function uploadFile(req, res, next){
 /* Testing API out */
   // var mnemonic = mnemonicGenerate(128);
   // console.log('Mnemonic geneator: ', mnemonic)
@@ -37,6 +37,7 @@ function uploadFile(){
         return console.error(err);
       }
       console.log('File complete:', fileId);
+      res.send(fileId);
       storj.destroy();
     }
   });

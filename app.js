@@ -9,9 +9,10 @@ var web3;
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
-  NODE_ENV=production PORT=5000 node app.js
+  NODE_ENV=production PORT=8000 node app.js
   */
   /* Setting the environment variable to dictate which DB */
+
   web3 = new Web3(process.env.INFURA_ROPSTEN);
   // console.log(web3, "ropsten")
   environment = { environment: 'development' };
@@ -21,6 +22,7 @@ if (app.get('env') === 'development') {
         status: 'error',
         message: err
       });
+
   });
 } else {
    web3 = new Web3.setProvider(process.env.INFURA_MAIN);
@@ -51,7 +53,7 @@ app.post('/api/submitanswers', db.submitAnswers);
 app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 app.get('/api/csv', db.csvParser);
 
-app.get('/api/storj/upload', storj.uploadFile);
+app.post('/api/storj/upload', storj.uploadFile);
 app.get('/api/storj/download', storj.downloadFile);
 app.get('/api/storj/delete', storj.deleteFile);
 app.get('/api/storj/bucket/get', storj.getBucketId);
@@ -60,7 +62,7 @@ app.get('/api/storj/bucket/create', storj.createBucket);
 app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
 
-app.get('/api/factom/chain/add', factom.createChain);
+app.post('/api/factom/chain/add', factom.createChain);
 app.get('/api/factom/entry/add', factom.createEntry);
 app.get('/api/factom/entry/get', factom.getEntry);
 app.get('/api/factom/entry/', factom.getAllEntries);
@@ -69,8 +71,9 @@ app.get('/api/factom/chain/search', factom.searchChain);
 
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
+app.get('/test', ipfs.testipfs);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
-  // console.log('yeeyah', web3)
+  console.log('yeeyah')
 });
