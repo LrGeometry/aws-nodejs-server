@@ -54,26 +54,21 @@ function createChain(req, res, next) {
 
 
 // Add an entry, may need to turn this into async, tests will decide.
-function createEntry(identifyingInformation) {
-    let entryInfo;
-    // convert the id'ing info to a string
-    let extIdString = JSON.stringify(identifyingInformation.assetInfo);
-    // optional to make it a buffer, Factom likes buffers
-    // const sigBuffer = new Buffer(identifyingInformation);
-    let hash = JSON.stringify(identifyingInformation.hash); // may be unnecessary to stringify....
+function createEntry(req, res, next) {
+  // optional to make it a buffer, Factom likes buffers
+  // const sigBuffer = new Buffer(identifyingInformation.hash);
+    var extIdString = req.body.assetInfo;
+    var chainId = req.body.chainId
+    var hash = req.body.hash
     const myEntry = Entry.builder()
-        .chainId(testChainId)
-        // If no encoding parameter is passed as 2nd argument, 'hex' is used
-        .extId(Date.now().toString()) // We can include a timestamp in the id Info to lose one extId
+        .chainId(chainId)
+        .extId(Date.now().toString())
         .extId(extIdString, "utf8")
-        .content(
-            hash,
-            "utf8"
-        )
+        .content(hash, "utf8")
         .build();
 
     cli.add(myEntry, FCT_PUB_SIG)
-        .then(console.log)
+        .then(response => console.log("Added entry to factom chain: ", response))
         .catch(console.error);
 
 };

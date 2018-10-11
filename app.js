@@ -53,7 +53,7 @@ app.post('/api/submitanswers', db.submitAnswers);
 app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 app.get('/api/csv', db.csvParser);
 
-app.get('/api/storj/upload', storj.uploadFile);
+app.post('/api/storj/upload', storj.uploadFile);
 app.get('/api/storj/download', storj.downloadFile);
 app.get('/api/storj/delete', storj.deleteFile);
 app.get('/api/storj/bucket/get', storj.getBucketId);
