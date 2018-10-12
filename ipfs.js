@@ -7,24 +7,21 @@ const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
 
 function ipfsGetFile(req, res, next) {
   let assets = [];
-
-  console.log(JSON.stringify(req.body), "serverside IPFS Getaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-  // Getting the uploaded file via hash code.
   // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
-  const validCID = JSON.stringify(req.body.hash)
-  ipfs.files.get(validCID, function (err, file) {
-    if (err) {
-      console.log("error:" + err);
-    }
-
+  const validCID = req.query[0];
+  ipfs.files.get(validCID, function (err, files) {
+    files.forEach((file) => {
+      // console.log(file, 'file')
+      assets.push((Object.keys(JSON.parse(file.content))))
+    })
+    // console.log(files.toString('utf8'));
     // files.forEach((file) => {
     // console.log("hash path: ", file.path)
     // console.log(file.content.toString('utf8'))
     // console.log(JSON.parse(file.content))
     // assets.push(JSON.parse(file.content));
+    res.json(assets)
   })
-    .then(res.send(assets))
-
 }
 
 
