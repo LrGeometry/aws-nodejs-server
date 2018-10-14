@@ -28,14 +28,15 @@ function ipfsGetFile(req, res, next) {
 function ipfsAddFile(req, res, next) {
   //Addfile router for adding file a local file to the IPFS network without any local node
   // console.log("IPFS req.body: ",req.body)//{ '{"Logo":null,"Name":"asdfdsf","CoreProps":{"asdfds":""},"hercId":62}': ''
-  var cleanedBody = JSON.stringify(req.body)//{"{\"Logo\":null,\"Name\":\"werwer\",\"CoreProps\":{\"wwerwe\":\"\"},\"hercId\":63}":""}
-  let testBuffer = new Buffer(cleanedBody);
+  var cleanedBody = JSON.parse(Object.keys(req.body)[0])//{"{\"Logo\":null,\"Name\":\"werwer\",\"CoreProps\":{\"wwerwe\":\"\"},\"hercId\":63}":""}
+  let testBuffer = new Buffer(JSON.stringify(cleanedBody));
   ipfs.files.add(testBuffer, function (err, file) {
     if (err) {
       console.log(err);
     }
     res.send(file);
-    console.log(file)
+
+    console.log(cleanedBody, file)
   })
 }
 

@@ -63,9 +63,9 @@ app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
 
 app.post('/api/factom/chain/add', factom.createChain);
-app.get('/api/factom/entry/add', factom.createEntry);
+app.post('/api/factom/entry/add', factom.createEntry);
 app.get('/api/factom/entry/get', factom.getEntry);
-app.get('/api/factom/entry/', factom.getAllEntries);
+app.post('/api/factom/entry/', factom.getAllEntries);
 app.get('/api/factom/chain/iterate', factom.iterateChain);
 app.get('/api/factom/chain/search', factom.searchChain);
 

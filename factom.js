@@ -57,19 +57,23 @@ function createChain(req, res, next) {
 function createEntry(req, res, next) {
   // optional to make it a buffer, Factom likes buffers
   // const sigBuffer = new Buffer(identifyingInformation.hash);
-    var extIdString = req.body.assetInfo;
-    var chainId = req.body.chainId
-    var hash = req.body.hash
-    const myEntry = Entry.builder()
-        .chainId(chainId)
-        .extId(Date.now().toString())
-        .extId(extIdString, "utf8")
-        .content(hash, "utf8")
-        .build();
+    console.log(req.body, "0 fresh from client")
+    // var extIdString = req.body.assetInfo;
+    // var chainId = req.body.chainId
+    // var hash = req.body.hash
+    //
+    // console.log(extIdString, chainId, hash, "1 fresh from client")
 
-    cli.add(myEntry, FCT_PUB_SIG)
-        .then(response => console.log("Added entry to factom chain: ", response))
-        .catch(console.error);
+    // const myEntry = Entry.builder()
+    //     .chainId(chainId)
+    //     .extId(Date.now().toString())
+    //     .extId(extIdString, "utf8")
+    //     .content(hash, "utf8")
+    //     .build();
+    //
+    // cli.add(myEntry, FCT_PUB_SIG)
+    //     .then(response => console.log("Added entry to factom chain: ", response))
+    //     .catch(console.error);
 
 };
 
