@@ -34,7 +34,7 @@ function uploadFile(req, res, next){
     const bucketId = '2443acd6222d73b373cbf18e';
     const filePath = filepath;
     const state = storj.storeFile(bucketId, filePath, {
-      filename: 'transaction_image' + Date.now() + '.jpg', //could be named with identifying information
+      filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
       progressCallback: function(progress, downloadedBytes, totalBytes) {
         console.log('progress:', progress);
       },
