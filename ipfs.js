@@ -9,10 +9,11 @@ function ipfsGetFile(req, res, next) {
   let assets = [];
   // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
   const validCID = req.query[0];
+
   ipfs.files.get(validCID, function (err, files) {
     files.forEach((file) => {
-      // console.log(file, 'file')
-      assets.push((Object.keys(JSON.parse(file.content))))
+      // console.log(file.content, 'file')
+      assets.push(JSON.parse(file.content))
     })
     // console.log(files.toString('utf8'));
     // files.forEach((file) => {
@@ -20,7 +21,7 @@ function ipfsGetFile(req, res, next) {
     // console.log(file.content.toString('utf8'))
     // console.log(JSON.parse(file.content))
     // assets.push(JSON.parse(file.content));
-    res.json(assets)
+    res.send(assets)
   })
 }
 
@@ -33,6 +34,7 @@ function ipfsAddFile(req, res, next) {
   obj.key = cleanedBody.key // {key: 'properties'}
   obj.hash = null // {key: 'properties', hash: null}
   let testBuffer = new Buffer(JSON.stringify(cleanedBody.data));
+
   ipfs.files.add(testBuffer, function (err, file) {
     if (err) {console.log(err)};
     obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
