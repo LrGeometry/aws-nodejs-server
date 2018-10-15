@@ -58,27 +58,35 @@ function createEntry(req, res, next) {
   // optional to make it a buffer, Factom likes buffers
   // const sigBuffer = new Buffer(identifyingInformation.hash);
     console.log(req.body, "0 fresh from client")
-    var data = JSON.parse(Object.keys(req.body)[0])//{ '{"hash":["Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"],"chainId":"69cb1d318a61e49ce689af628fd2fe03c3541b696e1bc1e","assetInfo":"SampleAssetInfo"}': '' }
-
-    console.log(data, "0.5 fresh from client")
+    var data = JSON.parse(Object.keys(req.body)) /* {hash: [{key: 'properties', hash: "Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"},
+              {key: 'images', hash: "Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"}],
+    chainId: "69cb1d318a61e49ce689af628fd2fe03c3541b696e1bc1e",
+    assetInfo: "SampleAssetInfo"}'
+    */
 
     var extIdString = data.assetInfo;
     var chainId = data.chainId
-    var hash = data.hash
+    var hash = data.hash // [ { key: 'images', hash: '4435f1ffdb915de7b8e04f29' }, { key: 'properties', hash: 'QmX4EzKBem4JEicrY2j2KoEF6iSnyy7y3A1NuM8C6j9JwM' } ]
 
     console.log(extIdString, chainId, hash, "1 fresh from client")
 
     const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
-        .extId(extIdString, "utf8")
-        .content(hash, "utf8")
+        .extId(extIdString, 'utf8')
+        .content(hash, 'utf8')
         .build();
 
     cli.add(myEntry, FCT_PUB_SIG)
         .then(response => {
-          console.log("Added entry to factom chain: ", response)
-          res.send(response)
+          console.log("Success entry in factom chain: ", response)
+          /*
+          { txId: 'c111f0d03a66db786a946be5e63f344a845371a106800c9a01d743d090b841bd',
+            repeatedCommit: false,
+            chainId: 'e55c0f97cdb944c45c1ad00c6784976bf697ae6faefc8a9c9f25076b2d80dd38',
+            entryHash: '2447e75a189ccee7641811cef42b80fecea28385d709c711a327e30152ec0620' }
+          */
+          res.send(response.chainId)
         })
         .catch(err => { console.log(err) });
 
