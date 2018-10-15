@@ -58,22 +58,29 @@ function createEntry(req, res, next) {
   // optional to make it a buffer, Factom likes buffers
   // const sigBuffer = new Buffer(identifyingInformation.hash);
     console.log(req.body, "0 fresh from client")
-    // var extIdString = req.body.assetInfo;
-    // var chainId = req.body.chainId
-    // var hash = req.body.hash
-    //
-    // console.log(extIdString, chainId, hash, "1 fresh from client")
+    var data = JSON.parse(Object.keys(req.body)[0])//{ '{"hash":["Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"],"chainId":"69cb1d318a61e49ce689af628fd2fe03c3541b696e1bc1e","assetInfo":"SampleAssetInfo"}': '' }
 
-    // const myEntry = Entry.builder()
-    //     .chainId(chainId)
-    //     .extId(Date.now().toString())
-    //     .extId(extIdString, "utf8")
-    //     .content(hash, "utf8")
-    //     .build();
-    //
-    // cli.add(myEntry, FCT_PUB_SIG)
-    //     .then(response => console.log("Added entry to factom chain: ", response))
-    //     .catch(console.error);
+    console.log(data, "0.5 fresh from client")
+
+    var extIdString = data.assetInfo;
+    var chainId = data.chainId
+    var hash = data.hash
+
+    console.log(extIdString, chainId, hash, "1 fresh from client")
+
+    const myEntry = Entry.builder()
+        .chainId(chainId)
+        .extId(Date.now().toString())
+        .extId(extIdString, "utf8")
+        .content(hash, "utf8")
+        .build();
+
+    cli.add(myEntry, FCT_PUB_SIG)
+        .then(response => {
+          console.log("Added entry to factom chain: ", response)
+          res.send(response)
+        })
+        .catch(err => { console.log(err) });
 
 };
 

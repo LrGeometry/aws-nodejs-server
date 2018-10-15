@@ -26,7 +26,12 @@ function uploadFile(req, res, next){
   //   console.log("GetInfo Function: ",result)
   // })
 
-  var base64 = Object.keys(req.body)[0]
+  var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+  var base64 = cleanedBody.data
+  var obj = {}
+  obj.key = cleanedBody.key // {key: 'images'}
+  obj.hash = null // {key: 'images', hash: null}
+
   base64Img.img(base64, 'upload-files', '1', function(err, filepath) {
     if (err) {console.log(err)}
     console.log("success", filepath)
@@ -43,7 +48,8 @@ function uploadFile(req, res, next){
           return console.error(err);
         }
         console.log('File complete:', fileId);
-        res.send(fileId);
+        obj.hash = fileId
+        res.send(obj);
         storj.destroy();
       }
     });

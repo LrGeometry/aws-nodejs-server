@@ -27,32 +27,23 @@ function ipfsGetFile(req, res, next) {
 
 function ipfsAddFile(req, res, next) {
   //Addfile router for adding file a local file to the IPFS network without any local node
-  // console.log("IPFS req.body: ",req.body)//{ '{"Logo":null,"Name":"asdfdsf","CoreProps":{"asdfds":""},"hercId":62}': ''
-  var cleanedBody = JSON.parse(Object.keys(req.body)[0])//{"{\"Logo\":null,\"Name\":\"werwer\",\"CoreProps\":{\"wwerwe\":\"\"},\"hercId\":63}":""}
+  var cleanedBody = JSON.parse(Object.keys(req.body)[0])
   console.log(cleanedBody, "cleanedBody in ipfsAddFile")
-  let testBuffer = new Buffer(JSON.stringify(cleanedBody));
+  var obj = {}
+  obj.key = cleanedBody.key // {key: 'properties'}
+  obj.hash = null // {key: 'properties', hash: null}
+  let testBuffer = new Buffer(JSON.stringify(cleanedBody.data));
   ipfs.files.add(testBuffer, function (err, file) {
-    if (err) {
-      console.log(err);
-    }
-    res.send(file[0].hash);
-
+    if (err) {console.log(err)};
+    obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
+    res.send(obj);
     console.log("Success", cleanedBody, file)
   })
 }
 
 function testipfs(req, res, next) {
-  var headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-  var dataObject = { alpha: "cordelia" }
-  request.post({ url: 'http://localhost:8000/api/ipfs/add', headers: headers, form: dataObject }, function (err, httpResponse, body) {
-    console.log("IPFS test response: ", body)
-    // var response = JSON.parse(body)
-    // var hash = response[0].hash
-    // var path = response[0].path
-  })
+  console.log("ehllo world")
+  res.send("hello world")
 }
 /*
 fetch('http://10.0.3.2:3000/addfile',
