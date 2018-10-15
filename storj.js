@@ -2,6 +2,7 @@ const importEnv = require('import-env');
 const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
 var STORJ_BRIDGE_USER = process.env.STORJ_BRIDGE_USER;
 var STORJ_BRIDGE_PASS = process.env.STORJ_BRIDGE_PASS;
+var base64Img = require('base64-img');
 
 const storj = new Environment({
   bridgeUrl: 'https://api.storj.io',
@@ -11,35 +12,49 @@ const storj = new Environment({
   logLevel: 4
 });
 
-
-function uploadFile(){
+function uploadFile(req, res, next){
 /* Testing API out */
   // var mnemonic = mnemonicGenerate(128);
   // console.log('Mnemonic geneator: ', mnemonic)
   // console.log('Mnemonic check: ', mnemonicCheck(mnemonic))
   // console.log('Time: ', utilTimestamp())
 
-  const bucketId = '2443acd6222d73b373cbf18e';
-  const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
   // const julie = storj.getInfo(function(err, result) {
   //   if (err) {
   //     return console.error(err);
   //   }
   //   console.log("GetInfo Function: ",result)
   // })
-  const state = storj.storeFile(bucketId, filePath, {
-    filename: 'handwriting_7_Awesome_5_sample.data',
-    progressCallback: function(progress, downloadedBytes, totalBytes) {
-      console.log('progress:', progress);
-    },
-    finishedCallback: function(err, fileId) {
-      if (err) {
-        return console.error(err);
+
+  var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+  var base64 = cleanedBody.data
+  var obj = {}
+  obj.key = cleanedBody.key // {key: 'images'}
+  obj.hash = null // {key: 'images', hash: null}
+
+  base64Img.img(base64, 'upload-files', '1', function(err, filepath) {
+    if (err) {console.log(err)}
+    console.log("success", filepath)
+
+    const bucketId = '2443acd6222d73b373cbf18e';
+    const filePath = filepath;
+    const state = storj.storeFile(bucketId, filePath, {
+      filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
+      progressCallback: function(progress, downloadedBytes, totalBytes) {
+        console.log('progress:', progress);
+      },
+      finishedCallback: function(err, fileId) {
+        if (err) {
+          return console.error(err);
+        }
+        console.log('File complete:', fileId);
+        obj.hash = fileId
+        res.send(obj);
+        storj.destroy();
       }
-      console.log('File complete:', fileId);
-      storj.destroy();
-    }
-  });
+    });
+  })
+
 }
 
 function downloadFile () {
