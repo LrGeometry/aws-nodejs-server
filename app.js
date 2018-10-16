@@ -47,6 +47,7 @@ var db = require('./queries');
 var storj = require('./storj');
 var factom = require('./facTom');
 var ipfs = require('./ipfs');
+var webThree = require('./webThree');
 
 // var allowedOrigins = ['http://10.0.3.2:8000',
 //                       'http://10.0.3.2:3000',
@@ -104,6 +105,8 @@ app.get('/api/factom/chain/search', factom.searchChain);
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/test', ipfs.testipfs);
+
+app.get('/api/web3/latest', webThree.getLatestBlock);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
