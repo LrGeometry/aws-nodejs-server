@@ -42,13 +42,14 @@ function createChain(req, res, next) {
         .build();
 
     const chain = new Chain(firstEntry);
+
     cli.add(chain, FCT_PUB_SIG)
         .then(response => {
           console.log("2 factom chainId: ", response.chainId)
           res.status(200)
             .json(response);
         })
-        .catch(console.error);
+        .catch(err => {console.log(err)});
 
 }
 
