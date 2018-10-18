@@ -12,6 +12,8 @@ const storj = new Environment({
   logLevel: 4
 });
 
+console.log(storj)
+
 function uploadFile(req, res, next){
 /* Testing API out */
   // var mnemonic = mnemonicGenerate(128);

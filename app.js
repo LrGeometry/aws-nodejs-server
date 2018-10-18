@@ -19,6 +19,7 @@ var Web3 = require('web3');
 const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
+
 var web3;
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
@@ -49,25 +50,6 @@ var factom = require('./facTom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
-// var allowedOrigins = ['http://10.0.3.2:8000',
-//                       'http://10.0.3.2:3000',
-//                       'http://localhost:8000',
-//                       '10.0.3.2:8000',
-//                       'localhost:8000'];
-// var allowedOrigins = []
-// app.use(cors({
-//   origin: function(origin, callback){
-//     // allow requests with no origin
-//     // (like mobile apps or curl requests)
-//     if(!origin) return callback(null, true);
-//     if(allowedOrigins.indexOf(origin) === -1){
-//       var msg = 'The CORS policy for this site does not ' +
-//                 'allow access from the specified Origin.';
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   }
-// }));
 // app.use(express.static('public'));
 app.use(body_parser.urlencoded({ extended: false }));
 app.set('view engine', 'hbs');
