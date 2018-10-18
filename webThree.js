@@ -262,6 +262,8 @@ function show(req, res, next){
 function getLatestBlock(req, res, next) {
   web3.eth.getBlock("latest", (err, block) => {
     if (err) return;
+
+    console.log("chance block")
     res.send(block)
   })
 }
