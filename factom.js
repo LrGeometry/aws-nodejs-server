@@ -54,6 +54,7 @@ function createChain(req, res, next) {
 }
 
 
+
 // Add an entry, may need to turn this into async, tests will decide.
 function createEntry(req, res, next) {
   // optional to make it a buffer, Factom likes buffers
