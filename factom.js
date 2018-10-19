@@ -38,10 +38,11 @@ function createChain(chainName) {
 
     const chain = new Chain(firstEntry);
     cli.add(chain, FCT_PUB_SIG)
-        .then(console.log)
-        .catch(console.error);
-
+    console.log("2 factom chainId: ", response.chainId)
+    res.status(200)
+        .json(response);
 }
+
 
 
 // Add an entry, may need to turn this into async, tests will decide.
