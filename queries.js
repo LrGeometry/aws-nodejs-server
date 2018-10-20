@@ -6,6 +6,14 @@ var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
 const importEnv = require('import-env');
+
+var admin = require("firebase-admin");
+var serviceAccount = require("./firebase.json");
+admin.initializeApp({
+ credential: admin.credential.cert(serviceAccount),
+ databaseURL: "https://hercone-8025f.firebaseio.com"
+});
+
 var config = {
       apiKey: process.env.FIREBASE_APIKEY,
       authDomain: process.env.FIREBASE_AUTHDOMAIN,
@@ -82,14 +90,8 @@ function parseXMLResponse(xml) {
 function createIdentity(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-    console.log("Decoded: ", decoded);
-
-    // parseXMLResponse(process.env.xml);
-
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     request.post({
       proxy: FIXIE_URL,
       url: 'https://web.idologylive.com/api/idiq.svc',
@@ -97,7 +99,7 @@ function createIdentity(req, res, next) {
     }, function(error, response, body){
       console.log(body)
     });
-
+    // parseXMLResponse(process.env.xml);
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`,
     //   { proxy:
@@ -114,11 +116,16 @@ function createIdentity(req, res, next) {
 
     var parseString = require('xml2js').parseString;
     parseString(process.env.xml, function (err, result) {
-        var questions = result.response.questions[0].question
-        res.status(200)
-          .json({questions});
-      });
+      var questions = result.response.questions[0].question
+      res.status(200)
+      .json({questions});
     });
+
+  })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
+
 }
 
 function numDaysBetween(d1, d2){
@@ -130,44 +137,42 @@ function numDaysBetween(d1, d2){
 function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-    console.log("Decoded: ", decoded);
-
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     return rootRef
-      .child('idology')
-      .child(decoded.username)
-      .once('value', function(snapshot) {
+    .child('idology')
+    .child(user_login.user.uid)
+    .once('value', function(snapshot) {
       if (snapshot.exists()) {
         var d1 = snapshot.val().epochTimestamp
         var d2 = Date.now()
         // var d3 = new Date(2018, 6, 1) // Uncomment this line if you want to test when numDaysBetween > 90
         if (numDaysBetween(d1, d2) < 90) {
           res.status(200)
-            .json({
-              status: 'true',
-              message: 'User, ' + decoded.username + ', is up-to-date.'
-            });
+          .json({
+            status: 'true',
+            message: 'User, ' + user_login.user.uid + ', is up-to-date.'
+          });
         } else {
           res.status(200)
-            .json({
-              status: 'false',
-              message: 'User, ' + decoded.username + ', is not up-to-date.'
-            });
+          .json({
+            status: 'false',
+            message: 'User, ' + user_login.user.uid + ', is not up-to-date.'
+          });
         }
       } else {
         res.status(200)
-          .json({
-            status: 'false',
-            message: 'User, ' + decoded.username + ', is not up-to-date.'
-          });
+        .json({
+          status: 'false',
+          message: 'User, ' + user_login.user.uid + ', is not up-to-date.'
+        });
       }
     });
-
-
-  });
+  })
+  .catch(err => {
+    console.log(err, "error decoding token")
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+  })
 }
 
 
@@ -228,17 +233,11 @@ function sendQuestions(req, res, next){
 }
 
 function submitAnswers (req, res, next) {
-  console.log("Request Body: ",req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
-  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-    res.status(200).send(decoded);
-
-    // var data = {['4','3','1']:[]} /* NOTE: Looks like {['4','3','1']:[]}*/
-
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     request.post({
       proxy: FIXIE_URL,
       url: 'https://web.idologylive.com/api/idliveq-answers.svc',
@@ -246,37 +245,57 @@ function submitAnswers (req, res, next) {
     }, function(error, response, body){
       console.log(body)
     });
-
-    /*
-    TODO: Make a post request to IDOLOGY: https://web.idologylive.com/api/idliveq-answers.svc
-    TODO: use decoded to grab UUID/username. update firebase with datetime of submission and boolean value
-    */
-
-  });
+  })
+  .catch(err => {
+    console.log(err)
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+  })
+    // TODO: Make a post request to IDOLOGY: https://web.idologylive.com/api/idliveq-answers.svc
+    // TODO: use decoded to grab UUID/username. update firebase with datetime of submission and boolean value
 }
 
 
 function token(req, res, next) {
-  var username = req.params.username
-  var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
-    expiresIn: 86400 //expires in 24 hours
-  });
-  console.log("Made it into the Token: ", token)
+  let uid = req.params.username
+  let additionalClaims = {
+    premiumAccount: true
+  }
+  admin.auth().createCustomToken(uid)
+    .then((customToken) => {
+      console.log("Made it into the Token: ", customToken)
+      res.status(200).json(customToken);
+    })
+    .catch(err => { console.log(err) })
 
-  res.status(200).json(token);
-  // res.status(200).send({ auth: true, token: token });
+  // var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
+  //   expiresIn: 86400 //expires in 24 hours
+  // });
+  // console.log("Made it into the Token: ", token)
+
 }
 
 function parseToken(req, res, next) {
-  var token = req.headers['authorization'];
-  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  // var token = req.headers['authorization'];
+  let token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTUzOTkwNTA1OSwiZXhwIjoxNTM5OTA4NjU5LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay15d2RvdUBoZXJjb25lLTgwMjVmLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwic3ViIjoiZmlyZWJhc2UtYWRtaW5zZGsteXdkb3VAaGVyY29uZS04MDI1Zi5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInVpZCI6ImhlcmNzdGFjayJ9.NBSCJN8LgGP2LxC7TL_F51v1gb_oe7rf040HyZnxBUEdQRqd1-npP5rrQg4GkGj0YiSKSacILiPvHXur4ug25KFLsa_aAAZI2ch1YY53khepMztIRIq09V9iAE4Bueso6E4lrvPXryaGHZj5YvOnCdY2LYV6lsRhleah1PYovxl9_wNci8Yl8mRS_2GtcxIMPyJC5x7wyjUiKIUoKwDmwtxAoJEA7oVgAcKhdjtEqblE3w_TWrMwXFc0IgDtVv5EL2OrokvgIYfDzSWghCFWLYItofloSvL-n2SxTDQ0EwxaQ6O79EXtigCsB-Rw3gdvukDYtdZQcNOEp-fnkos74A'
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    console.log("decoded token:", user_login)
+    res.status(200).send(user_login);
+  })
+  .catch(err => {
+    console.log(err, "error decoding token")
+    res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
+  })
 
-  jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-    console.log("TOKEN: ", token)
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-    res.status(200).send(decoded);
-  });
+  // var token = req.headers['authorization'];
+  // if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  //
+  // jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
+  //   console.log("TOKEN: ", token)
+  //   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  //
+  //   res.status(200).send(decoded);
+  // });
 }
 
 

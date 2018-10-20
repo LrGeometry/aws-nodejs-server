@@ -28,8 +28,10 @@ function ipfsGetFile(req, res, next) {
 
 function ipfsAddFile(req, res, next) {
   //Addfile router for adding file a local file to the IPFS network without any local node
+  console.log(req.body, "dirtyBody in ipfsAddFile") 
   var cleanedBody = JSON.parse(Object.keys(req.body)[0])
-  console.log(cleanedBody, "cleanedBody in ipfsAddFile")
+  console.log(cleanedBody, "cleanedBody in ipfsAddFile") // { key: 'newAsset', data: { CoreProps: { ponics: '' }, URL: 'www' } }
+
   var obj = {}
   obj.key = cleanedBody.key // {key: 'properties'}
   obj.hash = null // {key: 'properties', hash: null}
