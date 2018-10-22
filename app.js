@@ -50,7 +50,7 @@ var factom = require('./facTom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
-// app.use(express.static('public'));
+app.use(express.static('public'));
 app.use(body_parser.urlencoded({ extended: false }));
 app.set('view engine', 'hbs');
 
@@ -66,7 +66,7 @@ app.get('/api/parsetoken', db.parseToken);
 app.get('/api/questions', db.sendQuestions);
 app.post('/api/submitanswers', db.submitAnswers);
 app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
-app.get('/api/csv', db.csvParser);
+app.post('/api/csv', db.csvParser);
 
 app.post('/api/storj/upload', storj.uploadFile);
 app.get('/api/storj/download', storj.downloadFile);
@@ -89,6 +89,8 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/test', ipfs.testipfs);
 
 app.get('/api/web3/latest', webThree.getLatestBlock);
+app.get('/api/web3/balance', webThree.balanceOf);
+app.get('/api/web3/accounts/get', webThree.getAccounts);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)

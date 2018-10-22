@@ -661,10 +661,26 @@ let ABI = [
 let CreateAsset = new web3.eth.Contract(ABI, address)//instantiating
 console.log(CreateAsset.methods)
 
-function transfer(req, res, next){
+function getAccounts(req, res, next) {
+  let accounts = web3.eth.getAccounts().then(accounts => {
+    res.send(accounts)
+  })
+  .catch( err => { console.log(err) })
+}
+
+// 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
+// 0x1864a4327931f04b7fb489be97667fce1b23223e receiver - stack
+function balanceOf(req, res, next) {
+  CreateAsset.methods.balanceOf("0x323Ec6A2A0c61d789a9f5a96Aa08ec9661E49300").call()
+    .then(results => {
+    res.send(results)
+  })
+    .catch(err => {console.log(err)})
+}
+
+function transfer(req, res, next) { // from own account to anothers
   CreateAsset.methods.transfer().call()
     .then(results => {
-    console.log(results, 'chance results')
     res.send(results)
   })
     .catch(err => {console.log(err)})
@@ -674,12 +690,12 @@ function transfer(req, res, next){
 function getLatestBlock(req, res, next) {
   web3.eth.getBlock("latest", (err, block) => {
     if (err) return;
-
-    console.log("chance block")
     res.send(block)
   })
 }
 
 module.exports = {
-  getLatestBlock: getLatestBlock
+  getLatestBlock: getLatestBlock,
+  balanceOf: balanceOf,
+  getAccounts: getAccounts,
 }
