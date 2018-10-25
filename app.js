@@ -25,6 +25,7 @@ if (app.get('env') === 'development') {
   /* TEST WITH COMMAND
   NODE_ENV=production PORT=8000 node app.js
   */
+
   // console.log(web3, "ropsten")
   environment = { environment: 'development' };
   app.use(function (err, req, res, next) {
