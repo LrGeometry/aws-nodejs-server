@@ -86,7 +86,6 @@ app.get('/api/factom/chain/search', factom.searchChain);
 
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
-app.get('/test', ipfs.testipfs);
 
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);

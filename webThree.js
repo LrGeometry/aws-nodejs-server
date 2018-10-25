@@ -659,7 +659,7 @@ let ABI = [
   }
 ]
 let CreateAsset = new web3.eth.Contract(ABI, address)//instantiating
-console.log(CreateAsset.methods)
+// console.log(CreateAsset.methods)
 
 function getAccounts(req, res, next) {
   let accounts = web3.eth.getAccounts().then(accounts => {

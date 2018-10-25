@@ -25,10 +25,22 @@ function ipfsGetFile(req, res, next) {
   })
 }
 
+async function ipfsAddCsvFile(body, res) {
+  let csvData = new Buffer(JSON.stringify(body));
+  await ipfs.files.add(csvData, function (err, file) {
+    if (err) { console.log(err) };
+    let hash = file[0].hash
+    console.log("Success ", hash)
+    res.send(hash)
+    return hash
+  })
+}
+
 
 function ipfsAddFile(req, res, next) {
   //Addfile router for adding file a local file to the IPFS network without any local node
-  console.log(req.body, "dirtyBody in ipfsAddFile") 
+  console.log(req.body, "dirtyBody in ipfsAddFile")
+
   var cleanedBody = JSON.parse(Object.keys(req.body)[0])
   console.log(cleanedBody, "cleanedBody in ipfsAddFile") // { key: 'newAsset', data: { CoreProps: { ponics: '' }, URL: 'www' } }
 
@@ -45,10 +57,6 @@ function ipfsAddFile(req, res, next) {
   })
 }
 
-function testipfs(req, res, next) {
-  console.log("ehllo world")
-  res.send("hello world")
-}
 /*
 fetch('http://10.0.3.2:3000/addfile',
      {
@@ -70,5 +78,5 @@ fetch('http://10.0.3.2:3000/addfile',
 module.exports = {
   ipfsGetFile: ipfsGetFile,
   ipfsAddFile: ipfsAddFile,
-  testipfs: testipfs
+  ipfsAddCsvFile:ipfsAddCsvFile
 }

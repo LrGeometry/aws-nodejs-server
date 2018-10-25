@@ -300,40 +300,21 @@ function parseToken(req, res, next) {
 
 
 function csvParser(req, res, next) {
-  console.log("made it into csv Parser")
-   console.log(req, "chance csv body")
-  // var id = uuidv4()
-  // var Papa = require('papaparse');
-  // const fs = require('fs');
-  // var filename = "Gold-Reference-Chip-Average-Test-8-31-18.csv"; //TODO: Make the filename variable dynamic
-  // const file = fs.createReadStream("csv-reports/" + filename );
-  // Papa.parse(file, {
-  // 	complete: function(results) {
-  //     var dict = {};
-  //     var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
-  //     var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
-  //     var data = results.data
-  //     var dataKeys = data[0]
-  //     var dataValues = data[data.length - 1 ]
-  //     for (i = 0; i < dataKeys.length; i++){
-  //       if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
-  //         dict[dataKeys[i]] = dataValues[i]
-  //       }
-  //     }
-  //     // console.log("DICTIONARY: \n", dict)
-  //
-  //     rootRef.child('csvParser').child(id).set(dict, function() {
-  //       return rootRef
-  //         .child('csvParser')
-  //         .child(id)
-  //         .once('value')
-  //         .then(function(snapshot) {
-  //           console.log(snapshot.val())
-  //         });
-  //     });
-  //
-  // 	}
-  // });
+  let cleanedBody = Object.keys(req.body)[0]//string
+  let data = cleanedBody.split('"')[7].split("\r\n")
+  var dict = {};
+  var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
+  var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
+  var dataKeys = data[0].split(",") //first row
+  var dataValues = data[data.length - 2 ].split(",") //last row
+  for (i = 0; i < dataKeys.length; i++){
+    if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
+      dict[dataKeys[i]] = dataValues[i]
+    }
+  }
+  console.log("DICTIONARY: \n", dict)
+  var ipfs = require('./ipfs');
+  ipfs.ipfsAddCsvFile(dict, res)
 }
 
 
