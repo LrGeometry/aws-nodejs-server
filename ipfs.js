@@ -11,6 +11,7 @@ function ipfsGetFile(req, res, next) {
   const validCID = req.query[0];
 
   ipfs.files.get(validCID, function (err, files) {
+    if (err) { return console.error(err) }
     files.forEach((file) => {
       // console.log(file.content, 'file')
       assets.push(JSON.parse(file.content))
@@ -26,23 +27,23 @@ function ipfsGetFile(req, res, next) {
 }
 
 function ipfsAddCsvFile(body, res) {
+  var obj = {}
+  obj.key = 'csv'
+  obj.hash = null
   let csvData = new Buffer(JSON.stringify(body));
-  await ipfs.files.add(csvData, function (err, file) {
+  ipfs.files.add(csvData, function (err, file) {
     if (err) { console.log(err) };
-    let hash = file[0].hash
-    console.log("Success ", hash)
-    res.send(hash)
-    return hash
+    obj.hash = file[0].hash
+    res.send(obj)
+    console.log("Success IPFS csv upload ", obj.hash)
   })
 }
 
 
 function ipfsAddFile(req, res, next) {
   //Addfile router for adding file a local file to the IPFS network without any local node
-  console.log(req.body, "dirtyBody in ipfsAddFile")
-
   var cleanedBody = JSON.parse(Object.keys(req.body)[0])
-  console.log(cleanedBody, "cleanedBody in ipfsAddFile") // { key: 'newAsset', data: { CoreProps: { ponics: '' }, URL: 'www' } }
+  console.log(cleanedBody, "cleanedBody in ipfsAddFile") // { key: 'newAsset', data: req.body }
 
   var obj = {}
   obj.key = cleanedBody.key // {key: 'properties'}
@@ -53,28 +54,10 @@ function ipfsAddFile(req, res, next) {
     if (err) {console.log(err)};
     obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
     res.send(obj);
-    console.log("Success", cleanedBody, file)
+    console.log("Success IPFS upload", cleanedBody, obj.hash)
   })
 }
 
-/*
-fetch('http://10.0.3.2:3000/addfile',
-     {
-       method: 'POST',
-       headers: {
-         'Accept': 'application/json',
-         'Content-Type': 'application/json'
-       },
-       body: JSON.stringify(dataObject)
-     })
-     .then((response) => response.json()
-     ).then((responseJson) => {
-       console.log(responseJson, 'the response')// response is object.path, object.hash
-     })
-     .catch((error) => {
-       console.error(error)
-     })
-*/
 module.exports = {
   ipfsGetFile: ipfsGetFile,
   ipfsAddFile: ipfsAddFile,

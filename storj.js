@@ -9,27 +9,14 @@ function instantiateStorjEnvironment(){
     bridgeUrl: 'https://api.storj.io',
     bridgeUser: STORJ_BRIDGE_USER,
     bridgePass: STORJ_BRIDGE_PASS,
-    encryptionKey: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
-    logLevel: 4
+    encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
+    logLevel: 1 // Range: 0 - 4
   });
   return storj
 }
 
 function uploadFile(req, res, next){
   let storj = instantiateStorjEnvironment()
-/* Testing API out */
-  // var mnemonic = mnemonicGenerate(128);
-  // console.log('Mnemonic geneator: ', mnemonic)
-  // console.log('Mnemonic check: ', mnemonicCheck(mnemonic))
-  // console.log('Time: ', utilTimestamp())
-
-  // const julie = storj.getInfo(function(err, result) {
-  //   if (err) {
-  //     return console.error(err);
-  //   }
-  //   console.log("GetInfo Function: ",result)
-  // })
-
   var cleanedBody = JSON.parse(Object.keys(req.body)[0])
   var base64 = cleanedBody.data
   var obj = {}
@@ -38,7 +25,6 @@ function uploadFile(req, res, next){
 
   base64Img.img(base64, 'upload-files', '1', function(err, filepath) {
     if (err) {console.log(err)}
-    console.log("success", filepath)
 
     const bucketId = '2443acd6222d73b373cbf18e';
     const filePath = filepath;
@@ -48,17 +34,14 @@ function uploadFile(req, res, next){
         console.log('progress:', progress);
       },
       finishedCallback: function(err, fileId) {
-        if (err) {
-          return console.error(err);
-        }
-        console.log('File complete:', fileId);
+        if (err) { return console.error(err)}
+        console.log('Sucess Storj file upload:', fileId);
         obj.hash = fileId
         res.send(obj);
         storj.destroy();
       }
     });
   })
-
 }
 
 function downloadFile () {
@@ -77,9 +60,7 @@ function downloadFile () {
                     progress, downloadedBytes, totalBytes);
       },
       finishedCallback: function(err) {
-        if (err) {
-          return console.error(err);
-        }
+        if (err) { return console.error(err)}
         console.log('File download complete');
         storj.destroy();
       }
@@ -92,9 +73,7 @@ function deleteFile () {
   var bucketId = '2443acd6222d73b373cbf18e';
   var fileId = '63ABF516E1DCC5E5B337EACD';
   storj.deleteFile(bucketId, fileId, function(err, result) {
-    if (err) {
-      console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('File Deleted.');
     storj.destroy();
   })
@@ -105,9 +84,7 @@ function getBucketId () {
   let storj = instantiateStorjEnvironment()
   var testBucketName = 'HERC-SUPPLYCHAIN';
   storj.getBucketId(testBucketName, function(err, result) {
-    if (err) {
-      return console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('info.name:', result.name);
     console.log('info.id:', result.id);
     storj.destroy();
@@ -118,9 +95,7 @@ function deleteBucketId (req, res, next){
   let storj = instantiateStorjEnvironment()
   var bucketId = req.params.id;
   storj.deleteBucket(bucketId, function(err, result) {
-    if (err) {
-      return console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('Deleted bucket: ', bucketID)
   })
 }
@@ -129,15 +104,10 @@ function deleteBucketId (req, res, next){
 function listBuckets () {
   let storj = instantiateStorjEnvironment()
   storj.getInfo(function(err, result) {
-    if (err) {
-      return console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('info:', result);
-
     storj.getBuckets(function(err, result) {
-      if (err) {
-        return console.error(err);
-      }
+      if (err) { return console.error(err)}
       console.log('buckets:', result);
       storj.destroy();
     });
@@ -149,9 +119,7 @@ function createBucket () {
   let storj = instantiateStorjEnvironment()
   const testBucketName = 'test-' + Date.now();
   storj.createBucket(testBucketName, function(err, result) {
-    if (err) {
-      return console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('info:', result);
     storj.destroy();
   });
@@ -162,9 +130,7 @@ function bucketListFiles() {
   let storj = instantiateStorjEnvironment()
   var bucketID = "2443acd6222d73b373cbf18e"
   storj.listFiles(bucketID, function(err, result) {
-    if (err) {
-      return console.error(err);
-    }
+    if (err) { return console.error(err)}
     console.log('Bucket Files:', result);
     storj.destroy();
   });

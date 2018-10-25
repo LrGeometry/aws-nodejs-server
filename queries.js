@@ -88,6 +88,7 @@ function parseXMLResponse(xml) {
 }
 
 function createIdentity(req, res, next) {
+  console.log(req.body, "chance idology dirtyBody")
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -97,7 +98,8 @@ function createIdentity(req, res, next) {
       url: 'https://web.idologylive.com/api/idiq.svc',
       form: data
     }, function(error, response, body){
-      console.log(body)
+      console.log(response, 'chance idology response')
+      console.log(body, 'chance idology body')
     });
     // parseXMLResponse(process.env.xml);
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
@@ -266,12 +268,6 @@ function token(req, res, next) {
       res.status(200).json(customToken);
     })
     .catch(err => { console.log(err) })
-
-  // var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
-  //   expiresIn: 86400 //expires in 24 hours
-  // });
-  // console.log("Made it into the Token: ", token)
-
 }
 
 function parseToken(req, res, next) {
@@ -286,16 +282,6 @@ function parseToken(req, res, next) {
     console.log(err, "error decoding token")
     res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
-
-  // var token = req.headers['authorization'];
-  // if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-  //
-  // jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-  //   console.log("TOKEN: ", token)
-  //   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-  //
-  //   res.status(200).send(decoded);
-  // });
 }
 
 
@@ -312,7 +298,7 @@ function csvParser(req, res, next) {
       dict[dataKeys[i]] = dataValues[i]
     }
   }
-  console.log("DICTIONARY: \n", dict)
+  if (environment == 'development'){ console.log("DICTIONARY: \n", dict) }
   var ipfs = require('./ipfs');
   ipfs.ipfsAddCsvFile(dict, res)
 }

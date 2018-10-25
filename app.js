@@ -20,15 +20,11 @@ const body_parser = require('body-parser');
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
 
-var web3;
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
   NODE_ENV=production PORT=8000 node app.js
   */
-  /* Setting the environment variable to dictate which DB */
-
-  web3 = new Web3(process.env.INFURA_ROPSTEN);
   // console.log(web3, "ropsten")
   environment = { environment: 'development' };
   app.use(function (err, req, res, next) {
@@ -40,7 +36,6 @@ if (app.get('env') === 'development') {
 
   });
 } else {
-   web3 = new Web3.setProvider(process.env.INFURA_MAIN);
   environment = { environment: 'production' };
 }
 module.exports.environment = app.get('env');
@@ -93,5 +88,4 @@ app.get('/api/web3/accounts/get', webThree.getAccounts);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
-  console.log('yeeyah')
 });

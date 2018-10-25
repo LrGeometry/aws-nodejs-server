@@ -2,14 +2,11 @@
 const { FactomCli, Entry, Chain } = require("factom");
 var FCT_NODE = process.env.FCT_NODE;
 var FCT_PUB_SIG = process.env.FCT_PUB_SIG;
-
-
 const testChainId = '7b11a72cd69d3083e4d20137bb569423923a55696017b36f46222e9f83964679';
 
 /// Instantiating Factom
 // Default factomd connection to localhost:8088
 // and walletd connection to localhost:8089
-
 
 const cli = new FactomCli({
     factomd: {
@@ -20,9 +17,6 @@ const cli = new FactomCli({
     }
 });
 
-
-
-//Chains and Entries
 
 ////     Starting with adding entries to the existing chain.
 ////    Asset Registration will create a unique chain for the asset
@@ -56,20 +50,10 @@ function createChain(req, res, next) {
 
 // Add an entry, may need to turn this into async, tests will decide.
 function createEntry(req, res, next) {
-  // optional to make it a buffer, Factom likes buffers
-  // const sigBuffer = new Buffer(identifyingInformation.hash);
-    console.log(req.body, "0 fresh from client")
-    var data = JSON.parse(Object.keys(req.body)) /* {hash: [{key: 'properties', hash: "Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"},
-              {key: 'images', hash: "Qmassj7ndZ3JyVUPrtSDHAGFGnt363CfE9RC21L5o2duXG"}],
-    chainId: "69cb1d318a61e49ce689af628fd2fe03c3541b696e1bc1e",
-    assetInfo: "SampleAssetInfo"}'
-    */
-
+    var data = JSON.parse(Object.keys(req.body))
     var extIdString = data.assetInfo;
     var chainId = data.chainId
-    var hash = data.hash // [ { key: 'images', hash: '4435f1ffdb915de7b8e04f29' }, { key: 'properties', hash: 'QmX4EzKBem4JEicrY2j2KoEF6iSnyy7y3A1NuM8C6j9JwM' } ]
-
-    console.log(extIdString, chainId, hash, "1 fresh from client")
+    var hash = data.hash
 
     const myEntry = Entry.builder()
         .chainId(chainId)
@@ -80,35 +64,37 @@ function createEntry(req, res, next) {
 
     cli.add(myEntry, FCT_PUB_SIG)
         .then(response => {
-          console.log("Success entry in factom chain: ", response)
           /*
           { txId: 'c111f0d03a66db786a946be5e63f344a845371a106800c9a01d743d090b841bd',
             repeatedCommit: false,
             chainId: 'e55c0f97cdb944c45c1ad00c6784976bf697ae6faefc8a9c9f25076b2d80dd38',
             entryHash: '2447e75a189ccee7641811cef42b80fecea28385d709c711a327e30152ec0620' }
           */
-          res.send(response.chainId)
+          console.log("Success entry in factom chain: ", response)
+          res.send(response.entryHash)
         })
         .catch(err => { console.log(err) });
-
 };
 
 
 // Get a Single Entry
 function getEntry(entryHash) {
-    cli.getEntry(entryHash).then(
-        entry =>
-            console.log(entry)
-    )
+    cli.getEntry(entryHash)
+      .then(entry => {
+        console.log(entry)
+      })
+      .catch(err => {
+        console.log(err)
+      })
 }
 
 
 // Get All the Entries
 function getAllEntries(chainId_Or_firstEntryHash) {
-    cli.getAllEntriesOfChain(chainId_Or_firstEntryHash).then(
-        entries =>
-            console.log("get all entries, chainID:", chainId_Or_firstEntryHash, "entries:", entries)
-    )
+    cli.getAllEntriesOfChain(chainId_Or_firstEntryHash)
+      .then(entries => {console.log("get all entries, chainID:", chainId_Or_firstEntryHash, "entries:", entries)
+    })
+    .catch(err => {console.log(err)})
 }
 
 // FactomCli exposes the method
@@ -136,18 +122,13 @@ async function searchChain(entryHash, searchParam) {
                 found = entry;
             }
         });
-
-
 }
 
 module.exports = {
-
     createChain: createChain,
     createEntry: createEntry,
     getEntry: getEntry,
     getAllEntries: getAllEntries,
     iterateChain: iterateChain,
     searchChain: searchChain,
-
-
 };
