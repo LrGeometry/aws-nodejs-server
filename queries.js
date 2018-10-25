@@ -22,6 +22,7 @@ var config = {
       storageBucket: process.env.FIREBASE_STORAGEBUCKET,
       messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
     }
+
 var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
@@ -286,21 +287,29 @@ function parseToken(req, res, next) {
 
 
 function csvParser(req, res, next) {
-  let cleanedBody = Object.keys(req.body)[0]//string
-  let data = cleanedBody.split('"')[7].split("\r\n")
-  var dict = {};
-  var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
-  var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
-  var dataKeys = data[0].split(",") // first row
-  var dataValues = data[data.length - 2 ].split(",") // last row
-  for (i = 0; i < dataKeys.length; i++){
-    if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
-      dict[dataKeys[i]] = dataValues[i]
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    let cleanedBody = Object.keys(req.body)[0]//string
+    let data = cleanedBody.split('"')[7].split("\r\n")
+    var dict = {};
+    var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
+    var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
+    var dataKeys = data[0].split(",") // first row
+    var dataValues = data[data.length - 2 ].split(",") // last row
+    for (i = 0; i < dataKeys.length; i++){
+      if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
+        dict[dataKeys[i]] = dataValues[i]
+      }
     }
-  }
-  if (environment == 'development'){ console.log("DICTIONARY: \n", dict) }
-  var ipfs = require('./ipfs');
-  ipfs.ipfsAddCsvFile(dict, res)
+    if (environment == 'development'){ console.log("DICTIONARY: \n", dict) }
+    var ipfs = require('./ipfs');
+    ipfs.ipfsAddCsvFile(dict, res)
+  })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 }
 
 

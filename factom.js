@@ -1,4 +1,4 @@
-//Required modules
+var firebase = require('firebase')
 const { FactomCli, Entry, Chain } = require("factom");
 var FCT_NODE = process.env.FCT_NODE;
 var FCT_PUB_SIG = process.env.FCT_PUB_SIG;
@@ -22,6 +22,10 @@ const cli = new FactomCli({
 ////    Asset Registration will create a unique chain for the asset
 
 function createChain(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     var cleanedObject = JSON.parse(Object.keys(req.body)[0])
     var ipfsHash = cleanedObject.ipfsHash
     var organizationName = cleanedObject.organizationName
@@ -43,13 +47,20 @@ function createChain(req, res, next) {
           res.send(response.chainId)
         })
         .catch(err => {console.log(err)});
-
+      })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 }
 
 
 
 // Add an entry, may need to turn this into async, tests will decide.
 function createEntry(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     var data = JSON.parse(Object.keys(req.body))
     var extIdString = data.assetInfo;
     var chainId = data.chainId
@@ -74,34 +85,48 @@ function createEntry(req, res, next) {
           res.send(response.entryHash)
         })
         .catch(err => { console.log(err) });
+      })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 };
 
 
 // Get a Single Entry
 function getEntry(entryHash) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     cli.getEntry(entryHash)
-      .then(entry => {
-        console.log(entry)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+      .then(entry => { console.log(entry) })
+      .catch(err => { console.log(err) })
+    })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 }
 
 
 // Get All the Entries
 function getAllEntries(chainId_Or_firstEntryHash) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
     cli.getAllEntriesOfChain(chainId_Or_firstEntryHash)
       .then(entries => {console.log("get all entries, chainID:", chainId_Or_firstEntryHash, "entries:", entries)
     })
     .catch(err => {console.log(err)})
+  })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 }
 
 // FactomCli exposes the method
 // rewindChainWhile(chainId, function predicate(entry) {}
 //  function body(entry) {})
-
-
 
 // Iterating a long chain entry by entry
 async function iterateChain(chainId) {
@@ -113,15 +138,15 @@ async function iterateChain(chainId) {
 
 // Searching an entry in a chain
 async function searchChain(entryHash, searchParam) {
-    let search = true, found;
-    await cli.rewindChainWhile(entryHash,
-        () => search,
-        function (entry) {
-            if (entry.extId[0].toString() === searchParam) {
-                search = false;
-                found = entry;
-            }
-        });
+  let search = true, found;
+  await cli.rewindChainWhile(entryHash,
+    () => search,
+    function (entry) {
+      if (entry.extId[0].toString() === searchParam) {
+          search = false;
+          found = entry;
+      }
+    });
 }
 
 module.exports = {

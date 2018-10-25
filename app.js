@@ -35,9 +35,7 @@ if (app.get('env') === 'development') {
       });
 
   });
-} else {
-  environment = { environment: 'production' };
-}
+} else { environment = { environment: 'production' } }
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
