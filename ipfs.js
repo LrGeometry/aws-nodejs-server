@@ -25,7 +25,7 @@ function ipfsGetFile(req, res, next) {
   })
 }
 
-async function ipfsAddCsvFile(body, res) {
+function ipfsAddCsvFile(body, res) {
   let csvData = new Buffer(JSON.stringify(body));
   await ipfs.files.add(csvData, function (err, file) {
     if (err) { console.log(err) };

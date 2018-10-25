@@ -305,8 +305,8 @@ function csvParser(req, res, next) {
   var dict = {};
   var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
   var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
-  var dataKeys = data[0].split(",") //first row
-  var dataValues = data[data.length - 2 ].split(",") //last row
+  var dataKeys = data[0].split(",") // first row
+  var dataValues = data[data.length - 2 ].split(",") // last row
   for (i = 0; i < dataKeys.length; i++){
     if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
       dict[dataKeys[i]] = dataValues[i]
