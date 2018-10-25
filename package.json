@@ -1,7 +1,7 @@
 {
   "name": "aws-nodejs-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hercules: Decentralized Supply Chain Application",
   "main": "app.js",
   "scripts": {
     "test": "mocha",
@@ -31,9 +31,6 @@
     "jsonwebtoken": "^8.3.0",
     "node-gyp": "^3.8.0",
     "nodemon": "^1.18.4",
-    "papaparse": "^4.6.0",
-    "pg": "^7.4.3",
-    "pg-promise": "^8.4.5",
     "request": "^2.88.0",
     "storj": "github:storj/node-libstorj",
     "uuid": "^3.3.2",

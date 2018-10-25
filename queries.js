@@ -22,6 +22,7 @@ var config = {
       storageBucket: process.env.FIREBASE_STORAGEBUCKET,
       messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
     }
+
 var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
@@ -88,6 +89,7 @@ function parseXMLResponse(xml) {
 }
 
 function createIdentity(req, res, next) {
+  console.log(req.body, "chance idology dirtyBody")
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -97,7 +99,8 @@ function createIdentity(req, res, next) {
       url: 'https://web.idologylive.com/api/idiq.svc',
       form: data
     }, function(error, response, body){
-      console.log(body)
+      console.log(response, 'chance idology response')
+      console.log(body, 'chance idology body')
     });
     // parseXMLResponse(process.env.xml);
     // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
@@ -266,12 +269,6 @@ function token(req, res, next) {
       res.status(200).json(customToken);
     })
     .catch(err => { console.log(err) })
-
-  // var token = jwt.sign({ data: 'some_payload', username: username }, process.env.ENCRYPTION_KEY, {
-  //   expiresIn: 86400 //expires in 24 hours
-  // });
-  // console.log("Made it into the Token: ", token)
-
 }
 
 function parseToken(req, res, next) {
@@ -286,52 +283,33 @@ function parseToken(req, res, next) {
     console.log(err, "error decoding token")
     res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
-
-  // var token = req.headers['authorization'];
-  // if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-  //
-  // jwt.verify(token, process.env.ENCRYPTION_KEY, function(err, decoded) {
-  //   console.log("TOKEN: ", token)
-  //   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-  //
-  //   res.status(200).send(decoded);
-  // });
 }
 
 
-function csvParser() {
-  var id = uuidv4()
-  var Papa = require('papaparse');
-  const fs = require('fs');
-  var filename = "Gold-Reference-Chip-Average-Test-8-31-18.csv"; //TODO: Make the filename variable dynamic
-  const file = fs.createReadStream("csv-reports/" + filename );
-  Papa.parse(file, {
-  	complete: function(results) {
-      var dict = {};
-      var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
-      var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
-      var data = results.data
-      var dataKeys = data[0]
-      var dataValues = data[data.length - 1 ]
-      for (i = 0; i < dataKeys.length; i++){
-        if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
-          dict[dataKeys[i]] = dataValues[i]
-        }
+function csvParser(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    let cleanedBody = Object.keys(req.body)[0]//string
+    let data = cleanedBody.split('"')[7].split("\r\n")
+    var dict = {};
+    var acceptedKeys = ['Name', 'Class', 'Date', 'Time', 'Duration', 'Grade']
+    var elements = ['Al','Ni','Cu','Rh','Pd','Ag','Cd','Sn','Sb','Pt','Au','Pb']
+    var dataKeys = data[0].split(",") // first row
+    var dataValues = data[data.length - 2 ].split(",") // last row
+    for (i = 0; i < dataKeys.length; i++){
+      if (acceptedKeys.includes(dataKeys[i]) || elements.includes(dataKeys[i])){
+        dict[dataKeys[i]] = dataValues[i]
       }
-      // console.log("DICTIONARY: \n", dict)
-
-      rootRef.child('csvParser').child(id).set(dict, function() {
-        return rootRef
-          .child('csvParser')
-          .child(id)
-          .once('value')
-          .then(function(snapshot) {
-            console.log(snapshot.val())
-          });
-      });
-
-  	}
-  });
+    }
+    if (environment == 'development'){ console.log("DICTIONARY: \n", dict) }
+    var ipfs = require('./ipfs');
+    ipfs.ipfsAddCsvFile(dict, res)
+  })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
 }
 
 
