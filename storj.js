@@ -8,7 +8,7 @@ function instantiateStorjEnvironment(){
     bridgeUser: process.env.STORJ_BRIDGE_USER,
     bridgePass: process.env.STORJ_BRIDGE_PASSS,
     encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
-    logLevel: 0 // Range: 0 - 4
+    logLevel: 4 // Range: 0 - 4
   });
   return storj
 }
@@ -16,7 +16,7 @@ function instantiateStorjEnvironment(){
 function testStorjUpload(){
   /* Check if Bridge is operational: https://status.storj.io/ */
   let storj = instantiateStorjEnvironment()
-  const bucketId = 'ac67bbd5a7a6e36dbdaff71a';
+  const bucketId = '2443acd6222d73b373cbf18e';
   const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
   const state = storj.storeFile(bucketId, filePath, {
     filename: 'test_' + Date.now() + '.data',
@@ -46,7 +46,7 @@ function uploadFile(req, res, next){
     base64Img.img(base64, 'upload-files', '1', function(err, filepath) {
       if (err) {console.log("Storj Upload Error: ", err)}
 
-      const bucketId = 'ac67bbd5a7a6e36dbdaff71a';
+      const bucketId = '2443acd6222d73b373cbf18e';
       const filePath = filepath;
       const state = storj.storeFile(bucketId, filePath, {
         filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
@@ -76,7 +76,7 @@ function downloadFile () {
     // Downloads a file, return state object
     let storj = instantiateStorjEnvironment()
     var downloadFilePath = 'download-files/storj-test-download.data';
-    var bucketId = 'ac67bbd5a7a6e36dbdaff71a';
+    var bucketId = '2443acd6222d73b373cbf18e';
     var fileId = '63ABF516E1DCC5E5B337EACD';
     // storj.resolveFile(bucketId, fileId, downloadFilePath)
 
@@ -105,7 +105,7 @@ function deleteFile () {
   firebase.auth().signInWithCustomToken(token)
   .then(user_login => {
     let storj = instantiateStorjEnvironment()
-    var bucketId = 'ac67bbd5a7a6e36dbdaff71a';
+    var bucketId = '2443acd6222d73b373cbf18e';
     var fileId = '63ABF516E1DCC5E5B337EACD';
     storj.deleteFile(bucketId, fileId, function(err, result) {
       if (err) { return console.error(err)}
