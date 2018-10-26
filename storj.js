@@ -6,7 +6,7 @@ function instantiateStorjEnvironment(){
   const storj = new Environment({
     bridgeUrl: 'https://api.storj.io',
     bridgeUser: process.env.STORJ_BRIDGE_USER,
-    bridgePass: process.env.STORJ_BRIDGE_PASSS,
+    bridgePass: process.env.STORJ_BRIDGE_PASS,
     encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
     logLevel: 4 // Range: 0 - 4
   });

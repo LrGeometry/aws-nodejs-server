@@ -44,7 +44,8 @@ var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
 app.use(express.static('public'));
-app.use(body_parser.urlencoded({ extended: false }));
+app.use(body_parser.urlencoded({ limit: '10mb', extended: false }));
+app.use(body_parser.json({ limit: '10mb', extended: false }))
 app.set('view engine', 'hbs');
 
 app.get('/', function (req, res) {
