@@ -2,16 +2,33 @@ var firebase = require('firebase')
 const importEnv = require('import-env');
 const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
 var base64Img = require('base64-img');
-
 function instantiateStorjEnvironment(){
   const storj = new Environment({
     bridgeUrl: 'https://api.storj.io',
     bridgeUser: process.env.STORJ_BRIDGE_USER,
     bridgePass: process.env.STORJ_BRIDGE_PASSS,
     encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
-    logLevel: 1 // Range: 0 - 4
+    logLevel: 0 // Range: 0 - 4
   });
   return storj
+}
+
+function testStorjUpload(){
+  /* Check if Bridge is operational: https://status.storj.io/ */
+  let storj = instantiateStorjEnvironment()
+  const bucketId = 'ac67bbd5a7a6e36dbdaff71a';
+  const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
+  const state = storj.storeFile(bucketId, filePath, {
+    filename: 'test_' + Date.now() + '.data',
+    progressCallback: function(progress, downloadedBytes, totalBytes) {
+      console.log('progress:', progress);
+    },
+    finishedCallback: function(err, fileId) {
+      if (err) { return console.error(err)}
+      console.log('Success Storj file upload:', fileId);
+      storj.destroy();
+    }
+  });
 }
 
 function uploadFile(req, res, next){
@@ -27,9 +44,9 @@ function uploadFile(req, res, next){
     obj.hash = null // {key: 'images', hash: null}
 
     base64Img.img(base64, 'upload-files', '1', function(err, filepath) {
-      if (err) {console.log(err)}
+      if (err) {console.log("Storj Upload Error: ", err)}
 
-      const bucketId = '2443acd6222d73b373cbf18e';
+      const bucketId = 'ac67bbd5a7a6e36dbdaff71a';
       const filePath = filepath;
       const state = storj.storeFile(bucketId, filePath, {
         filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
@@ -38,7 +55,7 @@ function uploadFile(req, res, next){
         },
         finishedCallback: function(err, fileId) {
           if (err) { return console.error(err)}
-          console.log('Sucess Storj file upload:', fileId);
+          console.log('Success Storj file upload:', fileId);
           obj.hash = fileId
           res.send(obj);
           storj.destroy();
@@ -59,7 +76,7 @@ function downloadFile () {
     // Downloads a file, return state object
     let storj = instantiateStorjEnvironment()
     var downloadFilePath = 'download-files/storj-test-download.data';
-    var bucketId = '2443acd6222d73b373cbf18e';
+    var bucketId = 'ac67bbd5a7a6e36dbdaff71a';
     var fileId = '63ABF516E1DCC5E5B337EACD';
     // storj.resolveFile(bucketId, fileId, downloadFilePath)
 
@@ -88,7 +105,7 @@ function deleteFile () {
   firebase.auth().signInWithCustomToken(token)
   .then(user_login => {
     let storj = instantiateStorjEnvironment()
-    var bucketId = '2443acd6222d73b373cbf18e';
+    var bucketId = 'ac67bbd5a7a6e36dbdaff71a';
     var fileId = '63ABF516E1DCC5E5B337EACD';
     storj.deleteFile(bucketId, fileId, function(err, result) {
       if (err) { return console.error(err)}
@@ -206,5 +223,6 @@ module.exports = {
   createBucket: createBucket,
   bucketListFiles: bucketListFiles,
   deleteBucketId: deleteBucketId,
-  deleteFile: deleteFile
+  deleteFile: deleteFile,
+  testStorjUpload:testStorjUpload
 };

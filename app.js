@@ -26,7 +26,6 @@ if (app.get('env') === 'development') {
   NODE_ENV=production PORT=8000 node app.js
   */
 
-  // console.log(web3, "ropsten")
   environment = { environment: 'development' };
   app.use(function (err, req, res, next) {
     res.status(err.code || 500)
@@ -70,6 +69,7 @@ app.get('/api/storj/bucket/list', storj.listBuckets);
 app.get('/api/storj/bucket/create', storj.createBucket);
 app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
+app.get('/api/storj/test', storj.testStorjUpload);
 
 app.post('/api/factom/chain/add', factom.createChain);
 app.post('/api/factom/entry/add', factom.createEntry);

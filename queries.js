@@ -27,9 +27,8 @@ var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
-/*
-* TODO: Write a function that iterates through array, append to a string
-*/
+// TODO: Write a function that iterates through array, append to a string
+
 var USERNAME = process.env.USERNAME;
 var PASSWORD = process.env.PASSWORD;
 var data = {
