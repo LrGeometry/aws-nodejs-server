@@ -44,7 +44,7 @@ function createChain(req, res, next) {
     cli.add(chain, FCT_PUB_SIG)
         .then(response => {
           console.log("2 factom chainId: ", response.chainId)
-          res.status(200).send(response.chainId)
+          res.send(response.chainId)
         })
         .catch(err => {console.log(err)});
       })
@@ -82,7 +82,7 @@ function createEntry(req, res, next) {
             entryHash: '2447e75a189ccee7641811cef42b80fecea28385d709c711a327e30152ec0620' }
           */
           console.log("Success entry in factom chain: ", response)
-          res.send(response.entryHash)
+          res.status(200).send(response.entryHash)
         })
         .catch(err => { console.log(err) });
       })
