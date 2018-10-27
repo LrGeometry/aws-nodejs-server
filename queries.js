@@ -27,102 +27,58 @@ var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
-// TODO: Write a function that iterates through array, append to a string
-
-var USERNAME = process.env.USERNAME;
-var PASSWORD = process.env.PASSWORD;
-var data = {
-      'username' : USERNAME, //YOUR ExpectID USERNAME (16)
-      'password' : PASSWORD, //YOUR ExpectID PASSWORD
-      'invoice': '', //YOUR INVOICE OR ORDER NUMBER (30)
-      'amount': '', //ORDER AMOUNT
-      'shipping': '', //SHIPPING AMOUNT
-      'tax': '',//TAX AMOUNT
-      'total': '',//TOTAL AMOUNT(SUM OF THE ABOVE)
-      'idType': '',//TYPE OF ID PROVIDED
-      'idIssuer': '',//ISSUING AGENCY OF ID
-      'idNumber': '',//NUMBER ON ID
-      'paymentMethod': '',//PAYMENT METHOD
-      'firstName' : 'JOHN',
-      'lastName' : 'SMITH',
-      'address': '222333 peachtree place', //STREET ADDRESS
-      'city': '',
-      'state': '', //STATE (2)
-      'zip' : '30318', //5-DIGIT ZIP CODE (5)
-      'ssnLast4': '3333',//LAST 4 DIGITS OF SSN(4)
-      'ssn': '112-22-3333', //FULL SSN
-      'dobMonth': '02',//MONTH OF BIRTH (2)
-      'dobDay': '28',//DAY OF BIRTH (2)
-      'dobYear': '1975', //YEAR OF BIRTH (4)
-      'ipAddress': '',//IP ADDRESS E.G. 11.111.111.11
-      'email': '',//EMAIL ADDRESS
-      'telephone': '', //PHONE NUMBER
-      'sku': '',
-      'uid': '', //USER ID (EXTERNAL APPLICATION)
-      'altAddress': '',
-      'altCity': '',
-      'altState': '',
-      'altZip': '',
-    }
-
-function parseXMLResponse(xml) {
-  var parseString = require('xml2js').parseString;
-  parseString(xml, function (err, result) {
-      // console.log(util.inspect(result, false, null))
-      var resultKey = result.response.results.key
-      var summaryResults = result.response['summary-result'].key
-      var qualifier = result.response.qualifiers[0].qualifier[0].key[0]
-      var question = result.response.questions[0].question
-      var differentiatorQuestion = result.response['differentiator-questions']
-      if (differentiatorQuestion) {
-        /*
-        Send differentiator question and answers to Frontend.
-        Post response to https://web.idologylive.com/api/differentiator-answer.svc https://web.idologylive.com/api/differentiator-answer-iq.svc
-        refer to "API Guide - ExpectID IQ(3).pdf"
-        */
-      }
-      if (question) {
-        //Submit answers with : https://web.idologylive.com/api/idliveq-answers.svc
-      }
-  });
+// var idologyTemplate = {
+//       'username' : process.env.USERNAME,
+//       'password' : process.env.PASSWORD,
+//       'firstName' : '',
+//       'lastName' : '',
+//       'address': '',
+//       'zip' : '',
+//     }
+var idologyTemplate = {
+  'username' : process.env.USERNAME,
+  'password' : process.env.PASSWORD,
+  'firstName' : 'JOHN',
+  'lastName' : 'SMITH',
+  'address': '222333 peachtree place',
+  'zip' : '30318',
 }
 
 function createIdentity(req, res, next) {
-  console.log(req.body, "chance idology dirtyBody")
+  console.log(req.body)
+
+  let formResponses = req.body
+
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
   .then(user_login => {
+    // for (var key in idologyTemplate) {
+    //   if (idologyTemplate.hasOwnProperty(key) && formResponses[key]) {
+    //     idologyTemplate[key] = formResponses[key]
+    //       }
+    //   }
     request.post({
       proxy: FIXIE_URL,
       url: 'https://web.idologylive.com/api/idiq.svc',
-      form: data
+      form: idologyTemplate
     }, function(error, response, body){
-      console.log(response, 'chance idology response')
-      console.log(body, 'chance idology body')
+      if (error) {
+        console.log(error)
+        res.send(false)
+      }
+      parseString(body, function (err, result) {
+        console.log(result.response.results[0].key[0])
+        let verdict = result.response.results[0].key[0]
+        console.log(verdict)
+        if (verdict === 'result.match' ){
+          writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
+          res.send(true)
+        } else {
+          res.send(false)
+        }
+      })
     });
-    // parseXMLResponse(process.env.xml);
-    // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${req.body.firstName}&lastName=${req.body.lastName}&address=${req.body.address}&zip=${req.body.zipCode}`)
-    // axios.post(`https://web.idologylive.com/api/idiq.svc?username=${USERNAME}&password=${PASSWORD}&firstName=${data.firstName}&lastName=${data.lastName}&address=${data.address}&zip=${data.zip}`,
-    //   { proxy:
-    //     { host: process.env.FIXIE_URL_HOST, port: process.env.FIXIE_URL_PORT }
-    //   })
-    //   .then (res => {
-    //     console.log(res.data)
-    //   })
-    //   .catch(error => {
-    //     console.log(error)
-    //   })
-
-    writeUserData(req.body.edgeAccount, req.body.organizationName, req.body.firstName, req.body.lastName, req.body.address, req.body.zipCode)
-
-    var parseString = require('xml2js').parseString;
-    parseString(process.env.xml, function (err, result) {
-      var questions = result.response.questions[0].question
-      res.status(200)
-      .json({questions});
-    });
-
   })
   .catch(err => {
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
@@ -178,7 +134,7 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
 }
 
 
-function writeUserData(username, organizationName, firstName, lastName, zipCode, address) {
+function writeUserData(username, organizationName, firstName, lastName, zip, address) {
   var id = uuidv4()
   /* TODO: Return the UUID to the front, store it in redux, encode it in the authToken */
   console.log("UUID: ", id)
@@ -188,7 +144,7 @@ function writeUserData(username, organizationName, firstName, lastName, zipCode,
     username: username,
     firstName: firstName,
     lastName : lastName,
-    zipCode : zipCode,
+    zip: zip,
     address : address,
     epochTimestamp: Date.now()
   }, function() {

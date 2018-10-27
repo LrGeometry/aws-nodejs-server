@@ -39,7 +39,7 @@ if (app.get('env') === 'development') {
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
-var factom = require('./facTom');
+var factom = require('./factom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
