@@ -68,6 +68,7 @@ function createIdentity(req, res, next) {
         res.send(false)
       }
       parseString(body, function (err, result) {
+        if (err) {console.log(err)}
         let verdict = result.response.results[0].key[0]
         console.log(verdict)
         if (verdict === 'result.match' ){
