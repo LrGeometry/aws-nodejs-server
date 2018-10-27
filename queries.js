@@ -68,11 +68,10 @@ function createIdentity(req, res, next) {
         res.send(false)
       }
       parseString(body, function (err, result) {
-        console.log(result.response.results[0].key[0])
         let verdict = result.response.results[0].key[0]
         console.log(verdict)
         if (verdict === 'result.match' ){
-          writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
+          // writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
           res.send(true)
         } else {
           res.send(false)
