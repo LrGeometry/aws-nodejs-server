@@ -43,7 +43,7 @@ function createChain(req, res, next) {
 
     cli.add(chain, FCT_PUB_SIG)
         .then(response => {
-          console.log("2 factom chainId: ", response.chainId)
+          console.log("Success Factom Chain Created. ChainId: ", response.chainId)
           res.send(response.chainId)
         })
         .catch(err => {console.log(err)});

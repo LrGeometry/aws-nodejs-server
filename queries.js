@@ -69,10 +69,11 @@ function createIdentity(req, res, next) {
       }
       parseString(body, function (err, result) {
         if (err) {console.log(err)}
-        let verdict = result.response.results[0].key[0]
+        if (result.response.error) { res.send(false) } // catches invalid login: { response: { error: [ 'Invalid username and password' ] } }
+        let verdict = result.response.results[0].key[0] //this is buggy on marks machine
         console.log(verdict)
         if (verdict === 'result.match' ){
-          // writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
+          writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
           res.send(true)
         } else {
           res.send(false)

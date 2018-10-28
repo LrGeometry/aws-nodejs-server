@@ -1,5 +1,7 @@
+const importEnv = require('import-env');
 var Web3 = require('web3');
-web3 = new Web3('http://localhost:7545'); // my own blockchain
+// web3 = new Web3('http://localhost:7545'); // my own blockchain
+web3 = new Web3(process.env.INFURA_ROPSTEN)
 let address = '0xC443f11CfA23C1b5a098a46ceFb76cc998089a46'; // deployed erc777 contract on ropsten
 let ABI = [
   {
