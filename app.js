@@ -85,6 +85,9 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
+app.get('/api/web3/register', webThree.registerNewAsset);
+app.get('/api/web3/assets/get', webThree.getAssets);
+app.get('/api/web3/assets/count', webThree.countAssets);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)

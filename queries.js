@@ -27,22 +27,22 @@ var firebase = require('firebase')
 firebase.initializeApp(config);
 const rootRef = firebase.database().ref();
 
-// var idologyTemplate = {
-//       'username' : process.env.USERNAME,
-//       'password' : process.env.PASSWORD,
-//       'firstName' : '',
-//       'lastName' : '',
-//       'address': '',
-//       'zip' : '',
-//     }
 var idologyTemplate = {
-  'username' : process.env.USERNAME,
-  'password' : process.env.PASSWORD,
-  'firstName' : 'JOHN',
-  'lastName' : 'SMITH',
-  'address': '222333 peachtree place',
-  'zip' : '30318',
-}
+      'username' : process.env.USERNAME,
+      'password' : process.env.PASSWORD,
+      'firstName' : '',
+      'lastName' : '',
+      'address': '',
+      'zip' : '',
+    }
+// var idologyTemplate = {
+//   'username' : process.env.USERNAME,
+//   'password' : process.env.PASSWORD,
+//   'firstName' : 'JOHN',
+//   'lastName' : 'SMITH',
+//   'address': '222333 peachtree place',
+//   'zip' : '30318',
+// }
 
 function createIdentity(req, res, next) {
   console.log(req.body)
@@ -53,11 +53,11 @@ function createIdentity(req, res, next) {
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
   .then(user_login => {
-    // for (var key in idologyTemplate) {
-    //   if (idologyTemplate.hasOwnProperty(key) && formResponses[key]) {
-    //     idologyTemplate[key] = formResponses[key]
-    //       }
-    //   }
+    for (var key in idologyTemplate) {
+      if (idologyTemplate.hasOwnProperty(key) && formResponses[key]) {
+        idologyTemplate[key] = formResponses[key]
+          }
+      }
     request.post({
       proxy: FIXIE_URL,
       url: 'https://web.idologylive.com/api/idiq.svc',
@@ -69,13 +69,19 @@ function createIdentity(req, res, next) {
       }
       parseString(body, function (err, result) {
         if (err) {console.log(err)}
+        console.log(result, "chance result")
+
         if (result.response.error) { res.send(false) } // catches invalid login: { response: { error: [ 'Invalid username and password' ] } }
-        let verdict = result.response.results[0].key[0] //this is buggy on marks machine
-        console.log(verdict)
-        if (verdict === 'result.match' ){
-          writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
-          res.send(true)
-        } else {
+        try {
+          let verdict = result.response.results[0].key[0] //this is buggy on marks machine
+          if (verdict === 'result.match' ){
+            writeUserData(formResponses.edgeAccount, formResponses.organizationName, formResponses.firstName, formResponses.lastName, formResponses.zip, formResponses.address)
+            res.send(true)
+          } else {
+            res.send(false)
+          }
+        } catch (err) {
+          console.log(err)
           res.send(false)
         }
       })
