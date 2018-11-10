@@ -70,6 +70,7 @@ app.get('/api/storj/bucket/list', storj.listBuckets);
 app.get('/api/storj/bucket/create', storj.createBucket);
 app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
+app.post('/api/storj/upload/document', storj.uploadDocument);
 app.get('/api/storj/test', storj.testStorjUpload);
 
 app.post('/api/factom/chain/add', factom.createChain);

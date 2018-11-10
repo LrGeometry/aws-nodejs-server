@@ -65,12 +65,14 @@ function createEntry(req, res, next) {
     var extIdString = data.assetInfo;
     var chainId = data.chainId
     var hash = data.hash
+    var hashString = JSON.stringify(hash)
+    console.log(hashString)
 
     const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
         .extId(extIdString, 'utf8')
-        .content(hash, 'utf8')
+        .content(hashString, 'utf8')
         .build();
 
     cli.add(myEntry, FCT_PUB_SIG)

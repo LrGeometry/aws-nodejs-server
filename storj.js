@@ -68,7 +68,7 @@ function uploadFile(req, res, next){
   })
 }
 
-function downloadFile () {
+function downloadFile (req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -99,7 +99,46 @@ function downloadFile () {
   })
 }
 
-function deleteFile () {
+function uploadDocument(req, res, next){
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    let storj = instantiateStorjEnvironment()
+
+    var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
+    // name, uri, size, type, content
+    var name = cleanedBody.data.name
+    var type = cleanedBody.data.type
+    var content = cleanedBody.data.content
+    var obj = {}
+    obj.key = cleanedBody.key // {key: 'document'}
+    obj.hash = null // {key: 'document', hash: null}
+
+ // TODO: Find a library that will recompile file back, and then upload the file.
+   const bucketId = '2443acd6222d73b373cbf18e';
+   const filePath = filepath; // filePath is where the recompiled file lives
+   const state = storj.storeFile(bucketId, filePath, {
+     filename: name,
+     progressCallback: function(progress, downloadedBytes, totalBytes) {
+       console.log('progress:', progress);
+     },
+     finishedCallback: function(err, fileId) {
+       if (err) { return console.error(err)}
+       console.log('Success Storj file upload:', fileId);
+       obj.hash = fileId
+       res.send(obj);
+       storj.destroy();
+     }
+   });
+
+  })
+  .catch(err => {
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
+}
+
+function deleteFile (req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -119,7 +158,7 @@ function deleteFile () {
 }
 
 
-function getBucketId () {
+function getBucketId (req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -155,7 +194,7 @@ function deleteBucketId (req, res, next){
 }
 
 
-function listBuckets () {
+function listBuckets (req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -177,7 +216,7 @@ function listBuckets () {
 }
 
 
-function createBucket () {
+function createBucket (req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -196,7 +235,7 @@ function createBucket () {
 }
 
 
-function bucketListFiles() {
+function bucketListFiles(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -218,6 +257,7 @@ function bucketListFiles() {
 module.exports = {
   uploadFile: uploadFile,
   downloadFile: downloadFile,
+  uploadDocument: uploadDocument,
   getBucketId: getBucketId,
   listBuckets: listBuckets,
   createBucket: createBucket,
