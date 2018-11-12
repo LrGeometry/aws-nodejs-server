@@ -76,13 +76,11 @@ function downloadFile(req, res, next) {
     .then(user_login => {
       // Downloads a file, return state object
       let storj = instantiateStorjEnvironment()
-      var downloadFilePath = 'download-files/storj-test-download.data';
+      var downloadFilePath = 'download-files/storj-test-download.jpg';
       var bucketId = '2443acd6222d73b373cbf18e';
-      var fileId = '63ABF516E1DCC5E5B337EACD';
+      var fileId = 'f9fc0b6971bacd786a19d7a4';
       // storj.resolveFile(bucketId, fileId, downloadFilePath)
 
-
-      // download file that was just uploaded
       storj.resolveFile(bucketId, fileId, downloadFilePath, {
         progressCallback: function (progress, downloadedBytes, totalBytes) {
           console.log('Progress: %d, downloadedBytes: %d, totalBytes: %d',
@@ -102,6 +100,8 @@ function downloadFile(req, res, next) {
 
 function uploadDocument(req, res, next) {
   console.log("in upload documents")
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
@@ -116,13 +116,13 @@ function uploadDocument(req, res, next) {
       obj.key = cleanedBody.key // {key: 'document'}
       obj.hash = null // {key: 'document', hash: null}
       const bucketId = '2443acd6222d73b373cbf18e';
-      const filePath = name; // filePath is where the recompiled file lives
+      const filePath = "upload-files/"+ name; // filePath is where the recompiled file lives
 
       //create buffer from content
       const testit = new Buffer(content, 'base64');
 
       //create local file from buffer
-      fs.writeFileSync(name, testit, (err) => {
+      fs.writeFileSync(filePath, testit, (err) => {
         if (err) throw err;
       });
       console.log('***created local file from Base 64****')
@@ -141,21 +141,22 @@ function uploadDocument(req, res, next) {
           storj.destroy();
         }
       })
-        .catch(err => {
-          return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-        })
 
       //delete local file
-      fs.access(filePath, error => {
-        if (!error) {
-          fs.unlink(fileName, function (error) {
-            console.log(error);
-          });
-        } else {
-          console.log(error);
-        }
-      });
-      console.log('***deleted local file**')
+      // fs.access(filePath, error => {
+      //   if (!error) {
+      //     fs.unlink(fileName, function (error) {
+      //       console.log(error);
+      //     });
+      //   } else {
+      //     console.log(error);
+      //   }
+      // });
+      // console.log('***deleted local file**')
+    })
+
+    .catch(err => {
+      return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
 
