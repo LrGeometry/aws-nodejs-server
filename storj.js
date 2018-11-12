@@ -142,17 +142,17 @@ function uploadDocument(req, res, next) {
         }
       })
 
-      //delete local file
-      // fs.access(filePath, error => {
-      //   if (!error) {
-      //     fs.unlink(fileName, function (error) {
-      //       console.log(error);
-      //     });
-      //   } else {
-      //     console.log(error);
-      //   }
-      // });
-      // console.log('***deleted local file**')
+      // delete local file
+      fs.access(filePath, error => {
+        if (!error) {
+          fs.unlink(filePath, function (error) {
+            console.log(error);
+          });
+        } else {
+          console.log(error);
+        }
+      });
+      console.log('***deleted local file**')
     })
 
     .catch(err => {
