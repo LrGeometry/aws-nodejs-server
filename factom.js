@@ -45,22 +45,23 @@ function createChain(chainName) {
 
 
 // Add an entry, may need to turn this into async, tests will decide.
-function createEntry(identifyingInformation) {
-    let entryInfo;
-    // convert the id'ing info to a string
-    let extIdString = JSON.stringify(identifyingInformation.assetInfo);
-    // optional to make it a buffer, Factom likes buffers
-    // const sigBuffer = new Buffer(identifyingInformation);
-    let hash = JSON.stringify(identifyingInformation.hash); // may be unnecessary to stringify....
+function createEntry(req, res, next) {
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    var data = JSON.parse(Object.keys(req.body))
+    var extIdString = data.assetInfo;
+    var chainId = data.chainId
+    var hash = data.hash
+    var hashString = JSON.stringify(hash)
+    console.log(hashString)
+
     const myEntry = Entry.builder()
-        .chainId(testChainId)
-        // If no encoding parameter is passed as 2nd argument, 'hex' is used
-        .extId(Date.now().toString()) // We can include a timestamp in the id Info to lose one extId
-        .extId(extIdString, "utf8")
-        .content(
-            hash,
-            "utf8"
-        )
+        .chainId(chainId)
+        .extId(Date.now().toString())
+        .extId(extIdString, 'utf8')
+        .content(hashString, 'utf8')
         .build();
 
     cli.add(myEntry, FCT_PUB_SIG)

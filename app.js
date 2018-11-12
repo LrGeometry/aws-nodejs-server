@@ -39,7 +39,7 @@ if (app.get('env') === 'development') {
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
-var factom = require('./facTom');
+var factom = require('./factom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
@@ -70,6 +70,7 @@ app.get('/api/storj/bucket/list', storj.listBuckets);
 app.get('/api/storj/bucket/create', storj.createBucket);
 app.get('/api/storj/bucket/files', storj.bucketListFiles);
 app.get('/api/storj/bucket/delete/:id', storj.deleteBucketId);
+app.post('/api/storj/upload/document', storj.uploadDocument);
 app.get('/api/storj/test', storj.testStorjUpload);
 
 app.post('/api/factom/chain/add', factom.createChain);
@@ -85,6 +86,9 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
+app.get('/api/web3/register', webThree.registerNewAsset);
+app.get('/api/web3/assets/get', webThree.getAssets);
+app.get('/api/web3/assets/count', webThree.countAssets);
 
 app.listen(port, function(){
   console.log('listening on port ' + port)
