@@ -13,7 +13,7 @@ const testChainId = '7b11a72cd69d3083e4d20137bb569423923a55696017b36f46222e9f839
 
 const cli = new FactomCli({
     factomd: {
-        host: FCT_NODE // AWS-Node not quite synched as of 10/4/19:27 CST 
+        host: FCT_NODE // AWS-Node not quite synched as of 10/4/19:27 CST
     },
     walletd: {
         host: FCT_NODE
@@ -67,8 +67,9 @@ function createEntry(req, res, next) {
     cli.add(myEntry, FCT_PUB_SIG)
         .then(console.log)
         .catch(console.error);
-
+      })
 };
+
 
 
 // Get a Single Entry
@@ -88,7 +89,7 @@ function getAllEntries(chainId_Or_firstEntryHash) {
     )
 }
 
-// FactomCli exposes the method 
+// FactomCli exposes the method
 // rewindChainWhile(chainId, function predicate(entry) {}
 //  function body(entry) {})
 
