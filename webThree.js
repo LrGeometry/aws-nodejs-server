@@ -21,7 +21,7 @@ function getAccounts(req, res, next) {
  */
 function getHex(req, res, next) {
   let stringPayload = obj.location;
-  let convertedStr =  web3.utils.randomHex(stringPayload.toString());
+  let convertedStr =  web3.utils.randomHex(stringPayload.parseInt());
   ACF.methods.owner().call()
     .then(results => {
       res.send(results)
