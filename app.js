@@ -26,7 +26,9 @@ if (app.get('env') === 'development') {
   NODE_ENV=production PORT=8000 node app.js
   */
 
-  environment = { environment: 'development' };
+  environment = {
+    environment: 'development'
+  };
   app.use(function (err, req, res, next) {
     res.status(err.code || 500)
       .json({
@@ -35,7 +37,11 @@ if (app.get('env') === 'development') {
       });
 
   });
-} else { environment = { environment: 'production' } }
+} else {
+  environment = {
+    environment: 'production'
+  }
+}
 module.exports.environment = app.get('env');
 var db = require('./queries');
 var storj = require('./storj');
@@ -44,13 +50,21 @@ var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 
 app.use(express.static('public'));
-app.use(body_parser.urlencoded({ limit: '10mb', extended: false }));
-app.use(body_parser.json({ limit: '10mb', extended: false }))
+app.use(body_parser.urlencoded({
+  limit: '10mb',
+  extended: false
+}));
+app.use(body_parser.json({
+  limit: '10mb',
+  extended: false
+}))
 app.set('view engine', 'hbs');
 
 app.get('/', function (req, res) {
   response = '';
-  res.render('index.hbs', { 'response': response });
+  res.render('index.hbs', {
+    'response': response
+  });
 });
 
 app.post('/api/identities', db.createIdentity);
@@ -90,6 +104,6 @@ app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
 
-app.listen(port, function(){
+app.listen(port, function () {
   console.log('listening on port ' + port)
 });

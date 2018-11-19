@@ -13,6 +13,22 @@ function getAccounts(req, res, next) {
   .catch( err => { console.log(err) })
 }
 
+/**
+1) do a get request for client payload containing (what information?) 
+    at (what address? localhost:8000/????).
+2) presuming it's only a string, utilize hex function to 
+    convert string and write it to the ACF contract.
+ */
+function getHex(req, res, next) {
+  let stringPayload = obj.location;
+  let convertedStr =  web3.utils.randomHex(stringPayload.toString());
+  ACF.methods.owner().call()
+    .then(results => {
+      res.send(results)
+  })
+    .catch(err => {console.log(err)})
+}
+
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
 // 0x1864a4327931f04b7fb489be97667fce1b23223e receiver - stack
 function balanceOf(req, res, next) {
@@ -192,6 +208,7 @@ function owner(req, res, next) {
   })
     .catch(err => {console.log(err)})
 }
+
 
 function recipTransAccounts(req, res, next) {
   // TODO add variable
