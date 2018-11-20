@@ -15,23 +15,6 @@ function getAccounts(req, res, next) {
   .catch( err => { console.log(err) })
 }
 
-// console.log(util.inspect(ABI, {showHidden: false, depth: null}))
-const strAbi = JSON.stringify(ABI);
-console.log(strAbi)
-// let convertedStr =  web3.utils.randomHex(strAbi);
-// console.log(convertedStr);
-
-function getHex(req, res, next) {
-  const strAbi = JSON.stringify(ABI);
-  console.log(strAbi)
-  let convertedStr =  web3.utils.randomHex(strAbi.parseInt());
-  ACF.methods.owner().call()
-    .then(results => {
-      res.send(results)
-  })
-    .catch(err => {console.log(err)})
-}
-
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
 // 0x1864a4327931f04b7fb489be97667fce1b23223e receiver - stack
 function balanceOf(req, res, next) {

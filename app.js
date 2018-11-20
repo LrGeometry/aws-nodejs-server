@@ -100,8 +100,18 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
-// app.get('/api/web3/accounts/get', webThree.getAccounts); replace with get request for hex? but you can use
-//the getaccounts request to find the  acccount information to convert to hex.
+// app.post('/api/web3/accounts/submit', (req,res), webThree.getPayload());
+
+app.post('/api/web3/accounts/submit', function (request, response, next) {
+
+  var description = request.body //grabs detail from form.
+  //let jsonstringify = the object, stringified, done with
+  //let convertTohex = object in hex;
+
+  //don't worry about writing to smart contract.
+});
+
+ 
 app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
