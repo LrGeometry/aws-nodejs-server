@@ -5,6 +5,8 @@ web3 = new Web3(process.env.INFURA_MAIN)
 let address = '0x79c3a0ea58be241a9f5e16c4fb73a7bd19e035d7'; // ACF contract addr
 let ABI = [{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_origOrgName","type": "string"},{"name": "_recipOrgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_origTransFctHash","type": "uint256"},{"name": "_recipTransFctHash","type": "uint256"}],"name": "addValidatedTransaction","outputs": [],"payable": false,"stateMutability": "nonpayable","type": "function"},{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_transCost","type": "uint256"},{"name": "_orgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_originator","type": "string"}],"name": "newOrigTrans","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_origOrgName","type": "string"},{"name": "_recipOrgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_origTransFctHash","type": "uint256"},{"name": "_recipTransFctHash","type": "uint256"},{"name": "_transCost","type": "uint256"}],"name": "newRecipTrans","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "_orgName","type": "string"},{"name": "_address","type": "address"},{"name": "_hercId","type": "uint256"},{"name": "_fctHash","type": "uint256"}],"name": "registerNewAsset","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "newOwner","type": "address"}],"name": "transferOwnership","outputs": [],"payable": false,"stateMutability": "nonpayable","type": "function"},{"anonymous": false,"inputs": [{"indexed": true,"name": "from","type": "address"},{"indexed": true,"name": "to","type": "address"},{"indexed": false,"name": "value","type": "uint256"}],"name": "Transfer","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_organizationName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "NewAssetRegistered","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_organizationName","type": "string"},{"indexed": false,"name": "_originator","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "TransactionOriginated","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_recipOrgName","type": "string"},{"indexed": false,"name": "_receiving","type": "string"},{"indexed": false,"name": "_origOrgName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "ReceivedTransaction","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_validated","type": "string"},{"indexed": false,"name": "_origOrgName","type": "string"},{"indexed": false,"name": "_recipOrgName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "ValidTransaction","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"name": "previousOwner","type": "address"},{"indexed": true,"name": "newOwner","type": "address"}],"name": "OwnershipTransferred","type": "event"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "assetAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countAssets","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countOriginTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countRecipientTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countValidatedTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllOriginTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllRecipientTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllValidatedTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getAsset","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAssets","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleOriginTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleRecipientTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleValidatedTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "hercContract","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "origTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "owner","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "recipTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "user","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "validatedTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"}]
 let ACF = new web3.eth.Contract(ABI, address)//instantiating
+const util = require('util')
+
 
 function getAccounts(req, res, next) {
   let accounts = web3.eth.getAccounts().then(accounts => {
@@ -13,15 +15,16 @@ function getAccounts(req, res, next) {
   .catch( err => { console.log(err) })
 }
 
-/**
-1) do a get request for client payload containing (what information?) 
-    at (what address? localhost:8000/????).
-2) presuming it's only a string, utilize hex function to 
-    convert string and write it to the ACF contract.
- */
+// console.log(util.inspect(ABI, {showHidden: false, depth: null}))
+const strAbi = JSON.stringify(ABI);
+console.log(strAbi)
+// let convertedStr =  web3.utils.randomHex(strAbi);
+// console.log(convertedStr);
+
 function getHex(req, res, next) {
-  let stringPayload = obj.location;
-  let convertedStr =  web3.utils.randomHex(stringPayload.parseInt());
+  const strAbi = JSON.stringify(ABI);
+  console.log(strAbi)
+  let convertedStr =  web3.utils.randomHex(strAbi.parseInt());
   ACF.methods.owner().call()
     .then(results => {
       res.send(results)
@@ -38,6 +41,8 @@ function balanceOf(req, res, next) {
   })
     .catch(err => {console.log(err)})
 }
+
+
 
 function addValidatedTransaction(req, res, next) {
 // TODO: add variables
