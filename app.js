@@ -100,11 +100,10 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
-// app.post('/api/web3/accounts/submit', (req,res), webThree.getPayload());
 
 app.post('/api/submit', function (request, response, next) {
     console.log('POST route hit');
-    let webPayload = request.body.formdata //grabs form details.
+    let webPayload = request.body //grabs form details.
     let stringifyObj = JSON.stringify(webPayload);
     let results = web3.utils.toHex(stringifyObj);
     // response.render('success.hbs', console.log(results));
@@ -112,9 +111,6 @@ app.post('/api/submit', function (request, response, next) {
     response.send(results);
     //don't worry about writing to smart contract.
   });
-
-
-
 
 app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
