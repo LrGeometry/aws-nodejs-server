@@ -102,16 +102,20 @@ app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
 // app.post('/api/web3/accounts/submit', (req,res), webThree.getPayload());
 
-app.post('/api/web3/accounts/submit', function (request, response, next) {
+app.post('/api/submit', function (request, response, next) {
+    console.log('POST route hit');
+    let webPayload = request.body.formdata //grabs form details.
+    let stringifyObj = JSON.stringify(webPayload);
+    let results = web3.utils.toHex(stringifyObj);
+    // response.render('success.hbs', console.log(results));
+    console.log(results);
+    response.send(results);
+    //don't worry about writing to smart contract.
+  });
 
-  var description = request.body //grabs detail from form.
-  //let jsonstringify = the object, stringified, done with
-  //let convertTohex = object in hex;
 
-  //don't worry about writing to smart contract.
-});
 
- 
+
 app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
