@@ -17,13 +17,8 @@ function getAccounts(req, res, next) {
 }
 
 function convertToHex (req, res, next) {
-  console.log('POST route hit');
-  let webPayload = req.body //grabs form details.
-  console.log(webPayload);
-  let stringifyObj = JSON.stringify(webPayload);
-  let results = web3.utils.toHex(stringifyObj);
+  let results = web3.utils.toHex(JSON.stringify(req.body)); 
   // response.render('success.hbs');
-  console.log('hex generated is: ', results);
   res.send(results);
   //don't worry about writing to smart contract.
 };
