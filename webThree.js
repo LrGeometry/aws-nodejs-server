@@ -20,7 +20,6 @@ function convertToHex (req, res, next) {
   let results = web3.utils.toHex(JSON.stringify(req.body)); 
   // response.render('success.hbs');
   res.send(results);
-  //don't worry about writing to smart contract.
 };
 
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
