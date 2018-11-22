@@ -17,7 +17,6 @@ var cors = require('cors');
 var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
-const util = require('util')
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
 

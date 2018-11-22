@@ -1,6 +1,6 @@
 const importEnv = require('import-env');
 var Web3 = require('web3');
-const util = require('util')
+
 // web3 = new Web3('http://localhost:7545'); // my own blockchain
 web3 = new Web3(process.env.INFURA_MAIN)
 let address = '0x79c3a0ea58be241a9f5e16c4fb73a7bd19e035d7'; // ACF contract addr
