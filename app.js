@@ -17,6 +17,7 @@ var cors = require('cors');
 var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
+const util = require('util')
 const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
 
@@ -100,14 +101,16 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
+app.post('/api/web3/submit', webThree.convertHex);
 
 app.post('/api/submit', function (request, response, next) {
     console.log('POST route hit');
     let webPayload = request.body //grabs form details.
+    console.log(webPayload);
     let stringifyObj = JSON.stringify(webPayload);
     let results = web3.utils.toHex(stringifyObj);
-    // response.render('success.hbs', console.log(results));
-    console.log(results);
+    // response.render('success.hbs');
+    console.log('hex generated is: ', results);
     response.send(results);
     //don't worry about writing to smart contract.
   });
