@@ -1,5 +1,6 @@
 const importEnv = require('import-env');
 var Web3 = require('web3');
+const util = require('util')
 // web3 = new Web3('http://localhost:7545'); // my own blockchain
 web3 = new Web3(process.env.INFURA_MAIN)
 let address = '0x79c3a0ea58be241a9f5e16c4fb73a7bd19e035d7'; // ACF contract addr
@@ -14,15 +15,16 @@ function getAccounts(req, res, next) {
   })
   .catch( err => { console.log(err) })
 }
-function convertHex (req, res, next) {
+
+function convertToHex (req, res, next) {
   console.log('POST route hit');
-  let webPayload = request.body //grabs form details.
+  let webPayload = req.body //grabs form details.
   console.log(webPayload);
   let stringifyObj = JSON.stringify(webPayload);
   let results = web3.utils.toHex(stringifyObj);
   // response.render('success.hbs');
   console.log('hex generated is: ', results);
-  response.send(results);
+  res.send(results);
   //don't worry about writing to smart contract.
 };
 
@@ -249,6 +251,7 @@ module.exports = {
   getLatestBlock: getLatestBlock,
   balanceOf: balanceOf,
   getAccounts: getAccounts,
+  convertToHex: convertToHex,
   registerNewAsset: registerNewAsset,
   getAssets:getAssets,
   countAssets: countAssets
