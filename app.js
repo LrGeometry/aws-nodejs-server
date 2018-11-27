@@ -100,7 +100,7 @@ app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
 app.get('/api/web3/accounts/get', webThree.getAccounts);
-app.post('/api/web3/submit', webThree.convertToHex);
+app.post('/api/web3/submit', webThree.sendToContract);
 
 app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
