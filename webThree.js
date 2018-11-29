@@ -316,16 +316,17 @@ function sendToContract(req, res, next) {
   console.log('route was hit');
 
   let orgNameHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
+
   let hercId = parseInt(req.body.hercId);
+  console.log(hercId, orgNameHex);;
   
-  ACF.methods.registerNewAsset(convertToHex, hercId, factomAddress).send()
+  ACF.methods.registerNewAsset(orgNameHex, hercId, factomAddress).send()
     .then(results => {
       res.send(results)
     })
     .catch(err => {
-      // console.log(err)
+      console.log(err)
     })
-  res.send(results);
 }
 
 // what address is the transaction being sent from?
