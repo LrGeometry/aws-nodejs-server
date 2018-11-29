@@ -4,7 +4,6 @@ var Web3 = require('web3');
 web3 = new Web3('http://localhost:7545'); // my own blockchain
 // web3 = new Web3(process.env.INFURA_MAIN)
 let address = '0x8a0907ce5ba85a57a55f8f96b64ee28ae2932852'; // ACF contract addr
-let factomAddress = '0x4aa66fb0a816657dc8829cc41be5659de7cb94cdcb8318630bab8547f4c5e81a';
 let ABI = [{
     "constant": true,
     "inputs": [],
@@ -313,14 +312,12 @@ function getAccounts(req, res, next) {
 }
 
 function sendToContract(req, res, next) {
-  console.log('route was hit');
-
-  let orgNameHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
-
+  let orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
   let hercId = parseInt(req.body.hercId);
-  console.log(hercId, orgNameHex);;
-  
-  ACF.methods.registerNewAsset(orgNameHex, hercId, factomAddress).send()
+  let fctAddHex = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual node response
+
+
+  ACF.methods.registerNewAsset(orgNameToHex, hercId, fctAddHex).send({from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'})
     .then(results => {
       res.send(results)
     })
@@ -328,14 +325,6 @@ function sendToContract(req, res, next) {
       console.log(err)
     })
 }
-
-// what address is the transaction being sent from?
-// when i send the contract do i need to state the gas?
-// will i be deploying the contract?
-// will i be cloning a new contract on every new transaction?
-
-// please help me understand the workflow process.
-
 
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
 // 0x1864a4327931f04b7fb489be97667fce1b23223e receiver - stack
