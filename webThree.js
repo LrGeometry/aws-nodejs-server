@@ -1,51 +1,364 @@
 const importEnv = require('import-env');
 var Web3 = require('web3');
 
-// web3 = new Web3('http://localhost:7545'); // my own blockchain
-web3 = new Web3(process.env.INFURA_MAIN)
+web3 = new Web3('http://localhost:7545'); // my own blockchain
+// web3 = new Web3(process.env.INFURA_MAIN)
 let address = '0x8a0907ce5ba85a57a55f8f96b64ee28ae2932852'; // ACF contract addr
-let ABI = [{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_origOrgName","type": "string"},{"name": "_recipOrgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_origTransFctHash","type": "uint256"},{"name": "_recipTransFctHash","type": "uint256"}],"name": "addValidatedTransaction","outputs": [],"payable": false,"stateMutability": "nonpayable","type": "function"},{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_transCost","type": "uint256"},{"name": "_orgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_originator","type": "string"}],"name": "newOrigTrans","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "_address","type": "address"},{"name": "_origOrgName","type": "string"},{"name": "_recipOrgName","type": "string"},{"name": "_hercId","type": "uint256"},{"name": "_origTransFctHash","type": "uint256"},{"name": "_recipTransFctHash","type": "uint256"},{"name": "_transCost","type": "uint256"}],"name": "newRecipTrans","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "_orgName","type": "string"},{"name": "_address","type": "address"},{"name": "_hercId","type": "uint256"},{"name": "_fctHash","type": "uint256"}],"name": "registerNewAsset","outputs": [],"payable": true,"stateMutability": "payable","type": "function"},{"constant": false,"inputs": [{"name": "newOwner","type": "address"}],"name": "transferOwnership","outputs": [],"payable": false,"stateMutability": "nonpayable","type": "function"},{"anonymous": false,"inputs": [{"indexed": true,"name": "from","type": "address"},{"indexed": true,"name": "to","type": "address"},{"indexed": false,"name": "value","type": "uint256"}],"name": "Transfer","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_organizationName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "NewAssetRegistered","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_organizationName","type": "string"},{"indexed": false,"name": "_originator","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "TransactionOriginated","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_recipOrgName","type": "string"},{"indexed": false,"name": "_receiving","type": "string"},{"indexed": false,"name": "_origOrgName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "ReceivedTransaction","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"name": "_validated","type": "string"},{"indexed": false,"name": "_origOrgName","type": "string"},{"indexed": false,"name": "_recipOrgName","type": "string"},{"indexed": false,"name": "_hercId","type": "uint256"}],"name": "ValidTransaction","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"name": "previousOwner","type": "address"},{"indexed": true,"name": "newOwner","type": "address"}],"name": "OwnershipTransferred","type": "event"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "assetAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countAssets","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countOriginTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countRecipientTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "countValidatedTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllOriginTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllRecipientTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAllValidatedTrans","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getAsset","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "getAssets","outputs": [{"name": "","type": "address[]"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleOriginTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleRecipientTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "_address","type": "address"}],"name": "getSingleValidatedTrans","outputs": [{"name": "","type": "uint256"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "hercContract","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "origTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "owner","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "recipTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [],"name": "user","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"},{"constant": true,"inputs": [{"name": "","type": "uint256"}],"name": "validatedTransAccounts","outputs": [{"name": "","type": "address"}],"payable": false,"stateMutability": "view","type": "function"}]
-let ACF = new web3.eth.Contract(ABI, address)//instantiating
+let factomAddress = '0x4aa66fb0a816657dc8829cc41be5659de7cb94cdcb8318630bab8547f4c5e81a';
+let ABI = [{
+    "constant": true,
+    "inputs": [],
+    "name": "getOriginTransCountByAddress",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getAssetsCount",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_hercID",
+      "type": "uint256"
+    }],
+    "name": "getOriginTransCountByHercId",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+        "name": "_orgName",
+        "type": "bytes32"
+      },
+      {
+        "name": "_hercId",
+        "type": "uint256"
+      },
+      {
+        "name": "_fctChain",
+        "type": "bytes32"
+      }
+    ],
+    "name": "registerNewAsset",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_codeWord",
+      "type": "bytes32"
+    }],
+    "name": "getRecipTransByCodeWord",
+    "outputs": [{
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{
+      "name": "",
+      "type": "address"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "isOwner",
+    "outputs": [{
+      "name": "",
+      "type": "bool"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getRecipTransCountByAddress",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_hercID",
+      "type": "uint256"
+    }],
+    "name": "getRecipTransCountByHercId",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+        "name": "_codeWord",
+        "type": "bytes32"
+      },
+      {
+        "name": "_origOrgName",
+        "type": "bytes32"
+      },
+      {
+        "name": "_recipOrgName",
+        "type": "bytes32"
+      },
+      {
+        "name": "_hercId",
+        "type": "uint256"
+      },
+      {
+        "name": "_origTransFctHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "_recipTransFctHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "newRecipTrans",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+        "name": "_orgName",
+        "type": "bytes32"
+      },
+      {
+        "name": "_hercId",
+        "type": "uint256"
+      },
+      {
+        "name": "_codeWord",
+        "type": "bytes32"
+      },
+      {
+        "name": "_origTransFctHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "newOrigTrans",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_hercIden",
+      "type": "uint256"
+    }],
+    "name": "getAsset",
+    "outputs": [{
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+      "name": "newOwner",
+      "type": "address"
+    }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_codeWord",
+      "type": "bytes32"
+    }],
+    "name": "getOriginTransByCodeWord",
+    "outputs": [{
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": true,
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  }
+]
+let ACF = new web3.eth.Contract(ABI, address) //instantiating
 
 
 function getAccounts(req, res, next) {
   let accounts = web3.eth.getAccounts().then(accounts => {
-    res.send(accounts)
-  })
-  .catch( err => { console.log(err) })
+      res.send(accounts)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
-function sendToContract (req, res, next) {
-  let convertToHex = web3.utils.toHex(JSON.stringify(req.body)); 
-
+function sendToContract(req, res, next) {
   console.log('route was hit');
 
-  res.send(convertToHex);
-
-
-  // res.send(results);
-
+  let orgNameHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
+  let hercId = parseInt(req.body.hercId);
+  
+  ACF.methods.registerNewAsset(convertToHex, hercId, factomAddress).send()
+    .then(results => {
+      res.send(results)
+    })
+    .catch(err => {
+      // console.log(err)
+    })
+  res.send(results);
 }
+
+// what address is the transaction being sent from?
+// when i send the contract do i need to state the gas?
+// will i be deploying the contract?
+// will i be cloning a new contract on every new transaction?
+
+// please help me understand the workflow process.
+
 
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
 // 0x1864a4327931f04b7fb489be97667fce1b23223e receiver - stack
 function balanceOf(req, res, next) {
   web3.eth.getBalance("0x942fe152331e6ca69656ee4feaeb8241829a978a").call()
     .then(results => {
-    res.send(results)
-  })
-    .catch(err => {console.log(err)})
+      res.send(results)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 
 
 function addValidatedTransaction(req, res, next) {
-// TODO: add variables
+  // TODO: add variables
   ACF.methods.addValidatedTransaction().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function assetAccounts(req, res, next) {
@@ -53,40 +366,50 @@ function assetAccounts(req, res, next) {
   ACF.methods.countAssets().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function countAssets(req, res, next) {
   ACF.methods.countAssets().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function countOriginTrans(req, res, next) {
   ACF.methods.countOriginTrans().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function countRecipientTrans(req, res, next) {
   ACF.methods.countRecipientTrans().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function countValidatedTrans(req, res, next) {
   ACF.methods.countValidatedTrans().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getAllOriginTrans(req, res, next) {
@@ -94,8 +417,10 @@ function getAllOriginTrans(req, res, next) {
     .then(results => {
       // should return an array of addresses
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getAllRecipientTrans(req, res, next) {
@@ -103,8 +428,10 @@ function getAllRecipientTrans(req, res, next) {
     .then(results => {
       // should return an array of addresses
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getAllValidatedTrans(req, res, next) {
@@ -112,8 +439,10 @@ function getAllValidatedTrans(req, res, next) {
     .then(results => {
       // should return array of address
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getAsset(req, res, next) {
@@ -122,17 +451,21 @@ function getAsset(req, res, next) {
     .then(results => {
       // should return a single hercId
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getAssets(req, res, next) {
   ACF.methods.getAssets().call()
-  // should return array of address
+    // should return array of address
     .then(results => {
-    res.send(results)
-  })
-    .catch(err => {console.log(err)})
+      res.send(results)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getSingleOriginTrans(req, res, next) {
@@ -141,8 +474,10 @@ function getSingleOriginTrans(req, res, next) {
     .then(results => {
       // should return single hercId
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getSingleRecipientTrans(req, res, next) {
@@ -151,8 +486,10 @@ function getSingleRecipientTrans(req, res, next) {
     .then(results => {
       // should return single hercId
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function getSingleValidatedTrans(req, res, next) {
@@ -160,16 +497,20 @@ function getSingleValidatedTrans(req, res, next) {
   ACF.methods.getSingleValidatedTrans(address).call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function hercContract(req, res, next) {
   ACF.methods.hercContract().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function newOrigTrans(req, res, next) {
@@ -178,8 +519,10 @@ function newOrigTrans(req, res, next) {
   ACF.methods.newOrigTrans().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function newRecipTrans(req, res, next) {
@@ -188,8 +531,10 @@ function newRecipTrans(req, res, next) {
   ACF.methods.newRecipTrans().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function origTransAccounts(req, res, next) {
@@ -197,16 +542,20 @@ function origTransAccounts(req, res, next) {
   ACF.methods.origTransAccounts().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function owner(req, res, next) {
   ACF.methods.owner().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 
@@ -215,8 +564,10 @@ function recipTransAccounts(req, res, next) {
   ACF.methods.recipTransAccounts().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function registerNewAsset(req, res, next) {
@@ -224,9 +575,11 @@ function registerNewAsset(req, res, next) {
   // TODO: add variables
   ACF.methods.registerNewAsset('megatron', '0x942fe152331e6ca69656ee4feaeb8241829a978a', 12, 334).call()
     .then(results => {
-    res.send(results)
-  })
-    .catch(err => {console.log(err)})
+      res.send(results)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 function validatedTransAccounts(req, res, next) {
@@ -234,8 +587,10 @@ function validatedTransAccounts(req, res, next) {
   ACF.methods.validatedTransAccounts().call()
     .then(results => {
       res.send(results)
-  })
-    .catch(err => {console.log(err)})
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 
@@ -252,6 +607,6 @@ module.exports = {
   getAccounts: getAccounts,
   sendToContract: sendToContract,
   registerNewAsset: registerNewAsset,
-  getAssets:getAssets,
+  getAssets: getAssets,
   countAssets: countAssets
 }
