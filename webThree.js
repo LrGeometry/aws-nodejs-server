@@ -317,7 +317,7 @@ function sendToContract(req, res, next) {
   let fctAddHex = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual node response
 
 
-  ACF.methods.registerNewAsset(orgNameToHex, hercId, fctAddHex).send({from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'})
+  ACF.methods.registerNewAsset(orgNameToHex, hercId, fctAddHex).send({from: process.env.ETH_PUBLIC_KEY})
     .then(results => {
       res.send(results)
     })
