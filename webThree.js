@@ -320,7 +320,7 @@ function sendToContract(req, res, next) {
   const orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
   const factomAddress = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual json response. #res.body.fctTransAddress
   const hercId = parseInt(req.body.hercId);
-  if (hercId < 0){  //validate hercId int
+  if (hercId < 0){  //validate hercId
     return res.send({error: 'hercId is a negative number'});
   }
   ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).send({from: process.env.ETH_PUBLIC_KEY, gas: 133}) //will return invalid contract address, needs to be updated //gas based on acf.SOL
