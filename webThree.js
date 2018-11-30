@@ -311,13 +311,20 @@ function getAccounts(req, res, next) {
     })
 }
 
+/**
+ * 
+ * @param {*} req json form payload objects
+ * @param {*} res orgNameToHex, hercId, factomAddress
+ */
 function sendToContract(req, res, next) {
-  let orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
-  let hercId = parseInt(req.body.hercId);
-  let fctAddHex = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual node response
+  const orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
+  const factomAddress = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual json response. #res.body.fctTransAddress
+  const hercId = parseInt(req.body.hercId); //if hercId < 0 return error
+  if (hercId < 0){
+    return res.send({error: 'hercId is a negative number'});
+  }
 
-
-  ACF.methods.registerNewAsset(orgNameToHex, hercId, fctAddHex).send({from: process.env.ETH_PUBLIC_KEY})
+  ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).send({from: process.env.ETH_PUBLIC_KEY, gas: 133}) //will return invalid contract address, needs to be updated //gas based on acf.SOL
     .then(results => {
       res.send(results)
     })
