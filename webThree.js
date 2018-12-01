@@ -25,41 +25,36 @@ function getAccounts(req, res, next) {
 
 function sendToContract(req, res, next) {
   const orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
-  // let orgNameToHex = '0x4aa66fb0a816657dc882';
   const factomAddress = '0x4aa66fb0a816657dc882';
   const hercId = parseInt(req.body.hercId);
+
   if (hercId < 0){  //validate hercId
     return res.send({error: 'hercId is a negative number!'});
   }
 
   const data = ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).encodeABI(); //converts everything to byte code
-
   let tx = {
     from: process.env.ETH_PUBLIC_KEY,
     to: address,
     data,
-    gasPrice: web3.utils.toWei('2','gwei')
+    gasPrice: web3.utils.toWei('2','gwei')  //set initial gasPrice willing to be paid, but this is not necessary.
   };
-  
-  ACF.methods.registerNewAsset(web3.utils.toHex(JSON.stringify(req.body.orgName)), hercId, factomAddress).estimateGas()
-  .then((gas) => {
-    tx.gas = gas;
-
-    return web3.eth.getGasPrice() //gets the current gas price
+  ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).estimateGas() 
+  .then((gas) => { //gets an estimate of gas required to send the transaction
+    tx.gas = gas; //set the max amount of gas willing to be paid for this transaction
+    return web3.eth.getGasPrice()  //Returns the current gas price. The gas price is determined by the last few blocks median gas price.
   })
   .then((gasPrice) => {
-    tx.gasPrice = gasPrice;
-
-    return web3.eth.accounts.signTransaction(tx, process.env.ETH_PRIVATE_KEY); //this will return a raw transaction
+    tx.gasPrice = gasPrice; //set the transaction gas price
+    return web3.eth.accounts.signTransaction(tx, process.env.ETH_PRIVATE_KEY); //sign transaction with private key
   })
-  .then(transaction => web3.eth.sendSignedTransaction(transaction.rawTransaction)) //look up rawTransaction on web3 docs
+  .then(transaction => web3.eth.sendSignedTransaction(transaction.rawTransaction)) //this will return a raw transaction
   .then((receipt) => {
     console.log(receipt);
   })
   .catch((err) => {
     console.log(err);
   });
-
 }
 
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
