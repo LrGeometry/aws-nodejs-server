@@ -1,306 +1,11 @@
 const importEnv = require('import-env');
 var Web3 = require('web3');
-
-web3 = new Web3('http://localhost:7545'); // my own blockchain
+web3 = new Web3('http://localhost:8545'); // my own blockchain
 // web3 = new Web3(process.env.INFURA_MAIN)
-let address = '0x8a0907ce5ba85a57a55f8f96b64ee28ae2932852'; // ACF contract addr
-let ABI = [{
-    "constant": true,
-    "inputs": [],
-    "name": "getOriginTransCountByAddress",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getAssetsCount",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "_hercID",
-      "type": "uint256"
-    }],
-    "name": "getOriginTransCountByHercId",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-        "name": "_orgName",
-        "type": "bytes32"
-      },
-      {
-        "name": "_hercId",
-        "type": "uint256"
-      },
-      {
-        "name": "_fctChain",
-        "type": "bytes32"
-      }
-    ],
-    "name": "registerNewAsset",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "_codeWord",
-      "type": "bytes32"
-    }],
-    "name": "getRecipTransByCodeWord",
-    "outputs": [{
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{
-      "name": "",
-      "type": "address"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "isOwner",
-    "outputs": [{
-      "name": "",
-      "type": "bool"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getRecipTransCountByAddress",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "_hercID",
-      "type": "uint256"
-    }],
-    "name": "getRecipTransCountByHercId",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-        "name": "_codeWord",
-        "type": "bytes32"
-      },
-      {
-        "name": "_origOrgName",
-        "type": "bytes32"
-      },
-      {
-        "name": "_recipOrgName",
-        "type": "bytes32"
-      },
-      {
-        "name": "_hercId",
-        "type": "uint256"
-      },
-      {
-        "name": "_origTransFctHash",
-        "type": "bytes32"
-      },
-      {
-        "name": "_recipTransFctHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "newRecipTrans",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-        "name": "_orgName",
-        "type": "bytes32"
-      },
-      {
-        "name": "_hercId",
-        "type": "uint256"
-      },
-      {
-        "name": "_codeWord",
-        "type": "bytes32"
-      },
-      {
-        "name": "_origTransFctHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "newOrigTrans",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "_hercIden",
-      "type": "uint256"
-    }],
-    "name": "getAsset",
-    "outputs": [{
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-      "name": "newOwner",
-      "type": "address"
-    }],
-    "name": "transferOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "_codeWord",
-      "type": "bytes32"
-    }],
-    "name": "getOriginTransByCodeWord",
-    "outputs": [{
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "anonymous": false,
-    "inputs": [{
-        "indexed": true,
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  }
-]
+// let address = '0x8a0907ce5ba85a57a55f8f96b64ee28ae2932852'; // ACF contract addr
+let address = '0x73CAB6De9BEad65a4E0Fd996c73c33Ff733E3a48'  //ganache for testing
+let ABI = [{"constant":false,"inputs":[],"name":"renounceOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"constant":false,"inputs":[{"name":"_orgName","type":"bytes32"},{"name":"_hercId","type":"uint256"},{"name":"_fctChain","type":"bytes32"}],"name":"registerNewAsset","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getAssetsCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_hercIden","type":"uint256"}],"name":"getAsset","outputs":[{"name":"","type":"uint256"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_orgName","type":"bytes32"},{"name":"_hercId","type":"uint256"},{"name":"_codeWord","type":"bytes32"},{"name":"_origTransFctHash","type":"bytes32"}],"name":"newOrigTrans","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getOriginTransCountByAddress","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_codeWord","type":"bytes32"}],"name":"getOriginTransByCodeWord","outputs":[{"name":"","type":"bytes32"},{"name":"","type":"uint256"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_hercID","type":"uint256"}],"name":"getOriginTransCountByHercId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_codeWord","type":"bytes32"},{"name":"_origOrgName","type":"bytes32"},{"name":"_recipOrgName","type":"bytes32"},{"name":"_hercId","type":"uint256"},{"name":"_origTransFctHash","type":"bytes32"},{"name":"_recipTransFctHash","type":"bytes32"}],"name":"newRecipTrans","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getRecipTransCountByAddress","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_codeWord","type":"bytes32"}],"name":"getRecipTransByCodeWord","outputs":[{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"uint256"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"},{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_hercID","type":"uint256"}],"name":"getRecipTransCountByHercId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}];
 let ACF = new web3.eth.Contract(ABI, address) //instantiating
-
 
 function getAccounts(req, res, next) {
   let accounts = web3.eth.getAccounts().then(accounts => {
@@ -316,20 +21,45 @@ function getAccounts(req, res, next) {
  * @param {*} req json form payload objects
  * @param {*} res orgNameToHex, hercId, factomAddress
  */
+
+
 function sendToContract(req, res, next) {
   const orgNameToHex = web3.utils.toHex(JSON.stringify(req.body.orgName));
-  const factomAddress = '0x4aa66fb0a816657dc882'; //generic address will need to replace with actual json response. #res.body.fctTransAddress
+  // let orgNameToHex = '0x4aa66fb0a816657dc882';
+  const factomAddress = '0x4aa66fb0a816657dc882';
   const hercId = parseInt(req.body.hercId);
   if (hercId < 0){  //validate hercId
-    return res.send({error: 'hercId is a negative number'});
+    return res.send({error: 'hercId is a negative number!'});
   }
-  ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).send({from: process.env.ETH_PUBLIC_KEY, gas: 133}) //will return invalid contract address, needs to be updated //gas based on acf.SOL
-    .then(results => {
-      res.send(results)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+
+  const data = ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).encodeABI(); //converts everything to byte code
+
+  let tx = {
+    from: process.env.ETH_PUBLIC_KEY,
+    to: address,
+    data,
+    gasPrice: web3.utils.toWei('2','gwei')
+  };
+  
+  ACF.methods.registerNewAsset(web3.utils.toHex(JSON.stringify(req.body.orgName)), hercId, factomAddress).estimateGas()
+  .then((gas) => {
+    tx.gas = gas;
+
+    return web3.eth.getGasPrice() //gets the current gas price
+  })
+  .then((gasPrice) => {
+    tx.gasPrice = gasPrice;
+
+    return web3.eth.accounts.signTransaction(tx, process.env.ETH_PRIVATE_KEY); //this will return a raw transaction
+  })
+  .then(transaction => web3.eth.sendSignedTransaction(transaction.rawTransaction)) //look up rawTransaction on web3 docs
+  .then((receipt) => {
+    console.log(receipt);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 }
 
 // 0x1a2a618f83e89efbd9c9c120ab38c1c2ec9c4e76 herc creator - logan
