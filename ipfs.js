@@ -5,7 +5,6 @@ const ipfsAPI = require('ipfs-api');
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
 
-
 function ipfsGetFile(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
