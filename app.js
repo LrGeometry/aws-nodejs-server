@@ -48,6 +48,7 @@ var storj = require('./storj');
 var factom = require('./factom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
+var bitly = require('./bitly');
 
 app.use(express.static('public'));
 app.use(body_parser.urlencoded({
@@ -105,6 +106,8 @@ app.post('/api/web3/submit', webThree.sendToContract);
 app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
+
+app.post('/api/bitly/shortenURL', bitly.shortenURL)
 
 app.listen(port, function () {
   console.log('listening on port ' + port)
