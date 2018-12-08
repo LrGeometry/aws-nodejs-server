@@ -19,6 +19,7 @@
   "homepage": "https://github.com/HERCone/aws-nodejs-server#readme",
   "dependencies": {
     "base64-img": "^1.0.4",
+    "bitly": "^6.0.8",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
