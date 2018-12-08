@@ -106,6 +106,8 @@ app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
 
+app.post('/api/bitly/shortenURL', bitly.shortenURL)
+
 app.listen(port, function () {
   console.log('listening on port ' + port)
 });
