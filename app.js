@@ -68,14 +68,14 @@ app.get('/', function (req, res) {
   });
 });
 
-app.post('/api/identities', db.createIdentity);
-app.get('/api/firebase/:slug', db.readUserData);
+// app.post('/api/identities', db.createIdentity);
+// app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
-app.get('/api/parsetoken', db.parseToken);
-app.get('/api/questions', db.sendQuestions);
-app.post('/api/submitanswers', db.submitAnswers);
-app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
-app.post('/api/csv', db.csvParser);
+// app.get('/api/parsetoken', db.parseToken);
+// app.get('/api/questions', db.sendQuestions);
+// app.post('/api/submitanswers', db.submitAnswers);
+// app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
+// app.post('/api/csv', db.csvParser);
 
 app.post('/api/storj/upload', storj.uploadFile);
 app.get('/api/storj/download', storj.downloadFile);
