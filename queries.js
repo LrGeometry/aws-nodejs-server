@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
+const fs = require('fs');
 const importEnv = require('import-env');
 
 var admin = require("firebase-admin");
@@ -275,13 +276,17 @@ function csvParser(req, res, next) {
 }
 
 
+function logError(message){
+  console.log(new Date().toUTCString(), message)
+  // var data = errorData;
+  //
+  // fs.writeFile('error_logs.txt', data, function(err, data){
+  //     if (err) console.log(err);
+  //     console.log("Successfully Written to File.");
+  // });
+}
+
 module.exports = {
-  createIdentity: createIdentity,
-  readUserData: readUserData,
-  checkIfUserSubmittedIdologyWithinLastThreeMonths: checkIfUserSubmittedIdologyWithinLastThreeMonths,
   token: token,
-  parseToken: parseToken,
-  sendQuestions: sendQuestions,
-  submitAnswers: submitAnswers,
-  csvParser: csvParser
+  logError: logError
 };

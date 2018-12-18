@@ -71,6 +71,7 @@ app.get('/', function (req, res) {
 // app.post('/api/identities', db.createIdentity);
 // app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
+app.get('/api/logerror', db.logError);
 // app.get('/api/parsetoken', db.parseToken);
 // app.get('/api/questions', db.sendQuestions);
 // app.post('/api/submitanswers', db.submitAnswers);
@@ -108,6 +109,7 @@ app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
 
 app.post('/api/bitly/shortenURL', bitly.shortenURL)
+app.get('/pseudo', factom.pseudo)
 
 app.listen(port, function () {
   console.log('listening on port ' + port)

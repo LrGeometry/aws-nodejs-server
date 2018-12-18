@@ -7,7 +7,7 @@ const {
 var FCT_NODE = process.env.FCT_NODE;
 var FCT_PUB_SIG = process.env.FCT_PUB_SIG;
 const testChainId = '7b11a72cd69d3083e4d20137bb569423923a55696017b36f46222e9f83964679';
-
+var queries = require('./queries');
 /// Instantiating Factom
 // Default factomd connection to localhost:8088
 // and walletd connection to localhost:8089
@@ -24,6 +24,10 @@ const cli = new FactomCli({
 
 ////     Starting with adding entries to the existing chain.
 ////    Asset Registration will create a unique chain for the asset
+function pseudo(req, res, next){
+  console.log('********* entered pseudo function ***********')
+  queries.logError('Hello')
+}
 
 function createChain(req, res, next) {
   var token = req.headers['authorization'];
@@ -33,7 +37,11 @@ function createChain(req, res, next) {
   });
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
-      var cleanedObject = JSON.parse(Object.keys(req.body)[0])
+      try{
+        var cleanedObject = JSON.parse(Object.keys(req.body)[0])
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
       var ipfsHash = cleanedObject.ipfsHash
       var organizationName = cleanedObject.organizationName
       // console.log("2 Create Chain req.body: ", req.body)
@@ -76,7 +84,11 @@ function createEntry(req, res, next) {
   });
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
-      var data = JSON.parse(Object.keys(req.body))
+      try{
+        var data = JSON.parse(Object.keys(req.body))
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
       var extIdString = data.assetInfo;
       var chainId = data.chainId
       var hash = data.hash
@@ -198,4 +210,5 @@ module.exports = {
   getAllEntries: getAllEntries,
   iterateChain: iterateChain,
   searchChain: searchChain,
+  pseudo: pseudo
 };
