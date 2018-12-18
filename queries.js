@@ -278,12 +278,15 @@ function csvParser(req, res, next) {
 
 function logError(message){
   console.log(new Date().toUTCString(), message)
-  // var data = errorData;
-  //
-  // fs.writeFile('error_logs.txt', data, function(err, data){
-  //     if (err) console.log(err);
-  //     console.log("Successfully Written to File.");
-  // });
+
+  var text = fs.readFileSync('error_logs.txt').toString();
+
+  var data = new Date().toUTCString() + '\n' + text;
+
+  fs.writeFile('error_logs.txt', data, function(err, data){
+      if (err) console.log(err);
+      console.log("Successfully Written to File.");
+  });
 }
 
 module.exports = {
