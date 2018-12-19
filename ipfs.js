@@ -55,8 +55,12 @@ function ipfsAddFile(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
   .then(user_login => {
     //Addfile router for adding file a local file to the IPFS network without any local node
-    var cleanedBody = JSON.parse(Object.keys(req.body)[0])
-    console.log(cleanedBody, "cleanedBody in ipfsAddFile") // { key: 'newAsset', data: req.body }
+    try{
+      var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+      console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
+    } catch (err) {
+      queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+    }
 
     var obj = {}
     obj.key = cleanedBody.key // {key: 'properties'}

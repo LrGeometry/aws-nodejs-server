@@ -3,6 +3,8 @@ var fs = require('fs');
 const importEnv = require('import-env');
 const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
 var base64Img = require('base64-img');
+var queries = require('./queries');
+
 function instantiateStorjEnvironment() {
   const storj = new Environment({
     bridgeUrl: 'https://api.storj.io',
@@ -38,7 +40,11 @@ function uploadFile(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
-      var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+      try{
+        var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
       var base64 = cleanedBody.data
       var obj = {}
       obj.key = cleanedBody.key // {key: 'images'}
@@ -108,7 +114,11 @@ function uploadDocument(req, res, next) {
 
       // const name = req.body.name; // testing with postman
       // const content = req.body.content; //testing with postman
-      var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
+      try{
+        var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
       const name = cleanedBody.data.name
