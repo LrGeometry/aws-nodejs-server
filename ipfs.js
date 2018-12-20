@@ -1,9 +1,9 @@
 const importEnv = require('import-env');
 var firebase = require('firebase')
-const ipfsAPI = require('ipfs-api');
+const ipfsClient = require('ipfs-http-client');
 
 //Connceting to the ipfs network via infura gateway
-const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
+const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
 
 function ipfsGetFile(req, res, next) {
   var token = req.headers['authorization'];
@@ -59,7 +59,7 @@ function ipfsAddFile(req, res, next) {
       var cleanedBody = JSON.parse(Object.keys(req.body)[0])
       console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
     } catch (err) {
-      queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
     }
 
     var obj = {}

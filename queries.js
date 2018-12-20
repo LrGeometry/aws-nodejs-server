@@ -288,7 +288,15 @@ function logError(message){
   });
 }
 
+function latestApk(req, res){
+  if (!req.params.version) throw err;
+  var version = req.params.version
+  var latestVersion = "9.0.5" // hardcoding for now
+  version == latestVersion ? true : false
+}
+
 module.exports = {
   token: token,
-  logError: logError
+  logError: logError,
+  latestApk: latestApk
 };

@@ -87,7 +87,7 @@ function createEntry(req, res, next) {
       try{
         var data = JSON.parse(Object.keys(req.body))
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
       var extIdString = data.assetInfo;
       var chainId = data.chainId

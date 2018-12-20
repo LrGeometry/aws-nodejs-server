@@ -43,7 +43,7 @@ function uploadFile(req, res, next) {
       try{
         var cleanedBody = JSON.parse(Object.keys(req.body)[0])
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
       var base64 = cleanedBody.data
       var obj = {}
@@ -117,7 +117,7 @@ function uploadDocument(req, res, next) {
       try{
         var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
