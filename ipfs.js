@@ -1,6 +1,6 @@
 const importEnv = require('import-env');
 var firebase = require('firebase')
-const ipfsClient = require('ipfs-http-client');
+const ipfsClient = require('ipfs-api');
 
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
