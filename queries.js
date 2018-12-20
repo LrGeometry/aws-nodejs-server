@@ -277,11 +277,10 @@ function csvParser(req, res, next) {
 
 
 function logError(message){
-  console.log(new Date().toUTCString(), message)
 
   var text = fs.readFileSync('error_logs.txt').toString();
 
-  var data = new Date().toUTCString() + '\n' + text;
+  var data = message + ' ' + new Date().toUTCString() + '\n' + text;
 
   fs.writeFile('error_logs.txt', data, function(err, data){
       if (err) console.log(err);
@@ -289,7 +288,15 @@ function logError(message){
   });
 }
 
+function latestApk(req, res){
+  if (!req.params.version) throw err;
+  var version = req.params.version
+  var latestVersion = "0.9.5" // hardcoding for now. In the future, this should be a global variable.
+  return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
+}
+
 module.exports = {
   token: token,
-  logError: logError
+  logError: logError,
+  latestApk: latestApk
 };
