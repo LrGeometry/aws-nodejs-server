@@ -291,8 +291,8 @@ function logError(message){
 function latestApk(req, res){
   if (!req.params.version) throw err;
   var version = req.params.version
-  var latestVersion = "9.0.5" // hardcoding for now
-  version == latestVersion ? true : false
+  var latestVersion = "0.9.5" // hardcoding for now. In the future, this should be a global variable.
+  return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
 }
 
 module.exports = {
