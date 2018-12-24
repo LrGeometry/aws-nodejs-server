@@ -111,6 +111,7 @@ app.get('/api/web3/assets/count', webThree.countAssets);
 app.post('/api/bitly/shortenURL', bitly.shortenURL)
 app.get('/pseudo', factom.pseudo)
 app.get('/api/latest/apk/:version', db.latestApk)
+app.get('/unhash', ipfs.ipfsUnhash)
 
 app.listen(port, function () {
   console.log('listening on port ' + port)

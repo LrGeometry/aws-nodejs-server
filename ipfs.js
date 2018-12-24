@@ -5,6 +5,16 @@ const ipfsClient = require('ipfs-api');
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
 
+function ipfsUnhash(req, res, next) {
+  // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
+  const validCID = "QmP8r5PQgLQtJ9tTTzU78NcF7jMbMNXVm7s5f7p4qPtshh"
+
+  ipfs.files.get(validCID, function (err, results) {
+    if (err) { return console.error(err) }
+    console.log("******", JSON.parse(results[0].content))
+  })
+}
+
 function ipfsGetFile(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
@@ -82,5 +92,6 @@ function ipfsAddFile(req, res, next) {
 module.exports = {
   ipfsGetFile: ipfsGetFile,
   ipfsAddFile: ipfsAddFile,
-  ipfsAddCsvFile:ipfsAddCsvFile
+  ipfsAddCsvFile:ipfsAddCsvFile,
+  ipfsUnhash: ipfsUnhash
 }

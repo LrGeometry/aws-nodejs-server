@@ -39,6 +39,7 @@ function createChain(req, res, next) {
     .then(user_login => {
       try{
         var cleanedObject = JSON.parse(Object.keys(req.body)[0])
+        console.log("1 factom chain object: ", cleanedObject)
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
       }
@@ -86,6 +87,7 @@ function createEntry(req, res, next) {
     .then(user_login => {
       try{
         var data = JSON.parse(Object.keys(req.body))
+        console.log('factom entry data: ', data)
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
@@ -93,7 +95,7 @@ function createEntry(req, res, next) {
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
-      console.log(hashString)
+      console.log('factom entry hashString: ',hashString)
 
       const myEntry = Entry.builder()
         .chainId(chainId)
