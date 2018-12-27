@@ -44,13 +44,14 @@ function createChain(req, res, next) {
         queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
       }
       var ipfsHash = cleanedObject.ipfsHash
-      var organizationName = cleanedObject.organizationName
+      // var organizationName = cleanedObject.organizationName
       // console.log("2 Create Chain req.body: ", req.body)
       // console.log("2 ipfshash and organization name: ", ipfsHash, organizationName)
 
       const firstEntry = Entry.builder()
         // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
-        .extId(organizationName, 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
+        // .extId(organizationName, 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
+        .extId("HerculesQ42018", 'utf8')
         // .extId(Date.now().toString()) // Can have as many of these as you want
         .content(ipfsHash, 'utf8')
         .build();
@@ -91,7 +92,7 @@ function createEntry(req, res, next) {
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
-      var extIdString = data.assetInfo;
+      // var extIdString = data.assetInfo;
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
@@ -100,7 +101,7 @@ function createEntry(req, res, next) {
       const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
-        .extId(extIdString, 'utf8')
+        .extId("HerculesQ42018", 'utf8')
         .content(hashString, 'utf8')
         .build();
 
