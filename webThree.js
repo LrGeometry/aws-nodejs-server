@@ -1,4 +1,3 @@
-const importEnv = require('import-env');
 var Web3 = require('web3');
 web3 = new Web3('http://localhost:8545'); // my own blockchain
 // web3 = new Web3(process.env.INFURA_MAIN)
@@ -17,7 +16,7 @@ function getAccounts(req, res, next) {
 }
 
 /**
- * 
+ *
  * @param {*} req json form payload objects
  * @param {*} res orgNameToHex, hercId, factomAddress
  */
@@ -39,7 +38,7 @@ function sendToContract(req, res, next) {
     data,
     gasPrice: web3.utils.toWei('2','gwei')  //set initial gasPrice willing to be paid, but this is not necessary.
   };
-  ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).estimateGas() 
+  ACF.methods.registerNewAsset(orgNameToHex, hercId, factomAddress).estimateGas()
   .then((gas) => { //gets an estimate of gas required to send the transaction
     tx.gas = gas; //set the max amount of gas willing to be paid for this transaction
     return web3.eth.getGasPrice()  //Returns the current gas price. The gas price is determined by the last few blocks median gas price.

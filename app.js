@@ -17,7 +17,6 @@ var cors = require('cors');
 var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
-const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
 
 if (app.get('env') === 'development') {
@@ -49,6 +48,7 @@ var factom = require('./factom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 var bitly = require('./bitly');
+var etherscan = require('./etherscan');
 
 app.use(express.static('public'));
 app.use(body_parser.urlencoded({

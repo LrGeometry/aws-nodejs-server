@@ -1,4 +1,3 @@
-const importEnv = require('import-env');
 var firebase = require('firebase')
 const ipfsClient = require('ipfs-http-client');
 

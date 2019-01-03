@@ -1,6 +1,5 @@
 var firebase = require('firebase')
 var fs = require('fs');
-const importEnv = require('import-env');
 const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
 var base64Img = require('base64-img');
 var queries = require('./queries');

@@ -6,7 +6,6 @@ var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
-const importEnv = require('import-env');
 
 var admin = require("firebase-admin");
 var serviceAccount = require("./firebase.json");
