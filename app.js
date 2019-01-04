@@ -18,6 +18,7 @@ var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
 const port = process.env.PORT || 8000;
+require('dotenv').config();
 
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user

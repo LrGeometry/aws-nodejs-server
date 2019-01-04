@@ -11,7 +11,7 @@ var admin = require("firebase-admin");
 var serviceAccount = require("./firebase.json");
 admin.initializeApp({
  credential: admin.credential.cert(serviceAccount),
- databaseURL: "https://hercone-8025f.firebaseio.com"
+ databaseURL: process.env.FIREBASE_DBURL
 });
 
 var config = {
