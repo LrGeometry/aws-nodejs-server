@@ -109,9 +109,13 @@ app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
 
-app.post('/api/bitly/shortenURL', bitly.shortenURL)
-app.get('/pseudo', factom.pseudo)
-app.get('/api/latest/apk/:version', db.latestApk)
+app.post('/api/bitly/shortenURL', bitly.shortenURL);
+app.get('/pseudo', factom.pseudo);
+app.get('/api/latest/apk/:version', db.latestApk);
+
+app.get('/api/etherscan/balance', etherscan.getEtherBalance);
+app.get('/api/etherscan/transactions/normal', etherscan.getNormalTransactions);
+app.get('/api/etherscan/transactions/internal', etherscan.getInternalTransactions);
 
 app.listen(port, function () {
   console.log('listening on port ' + port)
