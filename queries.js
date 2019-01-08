@@ -88,6 +88,7 @@ function createIdentity(req, res, next) {
     });
   })
   .catch(err => {
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 
@@ -136,6 +137,7 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
   })
   .catch(err => {
     console.log(err, "error decoding token")
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
 }
@@ -213,6 +215,7 @@ function submitAnswers (req, res, next) {
   })
   .catch(err => {
     console.log(err)
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
     // TODO: Make a post request to IDOLOGY: https://web.idologylive.com/api/idliveq-answers.svc
@@ -270,6 +273,7 @@ function csvParser(req, res, next) {
     ipfs.ipfsAddCsvFile(dict, res)
   })
   .catch(err => {
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }

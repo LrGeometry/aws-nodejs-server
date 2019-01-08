@@ -70,6 +70,7 @@ function uploadFile(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -99,6 +100,7 @@ function downloadFile(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -165,6 +167,7 @@ function uploadDocument(req, res, next) {
     })
 
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -184,6 +187,7 @@ function deleteFile(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -204,6 +208,7 @@ function getBucketId(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -221,6 +226,7 @@ function deleteBucketId(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -243,6 +249,7 @@ function listBuckets(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -262,6 +269,7 @@ function createBucket(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -281,6 +289,7 @@ function bucketListFiles(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }

@@ -29,6 +29,7 @@ function ipfsGetFile(req, res, next) {
     })
   })
   .catch(err => {
+    queries.logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }
@@ -74,6 +75,7 @@ function ipfsAddFile(req, res, next) {
     })
   })
   .catch(err => {
+    queries.logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }

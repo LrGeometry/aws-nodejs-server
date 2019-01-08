@@ -1,6 +1,7 @@
 var qs = require('querystring')
 var request = require('request')
 var ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+var queries = require('./queries');
 /*
 Get Ether Balance for a single Address
 
@@ -22,21 +23,42 @@ offset
 */
 
 function getEtherBalance(req, res, next) {
-  var body = {
-    module: 'account',
-    action: 'balance',
-    address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
-    apikey: ETHERSCAN_API_KEY
-  }
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({
+    auth: false,
+    message: 'No token provided.'
+  });
+  firebase.auth().signInWithCustomToken(token)
+    .then(user_login => {
+      try {
+        let address = JSON.parse(Object.keys(req.body)[0]) // pass 0x address here
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
+      var body = {
+        module: 'account',
+        action: 'balance',
+        address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
+        apikey: ETHERSCAN_API_KEY
+      }
 
-  var uri = 'https://api.etherscan.io/api'
-  + '?' + qs.stringify(body)
+      var uri = 'https://api.etherscan.io/api'
+      + '?' + qs.stringify(body)
 
-  request.get({
-    url: uri
-  }, function(error, response, body){
-    console.log("********** Response ********** \n", body)
-  })
+      request.get({
+        url: uri
+      }, function(error, response, body){
+        console.log("********** Response ********** \n", body)
+        res.send(body)
+      })
+    })
+    .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
+      return res.status(500).send({
+        auth: false,
+        message: 'Failed to authenticate token.'
+      });
+    })
 
 }
 
@@ -65,53 +87,100 @@ function getNormalTransactions(req, res, next) {
        gasUsed: '21000',
        confirmations: '561132' }
   */
-  var body = {
-    module: 'account',
-    action: 'txlist',
-    address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
-    // startblock: 0,
-    // endblock: 99999999,
-    apikey: ETHERSCAN_API_KEY
-  }
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({
+    auth: false,
+    message: 'No token provided.'
+  });
+  firebase.auth().signInWithCustomToken(token)
+    .then(user_login => {
+      try {
+        let address = JSON.parse(Object.keys(req.body)[0]) // pass 0x address here
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
+      var body = {
+        module: 'account',
+        action: 'txlist',
+        address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
+        // startblock: 0,
+        // endblock: 99999999,
+        apikey: ETHERSCAN_API_KEY
+      }
 
-  var uri = 'https://api.etherscan.io/api'
-  + '?' + qs.stringify(body)
+      var uri = 'https://api.etherscan.io/api'
+      + '?' + qs.stringify(body)
+      let acceptedKeys = ['blockNumber', 'timeStamp', 'hash', 'blockHash', 'from', 'to', 'value', 'isError']
 
-  request.get({
-    url: uri
-  }, function(error, response, body){
-    let acceptedKeys = ['blockNumber', 'timeStampe', 'hash', 'blockHash', 'from', 'to', 'value', 'isError']
-    console.log("********** Response ********** \n", JSON.parse(body))
-  })
+      request.get({
+        url: uri
+      }, function(error, response, body){
+        console.log("********** Response ********** \n", JSON.parse(body))
+        res.send(results)//sending entire response. Optional: clean up before sending
+        // var parsedBody = JSON.parse(body)
+        // var results = parsedBody['result']
+
+      })
+    })
+    .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
+      return res.status(500).send({
+        auth: false,
+        message: 'Failed to authenticate token.'
+      });
+    })
+
 
 }
 
 function getInternalTransactions(req, res, next) {
-  /*
-  ([BETA] Returned 'isError' values: 0=No Error, 1=Got Error)
-  (Returns up to a maximum of the last 10000 transactions only)
-  */
-  var body = {
-    module: 'account',
-    action: 'txlistinternal',
-    address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
-    // startblock: 0,
-    // endblock: 99999999,
-    apikey: ETHERSCAN_API_KEY
-  }
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({
+    auth: false,
+    message: 'No token provided.'
+  });
+  firebase.auth().signInWithCustomToken(token)
+    .then(user_login => {
+      try {
+        let address = JSON.parse(Object.keys(req.body)[0]) // pass 0x address here
+      } catch (err) {
+        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+      }
+      /*
+      ([BETA] Returned 'isError' values: 0=No Error, 1=Got Error)
+      (Returns up to a maximum of the last 10000 transactions only)
+      */
+      var body = {
+        module: 'account',
+        action: 'txlistinternal',
+        address: address,
+        // startblock: 0,
+        // endblock: 99999999,
+        apikey: ETHERSCAN_API_KEY
+      }
 
-  var uri = 'https://api.etherscan.io/api'
-  + '?' + qs.stringify(body)
+      var uri = 'https://api.etherscan.io/api'
+      + '?' + qs.stringify(body)
 
-  request.get({
-    url: uri
-  }, function(error, response, body){
-    let acceptedKeys = ['blockNumber', 'timeStamp', 'hash', 'from', 'to', 'value']
-    let results = JSON.parse(body)
-    if (results['status'] === '1') {
-      console.log("********** Response ********** \n", results['result']) //an array of blocks
-    }
-  })
+      request.get({
+        url: uri
+      }, function(error, response, body){
+        let acceptedKeys = ['blockNumber', 'timeStamp', 'hash', 'from', 'to', 'value']
+        let results = JSON.parse(body)
+        if (results['status'] === '1') {
+          console.log("********** Response ********** \n", results['result']) //an array of blocks
+          res.send(results)//sending entire response. Optional: clean up before sending
+        }
+      })
+    })
+    .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
+      return res.status(500).send({
+        auth: false,
+        message: 'Failed to authenticate token.'
+      });
+    })
+
 
 }
 
