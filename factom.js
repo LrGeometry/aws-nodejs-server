@@ -39,17 +39,15 @@ function createChain(req, res, next) {
     .then(user_login => {
       try{
         var cleanedObject = JSON.parse(Object.keys(req.body)[0])
+        console.log("1/2 factom chain object: ", cleanedObject)
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
       }
       var ipfsHash = cleanedObject.ipfsHash
-      var organizationName = cleanedObject.organizationName
-      // console.log("2 Create Chain req.body: ", req.body)
-      // console.log("2 ipfshash and organization name: ", ipfsHash, organizationName)
 
       const firstEntry = Entry.builder()
         // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
-        .extId(organizationName, 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
+        .extId("HerculesQ42018", 'utf8')
         // .extId(Date.now().toString()) // Can have as many of these as you want
         .content(ipfsHash, 'utf8')
         .build();
@@ -87,6 +85,7 @@ function createEntry(req, res, next) {
     .then(user_login => {
       try{
         var data = JSON.parse(Object.keys(req.body))
+        console.log('1/3 factom entry data: ', data)
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
       }
@@ -94,11 +93,12 @@ function createEntry(req, res, next) {
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
-      console.log(hashString)
+      console.log('2/3 factom entry hashString:', hashString)
 
       const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
+        .extId("HerculesQ42018", 'utf8')
         .extId(extIdString, 'utf8')
         .content(hashString, 'utf8')
         .build();
@@ -111,7 +111,7 @@ function createEntry(req, res, next) {
             chainId: 'e55c0f97cdb944c45c1ad00c6784976bf697ae6faefc8a9c9f25076b2d80dd38',
             entryHash: '2447e75a189ccee7641811cef42b80fecea28385d709c711a327e30152ec0620' }
           */
-          console.log("Success entry in factom chain: ", response)
+          console.log("3/3 Success entry in factom chain: ", response)
           res.send(response.entryHash)
         })
         .catch(err => {
