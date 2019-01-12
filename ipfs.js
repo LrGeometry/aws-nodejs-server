@@ -1,5 +1,6 @@
 var firebase = require('firebase')
 const ipfsClient = require('ipfs-http-client');
+var queries = require('./queries');
 
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
@@ -76,12 +77,12 @@ function ipfsAddFile(req, res, next) {
     obj.key = cleanedBody.key // {key: 'properties'}
     obj.hash = null // {key: 'properties', hash: null}
     let testBuffer = new Buffer(JSON.stringify(cleanedBody.data));
-
+    console.log('hi', testBuffer)
     ipfs.files.add(testBuffer, function (err, file) {
-      if (err) {console.log(err)};
+      if (err) {console.log("Error in ipfsAddFile(): ", err)};
       obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
       res.send(obj);
-      console.log("Success IPFS upload", cleanedBody, obj.hash)
+      console.log("Success IPFS upload: \n", cleanedBody,"\n Hash:", obj.hash)
     })
   })
   .catch(err => {

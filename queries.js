@@ -287,7 +287,7 @@ function logError(message){
 
   fs.writeFile('error_logs.txt', data, function(err, data){
       if (err) console.log(err);
-      console.log("Successfully Written to File.");
+      console.log("Successfully Written Log Error to File.");
   });
 }
 
