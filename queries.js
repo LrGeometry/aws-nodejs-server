@@ -285,9 +285,11 @@ function logError(message){
 
   var data = message + ' ' + new Date().toUTCString() + '\n' + text;
 
-  fs.writeFile('error_logs.txt', data, function(err, data){
+  fs.writeFile('error_logs.txt', data, async function(err, data){
       if (err) console.log(err);
       console.log("Successfully Written Log Error to File.");
+      let errorMessage = await fs.readFile('error_logs.txt', "utf8")
+      console.log(errorMessage)
   });
 }
 
