@@ -1,5 +1,5 @@
 var firebase = require('firebase')
-const ipfsClient = require('ipfs-http-client');
+const ipfsClient = require('ipfs-api');
 var queries = require('./queries');
 
 //Connceting to the ipfs network via infura gateway
@@ -25,7 +25,7 @@ function ipfsGetFile(req, res, next) {
     const validCID = req.query[0];
 
     ipfs.files.get(validCID, function (err, files) {
-      if (err) { return console.error(err) }
+      if (err) { return console.error("Error in ipfsGetFile(): ", err) }
       files.forEach((file) => {
         // console.log(file.content, 'file')
         assets.push(JSON.parse(file.content))
@@ -77,9 +77,11 @@ function ipfsAddFile(req, res, next) {
     obj.key = cleanedBody.key // {key: 'properties'}
     obj.hash = null // {key: 'properties', hash: null}
     let testBuffer = new Buffer(JSON.stringify(cleanedBody.data));
-    console.log('hi', testBuffer)
     ipfs.files.add(testBuffer, function (err, file) {
-      if (err) {console.log("Error in ipfsAddFile(): ", err)};
+      if (err) {
+        console.log("Error in ipfsAddFile(): ", err)
+        return res.status(500).send({ message: 'Failed to add file to IPFS', error: err });
+      };
       obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
       res.send(obj);
       console.log("Success IPFS upload: \n", cleanedBody,"\n Hash:", obj.hash)

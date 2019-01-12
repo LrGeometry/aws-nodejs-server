@@ -28,7 +28,7 @@
     "firebase": "^5.5.8",
     "firebase-admin": "^6.0.0",
     "hbs": "^4.0.1",
-    "ipfs-http-client": "^28.1.0",
+    "ipfs-api": "^26.1.2",
     "jsonwebtoken": "^8.3.0",
     "node-gyp": "^3.8.0",
     "nodemon": "^1.18.7",
