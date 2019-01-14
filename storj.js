@@ -6,7 +6,7 @@ var queries = require('./queries');
 
 function instantiateStorjEnvironment() {
   const storj = new Environment({
-    bridgeUrl: 'https://api.v2,storj.io',
+    bridgeUrl: 'https://api.v2.storj.io',
     bridgeUser: process.env.STORJ_BRIDGE_USER,
     bridgePass: process.env.STORJ_BRIDGE_PASS,
     encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
@@ -126,7 +126,8 @@ function uploadDocument(req, res, next) {
       var obj = {}
       obj.key = cleanedBody.key // {key: 'document'}
       obj.hash = null // {key: 'document', hash: null}
-      const bucketId = '2443acd6222d73b373cbf18e';
+      // const bucketId = '2443acd6222d73b373cbf18e'; //V1 bucket ID
+      const bucketId = '988901ba0063e3facd6ec94f'; //V2 bucketID
       const filePath = "upload-files/"+ name; // filePath is where the recompiled file lives
 
       //create buffer from content
