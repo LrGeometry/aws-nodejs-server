@@ -122,13 +122,19 @@ function uploadDocument(req, res, next) {
       }
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
-      const name = cleanedBody.data.name
+      var name = cleanedBody.data.name // splice off last 4 characters, save as var.
+      if (typeof(name) === 'string') {
+        var tempFileExtension = name.split('.')[1]
+        let fileExtension = [tempFileExtension.length - 1]
+      } else {
+        res.status(500).send({ error: "Invalid Storj Transaction Documents fileExtension" })
+      }
       var obj = {}
       obj.key = cleanedBody.key // {key: 'document'}
       obj.hash = null // {key: 'document', hash: null}
       // const bucketId = '2443acd6222d73b373cbf18e'; //V1 bucket ID
       const bucketId = '988901ba0063e3facd6ec94f'; //V2 bucketID
-      const filePath = "upload-files/"+ name; // filePath is where the recompiled file lives
+      const filePath = "upload-files/transaction_document"+ Date.now() + '.' + fileExtension; // filePath is where the recompiled file lives
 
       //create buffer from content
       const testit = new Buffer(content, 'base64');
@@ -146,7 +152,10 @@ function uploadDocument(req, res, next) {
           console.log('progress:', progress);
         },
         finishedCallback: function (err, fileId) {
-          if (err) { return console.error(err) }
+          if (err) {
+            res.status(500).send({ error: err })
+            return console.error(err)
+          }
           console.log('Success Storj file upload:', fileId);
           obj.hash = fileId
           res.send(obj);
