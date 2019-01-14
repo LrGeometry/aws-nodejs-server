@@ -18,7 +18,7 @@ function instantiateStorjEnvironment() {
 function testStorjUpload() {
   /* Check if Bridge is operational: https://status.storj.io/ */
   let storj = instantiateStorjEnvironment()
-  const bucketId = '2443acd6222d73b373cbf18e';
+  const bucketId = '988901ba0063e3facd6ec94f';
   const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
   const state = storj.storeFile(bucketId, filePath, {
     filename: 'test_' + Date.now() + '.data',
@@ -52,7 +52,8 @@ function uploadFile(req, res, next) {
       base64Img.img(base64, 'upload-files', '1', function (err, filepath) {
         if (err) { console.log("Storj Upload Error: ", err) }
 
-        const bucketId = '2443acd6222d73b373cbf18e';
+        // const bucketId = '2443acd6222d73b373cbf18e';
+        const bucketId = '988901ba0063e3facd6ec94f' //v2
         const filePath = filepath;
         const state = storj.storeFile(bucketId, filePath, {
           filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
@@ -188,7 +189,7 @@ function deleteFile(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
-      var bucketId = '2443acd6222d73b373cbf18e';
+      var bucketId = '988901ba0063e3facd6ec94f';
       var fileId = '63ABF516E1DCC5E5B337EACD';
       storj.deleteFile(bucketId, fileId, function (err, result) {
         if (err) { return console.error(err) }
@@ -291,7 +292,7 @@ function bucketListFiles(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
-      var bucketID = "2443acd6222d73b373cbf18e"
+      var bucketID = "988901ba0063e3facd6ec94f"
       storj.listFiles(bucketID, function (err, result) {
         if (err) { return console.error(err) }
         console.log('Bucket Files:', result);
