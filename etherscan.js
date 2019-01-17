@@ -1,5 +1,6 @@
 var qs = require('querystring')
 var request = require('request')
+var firebase = require('firebase')
 var ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 var queries = require('./queries');
 /*
@@ -116,9 +117,9 @@ function getNormalTransactions(req, res, next) {
         url: uri
       }, function(error, response, body){
         console.log("********** Response ********** \n", JSON.parse(body))
+        var parsedBody = JSON.parse(body)
+        var results = parsedBody['result']
         res.send(results)//sending entire response. Optional: clean up before sending
-        // var parsedBody = JSON.parse(body)
-        // var results = parsedBody['result']
 
       })
     })
