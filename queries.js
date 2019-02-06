@@ -7,25 +7,25 @@ var request = require('request')
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
 
-var admin = require("firebase-admin");
-var serviceAccount = require("./firebase.json");
-admin.initializeApp({
- credential: admin.credential.cert(serviceAccount),
- databaseURL: process.env.FIREBASE_DBURL
-});
-
-var config = {
-      apiKey: process.env.FIREBASE_APIKEY,
-      authDomain: process.env.FIREBASE_AUTHDOMAIN,
-      databaseURL: process.env.FIREBASE_DBURL,
-      projectId: process.env.FIREBASE_PROJECTID,
-      storageBucket: process.env.FIREBASE_STORAGEBUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
-    }
-
-var firebase = require('firebase')
-firebase.initializeApp(config);
-const rootRef = firebase.database().ref();
+// var admin = require("firebase-admin");
+// var serviceAccount = require("./firebase.json");
+// admin.initializeApp({
+//  credential: admin.credential.cert(serviceAccount),
+//  databaseURL: process.env.FIREBASE_DBURL
+// });
+//
+// var config = {
+//       apiKey: process.env.FIREBASE_APIKEY,
+//       authDomain: process.env.FIREBASE_AUTHDOMAIN,
+//       databaseURL: process.env.FIREBASE_DBURL,
+//       projectId: process.env.FIREBASE_PROJECTID,
+//       storageBucket: process.env.FIREBASE_STORAGEBUCKET,
+//       messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
+//     }
+//
+// var firebase = require('firebase')
+// firebase.initializeApp(config);
+// const rootRef = firebase.database().ref();
 
 var idologyTemplate = {
       'username' : process.env.USERNAME,

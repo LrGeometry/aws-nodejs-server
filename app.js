@@ -43,6 +43,7 @@ if (app.get('env') === 'development') {
   }
 }
 module.exports.environment = app.get('env');
+var test = require('./defcon');
 var db = require('./queries');
 var storj = require('./storj');
 var factom = require('./factom');
@@ -116,6 +117,8 @@ app.get('/api/latest/apk/:version', db.latestApk);
 app.get('/api/etherscan/balance', etherscan.getEtherBalance);
 app.get('/api/etherscan/transactions/normal', etherscan.getNormalTransactions);
 app.get('/api/etherscan/transactions/internal', etherscan.getInternalTransactions);
+
+app.get('/test', test.megaFunction)
 
 app.listen(port, function () {
   console.log('listening on port ' + port)
