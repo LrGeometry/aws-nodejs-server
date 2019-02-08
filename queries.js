@@ -295,8 +295,35 @@ function latestApk(req, res){
   return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
 }
 
+function addUser(req, res) {
+  //Post request to firebase
+  console.log("AddUser received request body: ", req.body)
+  var user = req.body.username //helmsleyspearkent
+  var address = req.body.address //0xaddress
+  if (req.body.registered == 'true'){
+    var toggleFlag = true
+  } else {
+    var toggleFlag = false
+  }
+  rootRef.child('users').child(username).set({
+    address: address,
+    username: username,
+    registeredENS: toggleFlag,
+    registeredENSAt: Date.now()
+  }, function() {
+    return rootRef
+      .child('users')
+      .child(username)
+      .once('value')
+      .then(function(snapshot) {
+        console.log("Wrote User Data: ", snapshot.val())
+      });
+  });
+}
+
 module.exports = {
   token: token,
   logError: logError,
-  latestApk: latestApk
+  latestApk: latestApk,
+  addUser: addUser
 };
