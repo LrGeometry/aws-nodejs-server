@@ -1,3 +1,15 @@
+HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 21:00:27 GMT
+HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 20:59:22 GMT
+HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 20:54:19 GMT
+HERC: Failed to authenticate token Thu, 17 Jan 2019 20:54:05 GMT
+HERC: Failed to authenticate token Thu, 17 Jan 2019 20:53:53 GMT
+HERC: Failed to authenticate token Thu, 17 Jan 2019 20:52:01 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 18:54:13 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 18:04:41 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 17:40:38 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 03:03:01 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 00:30:44 GMT
+HERC: Failed to authenticate token Sat, 12 Jan 2019 00:21:23 GMT
 Hello Wed, 19 Dec 2018 09:01:31 GMT
 Hello Wed, 19 Dec 2018 08:49:31 GMT
 Hello Wed, 19 Dec 2018 08:42:31 GMT

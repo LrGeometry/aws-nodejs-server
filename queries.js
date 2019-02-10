@@ -6,27 +6,26 @@ var FIXIE_URL = process.env.FIXIE_URL;
 var request = require('request')
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
-const importEnv = require('import-env');
 
-var admin = require("firebase-admin");
-var serviceAccount = require("./firebase.json");
-admin.initializeApp({
- credential: admin.credential.cert(serviceAccount),
- databaseURL: "https://hercone-8025f.firebaseio.com"
-});
-
-var config = {
-      apiKey: process.env.FIREBASE_APIKEY,
-      authDomain: process.env.FIREBASE_AUTHDOMAIN,
-      databaseURL: process.env.FIREBASE_DBURL,
-      projectId: process.env.FIREBASE_PROJECTID,
-      storageBucket: process.env.FIREBASE_STORAGEBUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
-    }
-
-var firebase = require('firebase')
-firebase.initializeApp(config);
-const rootRef = firebase.database().ref();
+// var admin = require("firebase-admin");
+// var serviceAccount = require("./firebase.json");
+// admin.initializeApp({
+//  credential: admin.credential.cert(serviceAccount),
+//  databaseURL: process.env.FIREBASE_DBURL
+// });
+//
+// var config = {
+//       apiKey: process.env.FIREBASE_APIKEY,
+//       authDomain: process.env.FIREBASE_AUTHDOMAIN,
+//       databaseURL: process.env.FIREBASE_DBURL,
+//       projectId: process.env.FIREBASE_PROJECTID,
+//       storageBucket: process.env.FIREBASE_STORAGEBUCKET,
+//       messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID
+//     }
+//
+// var firebase = require('firebase')
+// firebase.initializeApp(config);
+// const rootRef = firebase.database().ref();
 
 var idologyTemplate = {
       'username' : process.env.USERNAME,
@@ -89,6 +88,7 @@ function createIdentity(req, res, next) {
     });
   })
   .catch(err => {
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 
@@ -137,6 +137,7 @@ function checkIfUserSubmittedIdologyWithinLastThreeMonths(req, res, next) {
   })
   .catch(err => {
     console.log(err, "error decoding token")
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
 }
@@ -214,6 +215,7 @@ function submitAnswers (req, res, next) {
   })
   .catch(err => {
     console.log(err)
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' })
   })
     // TODO: Make a post request to IDOLOGY: https://web.idologylive.com/api/idliveq-answers.svc
@@ -271,6 +273,7 @@ function csvParser(req, res, next) {
     ipfs.ipfsAddCsvFile(dict, res)
   })
   .catch(err => {
+    logError("HERC: Failed to authenticate token", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }
@@ -282,9 +285,11 @@ function logError(message){
 
   var data = message + ' ' + new Date().toUTCString() + '\n' + text;
 
-  fs.writeFile('error_logs.txt', data, function(err, data){
+  fs.writeFile('error_logs.txt', data, async function(err, data){
       if (err) console.log(err);
-      console.log("Successfully Written to File.");
+      console.log("Successfully Written Log Error to File.");
+      let errorMessage = await fs.readFile('error_logs.txt', "utf8")
+      console.log(errorMessage)
   });
 }
 
