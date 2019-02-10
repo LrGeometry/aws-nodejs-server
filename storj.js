@@ -33,7 +33,7 @@ function testStorjUpload() {
   });
 }
 
-function uploadFile(req, res, next) {
+function uploadImage(req, res, next) {
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -307,7 +307,7 @@ function bucketListFiles(req, res, next) {
 
 
 module.exports = {
-  uploadFile: uploadFile,
+  uploadImage: uploadImage,
   downloadFile: downloadFile,
   uploadDocument: uploadDocument,
   getBucketId: getBucketId,

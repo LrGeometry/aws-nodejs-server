@@ -80,7 +80,7 @@ app.get('/api/logerror', db.logError);
 // app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 // app.post('/api/csv', db.csvParser);
 
-app.post('/api/storj/upload', storj.uploadFile);
+app.post('/api/storj/upload/image', storj.uploadImage);
 app.get('/api/storj/download', storj.downloadFile);
 app.get('/api/storj/delete', storj.deleteFile);
 app.get('/api/storj/bucket/get', storj.getBucketId);
