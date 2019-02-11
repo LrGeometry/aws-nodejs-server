@@ -40,7 +40,7 @@ function ipfsGetFile(req, res, next) {
     })
   })
   .catch(err => {
-    queries.logError("HERC: Failed to authenticate token", err)
+    queries.logError("HERC: Failed to authenticate token; ipfsGetFile", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }
@@ -70,7 +70,7 @@ function ipfsAddFile(req, res, next) {
       var cleanedBody = JSON.parse(Object.keys(req.body)[0])
       console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
     } catch (err) {
-      queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+      queries.logError("HERC: Invalid JSON, possible malicious code. ipfsAddFile", err) /*TODO: must error out elegantly for end user */
     }
 
     var obj = {}
@@ -88,7 +88,7 @@ function ipfsAddFile(req, res, next) {
     })
   })
   .catch(err => {
-    queries.logError("HERC: Failed to authenticate token", err)
+    queries.logError("HERC: Failed to authenticate token; ipfsAddFile", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }

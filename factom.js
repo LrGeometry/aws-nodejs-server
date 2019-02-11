@@ -41,7 +41,7 @@ function createChain(req, res, next) {
         var cleanedObject = JSON.parse(Object.keys(req.body)[0])
         console.log("1/2 factom chain object: ", cleanedObject)
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; createChain", err) /*TODO: must error out elegantly for end user */
       }
       var ipfsHash = cleanedObject.ipfsHash
 
@@ -64,7 +64,7 @@ function createChain(req, res, next) {
         });
     })
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; createChain", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -87,7 +87,7 @@ function createEntry(req, res, next) {
         var data = JSON.parse(Object.keys(req.body))
         console.log('1/3 factom entry data: ', data)
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; createEntry", err) /*TODO: must error out elegantly for end user */
       }
       var extIdString = data.assetInfo;
       var chainId = data.chainId
@@ -119,7 +119,7 @@ function createEntry(req, res, next) {
         });
     })
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; createEntry", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -146,7 +146,7 @@ function getEntry(entryHash) {
         })
     })
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; getEntry", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
