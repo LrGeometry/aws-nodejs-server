@@ -15,25 +15,34 @@ function instantiateStorjEnvironment() {
   return storj
 }
 
-function testStorjUpload() {
+function testStorjUpload(req, res) {
   /* Check if Bridge is operational: https://status.storj.io/ */
-  let storj = instantiateStorjEnvironment()
-  const bucketId = '988901ba0063e3facd6ec94f';
-  const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
-  const state = storj.storeFile(bucketId, filePath, {
-    filename: 'test_' + Date.now() + '.data',
-    progressCallback: function (progress, downloadedBytes, totalBytes) {
-      console.log('progress:', progress);
-    },
-    finishedCallback: function (err, fileId) {
-      if (err) { return console.error(err) }
-      console.log('Success Storj file upload:', fileId);
-      storj.destroy();
-    }
-  });
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    let storj = instantiateStorjEnvironment()
+    const bucketId = '988901ba0063e3facd6ec94f';
+    const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
+    const state = storj.storeFile(bucketId, filePath, {
+      filename: 'test_' + Date.now() + '.data',
+      progressCallback: function (progress, downloadedBytes, totalBytes) {
+        console.log('progress:', progress);
+      },
+      finishedCallback: function (err, fileId) {
+        if (err) { return console.error(err) }
+        console.log('Success Storj file upload:', fileId);
+        storj.destroy();
+      }
+    });
+  })
+  .catch(err => {
+    console.log('jm testStorjUpload error', err)
+  })
 }
 
 function uploadImage(req, res, next) {
+  console.log("uploadImage jm req.body", req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -71,7 +80,7 @@ function uploadImage(req, res, next) {
       })
     })
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; uploadImage", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -101,17 +110,17 @@ function downloadFile(req, res, next) {
       });
     })
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; downloadFile", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
 
 function uploadDocument(req, res, next) {
-  console.log("in upload documents")
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
+
       let storj = instantiateStorjEnvironment()
 
       // const name = req.body.name; // testing with postman
@@ -119,20 +128,22 @@ function uploadDocument(req, res, next) {
       try{
         var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; uploadDocument", err) /*TODO: must error out elegantly for end user */
       }
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
       var name = cleanedBody.data.name // splice off last 4 characters, save as var.
+      debugger;
       if (typeof(name) === 'string') {
-        var tempFileExtension = name.split('.')[1]
-        let fileExtension = [tempFileExtension.length - 1]
+        var fileExtension = name.split('.')[1]
+        // let fileExtension = [tempFileExtension.length - 1]
       } else {
         res.status(500).send({ error: "Invalid Storj Transaction Documents fileExtension" })
       }
       var obj = {}
       obj.key = cleanedBody.key // {key: 'document'}
       obj.hash = null // {key: 'document', hash: null}
+
       // const bucketId = '2443acd6222d73b373cbf18e'; //V1 bucket ID
       const bucketId = '988901ba0063e3facd6ec94f'; //V2 bucketID
       const filePath = "upload-files/transaction_document"+ Date.now() + '.' + fileExtension; // filePath is where the recompiled file lives
@@ -140,9 +151,10 @@ function uploadDocument(req, res, next) {
       //create buffer from content
       const testit = new Buffer(content, 'base64');
 
+
       //create local file from buffer
       fs.writeFileSync(filePath, testit, (err) => {
-        if (err) throw err;
+        if (err) console.log(err);
       });
       console.log('***created local file from Base 64****')
 
@@ -178,7 +190,7 @@ function uploadDocument(req, res, next) {
     })
 
     .catch(err => {
-      queries.logError("HERC: Failed to authenticate token", err)
+      queries.logError("HERC: Failed to authenticate token; uploadDocument", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }

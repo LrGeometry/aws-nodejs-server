@@ -1,3 +1,31 @@
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 04:13:00 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 04:10:34 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 04:07:28 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 04:04:50 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 04:02:29 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:53:47 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:51:13 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:45:48 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:31:58 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:29:28 GMT
+9:28 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:28:46 GMT
+8:46 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:27:39 GMT
+7:39 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:26:36 GMT
+6:36 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:26:03 GMT
+6:03 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 03:25:01 GMT
+5:01 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 01:55:01 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 01:52:18 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 01:11:10 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 00:14:46 GMT
+HERC: Failed to authenticate token; uploadDocument Mon, 11 Feb 2019 00:09:17 GMT
+HERC: Failed to authenticate token Mon, 11 Feb 2019 00:07:47 GMT
+HERC: Failed to authenticate token Mon, 11 Feb 2019 00:03:52 GMT
 HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 21:00:27 GMT
 HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 20:59:22 GMT
 HERC: Invalid JSON, possible malicious code Thu, 17 Jan 2019 20:54:19 GMT
