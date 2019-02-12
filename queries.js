@@ -295,37 +295,32 @@ function latestApk(req, res){
   return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
 }
 
+function writeUserToDb(username, address, toggleFlag){
+  rootRef.child('users').child(username).set({
+    address: address,
+    username: username,
+    registeredENS: toggleFlag, // in the future if someone wants to deactivate.
+    registeredENSAt: Date.now()
+  })
+}
+
 function addUser(req, res) {
   //check if user exists in list... if not, add it.
   console.log("AddUser Received raw data: ", req.body)
 
   var username = req.body.username //helmsleyspearkent
   var address = req.body.address //0xaddress
-  if (req.body.registered == 'true'){
-    var toggleFlag = true
-  } else {
-    var toggleFlag = false
-  }
+  var toggleFlag = req.body.registered
 
   rootRef.child('users').child(username).once("value")
   .then(snapshot => {
     if (snapshot.exists() !== true){
-      rootRef.child('users').child(username).set({
-        address: address,
-        username: username,
-        registeredENS: toggleFlag, // in the future if someone wants to deactivate.
-        registeredENSAt: Date.now()
-      }, () => {
-        return rootRef
-          .child('users')
-          .child(username)
-          .once('value')
-          .then(function(snapshot) {
-            console.log("Wrote User Data: ", snapshot.val())
-          });
-      });
+      console.log("user does not exist.")
+      writeUserToDb(username, address, toggleFlag)
+      return res.status(200).send(false)
     } else {
       console.log("user exists.")
+      return res.status(200).send(true)
     }
   });
 }
