@@ -296,28 +296,37 @@ function latestApk(req, res){
 }
 
 function addUser(req, res) {
-  //Post request to firebase
-  console.log("AddUser received request body: ", req.body)
-  var user = req.body.username //helmsleyspearkent
+  //check if user exists in list... if not, add it.
+  console.log("AddUser Received raw data: ", req.body)
+
+  var username = req.body.username //helmsleyspearkent
   var address = req.body.address //0xaddress
   if (req.body.registered == 'true'){
     var toggleFlag = true
   } else {
     var toggleFlag = false
   }
-  rootRef.child('users').child(username).set({
-    address: address,
-    username: username,
-    registeredENS: toggleFlag,
-    registeredENSAt: Date.now()
-  }, function() {
-    return rootRef
-      .child('users')
-      .child(username)
-      .once('value')
-      .then(function(snapshot) {
-        console.log("Wrote User Data: ", snapshot.val())
+
+  rootRef.child('users').child(username).once("value")
+  .then(snapshot => {
+    if (snapshot.exists() !== true){
+      rootRef.child('users').child(username).set({
+        address: address,
+        username: username,
+        registeredENS: toggleFlag, // in the future if someone wants to deactivate.
+        registeredENSAt: Date.now()
+      }, () => {
+        return rootRef
+          .child('users')
+          .child(username)
+          .once('value')
+          .then(function(snapshot) {
+            console.log("Wrote User Data: ", snapshot.val())
+          });
       });
+    } else {
+      console.log("user exists.")
+    }
   });
 }
 
