@@ -39,11 +39,16 @@ function createChain(req, res, next) {
     .then(user_login => {
       try{
         var cleanedObject = JSON.parse(Object.keys(req.body)[0])
+<<<<<<< HEAD
         console.log("1 factom chain object: ", cleanedObject)
+=======
+        console.log("1/2 factom chain object: ", cleanedObject)
+>>>>>>> master
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; createChain", err) /*TODO: must error out elegantly for end user */
       }
       var ipfsHash = cleanedObject.ipfsHash
+<<<<<<< HEAD
       // var organizationName = cleanedObject.organizationName
       // console.log("2 Create Chain req.body: ", req.body)
       // console.log("2 ipfshash and organization name: ", ipfsHash, organizationName)
@@ -51,6 +56,11 @@ function createChain(req, res, next) {
       const firstEntry = Entry.builder()
         // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
         // .extId(organizationName, 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
+=======
+
+      const firstEntry = Entry.builder()
+        // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
+>>>>>>> master
         .extId("HerculesQ42018", 'utf8')
         // .extId(Date.now().toString()) // Can have as many of these as you want
         .content(ipfsHash, 'utf8')
@@ -60,7 +70,7 @@ function createChain(req, res, next) {
 
       cli.add(chain, FCT_PUB_SIG)
         .then(response => {
-          console.log("2 factom chainId: ", response.chainId)
+          console.log("2/2 factom chainId: ", response.chainId)
           res.send(response.chainId)
         })
         .catch(err => {
@@ -68,6 +78,7 @@ function createChain(req, res, next) {
         });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; createChain", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -88,20 +99,32 @@ function createEntry(req, res, next) {
     .then(user_login => {
       try{
         var data = JSON.parse(Object.keys(req.body))
+<<<<<<< HEAD
         console.log('factom entry data: ', data)
+=======
+        console.log('1/3 factom entry data: ', data)
+>>>>>>> master
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; createEntry", err) /*TODO: must error out elegantly for end user */
       }
       // var extIdString = data.assetInfo;
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
+<<<<<<< HEAD
       console.log('factom entry hashString: ',hashString)
+=======
+      console.log('2/3 factom entry hashString:', hashString)
+>>>>>>> master
 
       const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
         .extId("HerculesQ42018", 'utf8')
+<<<<<<< HEAD
+=======
+        .extId(extIdString, 'utf8')
+>>>>>>> master
         .content(hashString, 'utf8')
         .build();
 
@@ -113,7 +136,7 @@ function createEntry(req, res, next) {
             chainId: 'e55c0f97cdb944c45c1ad00c6784976bf697ae6faefc8a9c9f25076b2d80dd38',
             entryHash: '2447e75a189ccee7641811cef42b80fecea28385d709c711a327e30152ec0620' }
           */
-          console.log("Success entry in factom chain: ", response)
+          console.log("3/3 Success entry in factom chain: ", response)
           res.send(response.entryHash)
         })
         .catch(err => {
@@ -121,6 +144,7 @@ function createEntry(req, res, next) {
         });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; createEntry", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -147,6 +171,7 @@ function getEntry(entryHash) {
         })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; getEntry", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'
@@ -173,6 +198,7 @@ function getAllEntries(chainId_Or_firstEntryHash) {
         })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({
         auth: false,
         message: 'Failed to authenticate token.'

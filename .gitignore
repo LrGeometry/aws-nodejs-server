@@ -1,6 +1,9 @@
 firebase.json
 defcon.js
 error_logs.txt
+csv-reports/
+download-files/
+upload-files/
 
 # Logs
 logs

@@ -1,6 +1,9 @@
-const importEnv = require('import-env');
 var firebase = require('firebase')
 const ipfsClient = require('ipfs-api');
+<<<<<<< HEAD
+=======
+var queries = require('./queries');
+>>>>>>> master
 
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
@@ -25,7 +28,7 @@ function ipfsGetFile(req, res, next) {
     const validCID = req.query[0];
 
     ipfs.files.get(validCID, function (err, files) {
-      if (err) { return console.error(err) }
+      if (err) { return console.error("Error in ipfsGetFile(): ", err) }
       files.forEach((file) => {
         // console.log(file.content, 'file')
         assets.push(JSON.parse(file.content))
@@ -40,6 +43,7 @@ function ipfsGetFile(req, res, next) {
     })
   })
   .catch(err => {
+    queries.logError("HERC: Failed to authenticate token; ipfsGetFile", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }
@@ -69,29 +73,38 @@ function ipfsAddFile(req, res, next) {
       var cleanedBody = JSON.parse(Object.keys(req.body)[0])
       console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
     } catch (err) {
-      queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+      queries.logError("HERC: Invalid JSON, possible malicious code. ipfsAddFile", err) /*TODO: must error out elegantly for end user */
     }
 
     var obj = {}
     obj.key = cleanedBody.key // {key: 'properties'}
     obj.hash = null // {key: 'properties', hash: null}
     let testBuffer = new Buffer(JSON.stringify(cleanedBody.data));
-
     ipfs.files.add(testBuffer, function (err, file) {
-      if (err) {console.log(err)};
+      if (err) {
+        console.log("Error in ipfsAddFile(): ", err)
+        return res.status(500).send({ message: 'Failed to add file to IPFS', error: err });
+      };
       obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
       res.send(obj);
-      console.log("Success IPFS upload", cleanedBody, obj.hash)
+      console.log("Success IPFS upload: \n", cleanedBody,"\n Hash:", obj.hash)
     })
   })
   .catch(err => {
+    queries.logError("HERC: Failed to authenticate token; ipfsAddFile", err)
     return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   })
 }
 
 module.exports = {
+  ipfsAddCsvFile:ipfsAddCsvFile,
+  ipfsUnhash: ipfsUnhash,
   ipfsGetFile: ipfsGetFile,
+<<<<<<< HEAD
   ipfsAddFile: ipfsAddFile,
   ipfsAddCsvFile:ipfsAddCsvFile,
   ipfsUnhash: ipfsUnhash
+=======
+  ipfsAddFile: ipfsAddFile
+>>>>>>> master
 }

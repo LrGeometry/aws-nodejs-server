@@ -1,6 +1,5 @@
 var firebase = require('firebase')
 var fs = require('fs');
-const importEnv = require('import-env');
 const { Environment, mnemonicGenerate, mnemonicCheck, utilTimestamp } = require('storj');
 var base64Img = require('base64-img');
 var queries = require('./queries');
@@ -16,25 +15,34 @@ function instantiateStorjEnvironment() {
   return storj
 }
 
-function testStorjUpload() {
+function testStorjUpload(req, res) {
   /* Check if Bridge is operational: https://status.storj.io/ */
-  let storj = instantiateStorjEnvironment()
-  const bucketId = '2443acd6222d73b373cbf18e';
-  const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
-  const state = storj.storeFile(bucketId, filePath, {
-    filename: 'test_' + Date.now() + '.data',
-    progressCallback: function (progress, downloadedBytes, totalBytes) {
-      console.log('progress:', progress);
-    },
-    finishedCallback: function (err, fileId) {
-      if (err) { return console.error(err) }
-      console.log('Success Storj file upload:', fileId);
-      storj.destroy();
-    }
-  });
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    let storj = instantiateStorjEnvironment()
+    const bucketId = '988901ba0063e3facd6ec94f';
+    const filePath = 'upload-files/handwriting_7_Awesome_5_sample.data';
+    const state = storj.storeFile(bucketId, filePath, {
+      filename: 'test_' + Date.now() + '.data',
+      progressCallback: function (progress, downloadedBytes, totalBytes) {
+        console.log('progress:', progress);
+      },
+      finishedCallback: function (err, fileId) {
+        if (err) { return console.error(err) }
+        console.log('Success Storj file upload:', fileId);
+        storj.destroy();
+      }
+    });
+  })
+  .catch(err => {
+    console.log('jm testStorjUpload error', err)
+  })
 }
 
-function uploadFile(req, res, next) {
+function uploadImage(req, res, next) {
+  console.log("uploadImage jm req.body", req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -53,7 +61,8 @@ function uploadFile(req, res, next) {
       base64Img.img(base64, 'upload-files', '1', function (err, filepath) {
         if (err) { console.log("Storj Upload Error: ", err) }
 
-        const bucketId = '2443acd6222d73b373cbf18e';
+        // const bucketId = '2443acd6222d73b373cbf18e';
+        const bucketId = '988901ba0063e3facd6ec94f' //v2
         const filePath = filepath;
         const state = storj.storeFile(bucketId, filePath, {
           filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
@@ -71,6 +80,7 @@ function uploadFile(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; uploadImage", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -100,16 +110,17 @@ function downloadFile(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; downloadFile", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
 
 function uploadDocument(req, res, next) {
-  console.log("in upload documents")
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
+
       let storj = instantiateStorjEnvironment()
 
       // const name = req.body.name; // testing with postman
@@ -117,23 +128,33 @@ function uploadDocument(req, res, next) {
       try{
         var cleanedBody = JSON.parse(Object.keys(req.body)[0]) //document
       } catch (err) {
-        queries.logError("HERC: Invalid JSON, possible malicious code.", err) /*TODO: must error out elegantly for end user */
+        queries.logError("HERC: Invalid JSON, possible malicious code; uploadDocument", err) /*TODO: must error out elegantly for end user */
       }
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
-      const name = cleanedBody.data.name
+      var name = cleanedBody.data.name // splice off last 4 characters, save as var.
+      debugger;
+      if (typeof(name) === 'string') {
+        var fileExtension = name.split('.')[1]
+        // let fileExtension = [tempFileExtension.length - 1]
+      } else {
+        res.status(500).send({ error: "Invalid Storj Transaction Documents fileExtension" })
+      }
       var obj = {}
       obj.key = cleanedBody.key // {key: 'document'}
       obj.hash = null // {key: 'document', hash: null}
-      const bucketId = '2443acd6222d73b373cbf18e';
-      const filePath = "upload-files/"+ name; // filePath is where the recompiled file lives
+
+      // const bucketId = '2443acd6222d73b373cbf18e'; //V1 bucket ID
+      const bucketId = '988901ba0063e3facd6ec94f'; //V2 bucketID
+      const filePath = "upload-files/transaction_document"+ Date.now() + '.' + fileExtension; // filePath is where the recompiled file lives
 
       //create buffer from content
       const testit = new Buffer(content, 'base64');
 
+
       //create local file from buffer
       fs.writeFileSync(filePath, testit, (err) => {
-        if (err) throw err;
+        if (err) console.log(err);
       });
       console.log('***created local file from Base 64****')
 
@@ -144,7 +165,10 @@ function uploadDocument(req, res, next) {
           console.log('progress:', progress);
         },
         finishedCallback: function (err, fileId) {
-          if (err) { return console.error(err) }
+          if (err) {
+            res.status(500).send({ error: err })
+            return console.error(err)
+          }
           console.log('Success Storj file upload:', fileId);
           obj.hash = fileId
           res.send(obj);
@@ -166,6 +190,7 @@ function uploadDocument(req, res, next) {
     })
 
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token; uploadDocument", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -176,7 +201,7 @@ function deleteFile(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
-      var bucketId = '2443acd6222d73b373cbf18e';
+      var bucketId = '988901ba0063e3facd6ec94f';
       var fileId = '63ABF516E1DCC5E5B337EACD';
       storj.deleteFile(bucketId, fileId, function (err, result) {
         if (err) { return console.error(err) }
@@ -185,6 +210,7 @@ function deleteFile(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -205,6 +231,7 @@ function getBucketId(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -222,6 +249,7 @@ function deleteBucketId(req, res, next) {
       })
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -244,6 +272,7 @@ function listBuckets(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -263,6 +292,7 @@ function createBucket(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
@@ -274,7 +304,7 @@ function bucketListFiles(req, res, next) {
   firebase.auth().signInWithCustomToken(token)
     .then(user_login => {
       let storj = instantiateStorjEnvironment()
-      var bucketID = "2443acd6222d73b373cbf18e"
+      var bucketID = "988901ba0063e3facd6ec94f"
       storj.listFiles(bucketID, function (err, result) {
         if (err) { return console.error(err) }
         console.log('Bucket Files:', result);
@@ -282,13 +312,14 @@ function bucketListFiles(req, res, next) {
       });
     })
     .catch(err => {
+      queries.logError("HERC: Failed to authenticate token", err)
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     })
 }
 
 
 module.exports = {
-  uploadFile: uploadFile,
+  uploadImage: uploadImage,
   downloadFile: downloadFile,
   uploadDocument: uploadDocument,
   getBucketId: getBucketId,

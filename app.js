@@ -17,8 +17,8 @@ var cors = require('cors');
 var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
-const importEnv = require('import-env');
 const port = process.env.PORT || 8000;
+require('dotenv').config();
 
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
@@ -43,12 +43,14 @@ if (app.get('env') === 'development') {
   }
 }
 module.exports.environment = app.get('env');
+// var test = require('./defcon');
 var db = require('./queries');
 var storj = require('./storj');
 var factom = require('./factom');
 var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 var bitly = require('./bitly');
+var etherscan = require('./etherscan');
 
 app.use(express.static('public'));
 app.use(body_parser.urlencoded({
@@ -79,7 +81,11 @@ app.post('/api/users', db.addUser);
 // app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 // app.post('/api/csv', db.csvParser);
 
+<<<<<<< HEAD
 app.post('/api/storj/upload/image', storj.uploadFile);
+=======
+app.post('/api/storj/upload/image', storj.uploadImage);
+>>>>>>> master
 app.get('/api/storj/download', storj.downloadFile);
 app.get('/api/storj/delete', storj.deleteFile);
 app.get('/api/storj/bucket/get', storj.getBucketId);
@@ -109,10 +115,22 @@ app.get('/api/web3/register', webThree.registerNewAsset);
 app.get('/api/web3/assets/get', webThree.getAssets);
 app.get('/api/web3/assets/count', webThree.countAssets);
 
+<<<<<<< HEAD
 app.post('/api/bitly/shortenURL', bitly.shortenURL)
 app.get('/pseudo', factom.pseudo)
 app.get('/api/latest/apk/:version', db.latestApk)
 app.get('/unhash', ipfs.ipfsUnhash)
+=======
+app.post('/api/bitly/shortenURL', bitly.shortenURL);
+app.get('/pseudo', factom.pseudo);
+app.get('/api/latest/apk/:version', db.latestApk);
+
+app.get('/api/etherscan/balance', etherscan.getEtherBalance);
+app.get('/api/etherscan/transactions/normal', etherscan.getNormalTransactions);
+app.get('/api/etherscan/transactions/internal', etherscan.getInternalTransactions);
+
+// app.get('/test', test.megaFunction)
+>>>>>>> master
 
 app.listen(port, function () {
   console.log('listening on port ' + port)
