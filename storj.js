@@ -7,7 +7,7 @@ var queries = require('./queries');
 
 function instantiateStorjEnvironment() {
   const storj = new Environment({
-    bridgeUrl: 'https://api.storj.io',
+    bridgeUrl: 'https://api.v2.storj.io',
     bridgeUser: process.env.STORJ_BRIDGE_USER,
     bridgePass: process.env.STORJ_BRIDGE_PASS,
     encryptionKey: process.env.STORJ_ENCRYPTION_KEY,
@@ -58,7 +58,7 @@ function uploadFile(req, res, next) {
         const state = storj.storeFile(bucketId, filePath, {
           filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
           progressCallback: function (progress, downloadedBytes, totalBytes) {
-            console.log('progress:', progress);
+            console.log('progress:', progress, downloadedBytes, totalBytes);
           },
           finishedCallback: function (err, fileId) {
             if (err) { return console.error(err) }

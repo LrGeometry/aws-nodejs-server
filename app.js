@@ -79,7 +79,7 @@ app.post('/api/users', db.addUser);
 // app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 // app.post('/api/csv', db.csvParser);
 
-app.post('/api/storj/upload', storj.uploadFile);
+app.post('/api/storj/upload/image', storj.uploadFile);
 app.get('/api/storj/download', storj.downloadFile);
 app.get('/api/storj/delete', storj.deleteFile);
 app.get('/api/storj/bucket/get', storj.getBucketId);
