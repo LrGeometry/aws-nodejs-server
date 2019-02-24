@@ -99,7 +99,6 @@ function createEntry(req, res, next) {
         .chainId(chainId)
         .extId(Date.now().toString())
         .extId("HerculesQ42018", 'utf8')
-        .extId(extIdString, 'utf8')
         .content(hashString, 'utf8')
         .build();
 
