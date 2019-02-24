@@ -39,28 +39,14 @@ function createChain(req, res, next) {
     .then(user_login => {
       try{
         var cleanedObject = JSON.parse(Object.keys(req.body)[0])
-<<<<<<< HEAD
-        console.log("1 factom chain object: ", cleanedObject)
-=======
         console.log("1/2 factom chain object: ", cleanedObject)
->>>>>>> master
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code; createChain", err) /*TODO: must error out elegantly for end user */
       }
       var ipfsHash = cleanedObject.ipfsHash
-<<<<<<< HEAD
-      // var organizationName = cleanedObject.organizationName
-      // console.log("2 Create Chain req.body: ", req.body)
-      // console.log("2 ipfshash and organization name: ", ipfsHash, organizationName)
 
       const firstEntry = Entry.builder()
         // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
-        // .extId(organizationName, 'utf8') // Explicit the encoding. Or you can pass directly a Buffer
-=======
-
-      const firstEntry = Entry.builder()
-        // .extId('6d79206578742069642031') // If no encoding parameter is passed as 2nd argument, 'hex' is used
->>>>>>> master
         .extId("HerculesQ42018", 'utf8')
         // .extId(Date.now().toString()) // Can have as many of these as you want
         .content(ipfsHash, 'utf8')
@@ -99,11 +85,7 @@ function createEntry(req, res, next) {
     .then(user_login => {
       try{
         var data = JSON.parse(Object.keys(req.body))
-<<<<<<< HEAD
-        console.log('factom entry data: ', data)
-=======
         console.log('1/3 factom entry data: ', data)
->>>>>>> master
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code; createEntry", err) /*TODO: must error out elegantly for end user */
       }
@@ -111,20 +93,13 @@ function createEntry(req, res, next) {
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
-<<<<<<< HEAD
-      console.log('factom entry hashString: ',hashString)
-=======
       console.log('2/3 factom entry hashString:', hashString)
->>>>>>> master
 
       const myEntry = Entry.builder()
         .chainId(chainId)
         .extId(Date.now().toString())
         .extId("HerculesQ42018", 'utf8')
-<<<<<<< HEAD
-=======
         .extId(extIdString, 'utf8')
->>>>>>> master
         .content(hashString, 'utf8')
         .build();
 

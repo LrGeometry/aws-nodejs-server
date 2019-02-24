@@ -1,9 +1,6 @@
 var firebase = require('firebase')
 const ipfsClient = require('ipfs-api');
-<<<<<<< HEAD
-=======
 var queries = require('./queries');
->>>>>>> master
 
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
@@ -100,11 +97,5 @@ module.exports = {
   ipfsAddCsvFile:ipfsAddCsvFile,
   ipfsUnhash: ipfsUnhash,
   ipfsGetFile: ipfsGetFile,
-<<<<<<< HEAD
-  ipfsAddFile: ipfsAddFile,
-  ipfsAddCsvFile:ipfsAddCsvFile,
-  ipfsUnhash: ipfsUnhash
-=======
   ipfsAddFile: ipfsAddFile
->>>>>>> master
 }
