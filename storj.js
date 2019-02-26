@@ -133,7 +133,6 @@ function uploadDocument(req, res, next) {
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
       var name = cleanedBody.data.name // splice off last 4 characters, save as var.
-      debugger;
       if (typeof(name) === 'string') {
         var fileExtension = name.split('.')[1]
         // let fileExtension = [tempFileExtension.length - 1]
