@@ -42,7 +42,6 @@ function testStorjUpload(req, res) {
 }
 
 function uploadImage(req, res, next) {
-  console.log("uploadImage jm req.body", req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -67,7 +66,7 @@ function uploadImage(req, res, next) {
         const state = storj.storeFile(bucketId, filePath, {
           filename: 'transaction_image_' + Date.now() + '.jpg', //could be named with identifying information
           progressCallback: function (progress, downloadedBytes, totalBytes) {
-            console.log('progress:', progress, downloadedBytes, totalBytes);
+            console.log('progress:', progress);
           },
           finishedCallback: function (err, fileId) {
             if (err) { return console.error(err) }
