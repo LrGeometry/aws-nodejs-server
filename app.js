@@ -18,6 +18,9 @@ var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
 const port = process.env.PORT || 8000;
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
 require('dotenv').config();
 
 if (app.get('env') === 'development') {
@@ -102,6 +105,7 @@ app.get('/api/factom/chain/search', factom.searchChain);
 
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
+app.post('/api/ipfs/add/image', upload.single('agld_image'), ipfs.ipfsAddImage);
 
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);

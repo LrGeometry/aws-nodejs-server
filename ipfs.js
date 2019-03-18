@@ -1,9 +1,10 @@
 var firebase = require('firebase')
 const ipfsClient = require('ipfs-api');
 var queries = require('./queries');
-
+var fs = require('fs');
 //Connceting to the ipfs network via infura gateway
 const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https' })
+const rootRef = firebase.database().ref();
 
 function ipfsUnhash(req, res, next) {
   // const validCID = 'QmQhM65XyqJ52QXWPz2opaGkALgH8XXhPn8n8nff4LDE6C'
@@ -93,8 +94,55 @@ function ipfsAddFile(req, res, next) {
   })
 }
 
+function ipfsAddImage(req, res, next) {
+  console.log(req.file);
+
+  fs.readFile(req.file.path, function(err, data) {
+    if (err) throw err;
+    ipfs.files.add(data, (err, result) => { // Upload buffer to IPFS
+      if(err) {
+        console.error(err)
+        return
+      }
+      let url = `https://ipfs.io/ipfs/${result[0].hash}`
+      console.log(`Url --> ${url}`)
+      rootRef.child('AGLD_TEST_DB').child('TEST_ASSET_ID').child('images').set({
+        url
+      })
+
+      //  https://ipfs.io/ipfs/QmPcXPgEMoaoBE4zMzTn2eVuhNcgPegihFdHqgDhGCsn68
+      //  https://ipfs.io/ipfs/QmPcXPgEMoaoBE4zMzTn2eVuhNcgPegihFdHqgDhGCsn68
+    })
+});
+
+  fs.access(req.file.path, error => {
+    if (!error) {
+      fs.unlink(req.file.path, function (error) {
+        console.log(error);
+      });
+    } else {
+      console.log(error);
+    }
+  });
+
+/*
+{ fieldname: 'agld_image',
+  originalname: 'lifegoals.png',
+  encoding: '7bit',
+  mimetype: 'image/png',
+  destination: 'uploads/',
+  filename: '4f2aa905fcbff8d531625eda6ad19363',
+  path: 'uploads/4f2aa905fcbff8d531625eda6ad19363',
+  size: 306446 }
+*/
+
+
+
+}
+
 module.exports = {
   ipfsAddCsvFile:ipfsAddCsvFile,
+  ipfsAddImage: ipfsAddImage,
   ipfsUnhash: ipfsUnhash,
   ipfsGetFile: ipfsGetFile,
   ipfsAddFile: ipfsAddFile

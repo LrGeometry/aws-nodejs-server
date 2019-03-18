@@ -94,6 +94,7 @@ function downloadFile(req, res, next) {
       var downloadFilePath = 'download-files/storj-test-download.jpg';
       var bucketId = '2443acd6222d73b373cbf18e';
       var fileId = 'f9fc0b6971bacd786a19d7a4';
+      // var fileId = req.body.hash
       // storj.resolveFile(bucketId, fileId, downloadFilePath)
 
       storj.resolveFile(bucketId, fileId, downloadFilePath, {
