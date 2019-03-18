@@ -106,22 +106,19 @@ function ipfsAddImage(req, res, next) {
       }
       let url = `https://ipfs.io/ipfs/${result[0].hash}`
       console.log(`Url --> ${url}`)
-      rootRef.child('AGLD_TEST_DB').child('TEST_ASSET_ID').child('images').set({
-        url
-      })
-
-      //  https://ipfs.io/ipfs/QmPcXPgEMoaoBE4zMzTn2eVuhNcgPegihFdHqgDhGCsn68
-      //  https://ipfs.io/ipfs/QmPcXPgEMoaoBE4zMzTn2eVuhNcgPegihFdHqgDhGCsn68
+      rootRef.child('AGLD_TEST_DB').child('TEST_ASSET_ID').child('images').set({url , hash: req.file.path })
     })
 });
 
   fs.access(req.file.path, error => {
     if (!error) {
       fs.unlink(req.file.path, function (error) {
-        console.log(error);
+        console.error(error);
       });
+      res.sendStatus(200)
     } else {
-      console.log(error);
+      console.error(error);
+      res.sendStatus(500).send(error)
     }
   });
 
@@ -135,8 +132,6 @@ function ipfsAddImage(req, res, next) {
   path: 'uploads/4f2aa905fcbff8d531625eda6ad19363',
   size: 306446 }
 */
-
-
 
 }
 

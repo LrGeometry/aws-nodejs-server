@@ -64,14 +64,14 @@ app.use(body_parser.json({
   limit: '10mb',
   extended: false
 }))
-app.set('view engine', 'hbs');
+// app.set('view engine', 'hbs');
 
-app.get('/', function (req, res) {
-  response = '';
-  res.render('index.hbs', {
-    'response': response
-  });
-});
+// app.get('/', function (req, res) {
+//   response = '';
+//   res.render('index.hbs', {
+//     'response': response
+//   });
+// });
 
 // app.post('/api/identities', db.createIdentity);
 // app.get('/api/firebase/:slug', db.readUserData);
