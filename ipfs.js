@@ -106,7 +106,7 @@ function ipfsAddImage(req, res, next) {
       }
       let url = `https://ipfs.io/ipfs/${result[0].hash}`
       console.log(`Url --> ${url}`)
-      rootRef.child('AGLD_TEST_DB').child('TEST_ASSET_ID').child('images').set({url , hash: req.file.path })
+      rootRef.child('AGLD_TEST_DB').child('TEST_ASSET_ID').child('images').set({url , hash:result[0].hash })
     })
 });
 
