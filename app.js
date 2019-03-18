@@ -19,7 +19,7 @@ var Web3 = require('web3');
 const body_parser = require('body-parser');
 const port = process.env.PORT || 8000;
 var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'upload-files/' })
 
 require('dotenv').config();
 
