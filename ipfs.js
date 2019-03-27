@@ -95,7 +95,6 @@ function ipfsAddFile(req, res, next) {
 }
 
 function ipfsAddImage(req, res, next) {
-  console.log(req.file);
 
   fs.readFile(req.file.path, function(err, data) {
     if (err) throw err;
@@ -137,7 +136,6 @@ function ipfsAddImage(req, res, next) {
 
 function ipfsUploadDocument(req, res, next) {
   //*** this function expects base64 content *** 
-  console.log("Accessing: IPFS upload Document")
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -145,7 +143,7 @@ function ipfsUploadDocument(req, res, next) {
     //Addfile router for adding file a local file to the IPFS network without any local node
     try{
       var cleanedBody = JSON.parse(Object.keys(req.body)[0])
-      console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
+      // console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
     } catch (err) {
       queries.logError("HERC: Invalid JSON, possible malicious code. ipfsAddFile", err) /*TODO: must error out elegantly for end user */
     }
@@ -158,7 +156,43 @@ function ipfsUploadDocument(req, res, next) {
     // let testBuffer = new Buffer( JSON.stringify(cleanedBody.data), 'base64' );
     var testBuffer = new Buffer(content, 'base64')
     ipfs.files.add(testBuffer, function (err, file) {
-      console.log("in the ipgs.files.add section of code ***")
+      if (err) {
+        console.log("Error in ipfsAddFile(): ", err)
+        return res.status(500).send({ message: 'Failed to add file to IPFS', error: err });
+      };
+      obj.hash = file[0].hash // {key: 'properties', hash: 'QmU1D1eAeSLC5Dt4wVRR'}
+      res.send(obj);
+      console.log("Success IPFS upload: \n", cleanedBody,"\n Hash:", obj.hash)
+    })
+  })
+  .catch(err => {
+    queries.logError("HERC: Failed to authenticate token; ipfsAddFile", err)
+    return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  })
+}
+
+function ipfsUploadImage(req, res, next) {
+  //*** this function expects base64 content *** 
+  var token = req.headers['authorization'];
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  firebase.auth().signInWithCustomToken(token)
+  .then(user_login => {
+    //Addfile router for adding file a local file to the IPFS network without any local node
+    try{
+      var cleanedBody = JSON.parse(Object.keys(req.body)[0])
+      // console.log("HERC: cleanedBody in ipfsAddFile", cleanedBody) // { key: 'newAsset', data: req.body }
+    } catch (err) {
+      queries.logError("HERC: Invalid JSON, possible malicious code. ipfsAddFile", err) /*TODO: must error out elegantly for end user */
+    }
+
+    var content = cleanedBody.data
+
+    var obj = {}
+    obj.key = cleanedBody.key // {key: 'properties'}
+    obj.hash = null // {key: 'properties', hash: null}
+    // let testBuffer = new Buffer( JSON.stringify(cleanedBody.data), 'base64' );
+    var testBuffer = new Buffer(content, 'base64')
+    ipfs.files.add(testBuffer, function (err, file) {
       if (err) {
         console.log("Error in ipfsAddFile(): ", err)
         return res.status(500).send({ message: 'Failed to add file to IPFS', error: err });
@@ -180,5 +214,6 @@ module.exports = {
   ipfsUnhash: ipfsUnhash,
   ipfsGetFile: ipfsGetFile,
   ipfsAddFile: ipfsAddFile,
-  ipfsUploadDocument: ipfsUploadDocument
+  ipfsUploadDocument: ipfsUploadDocument,
+  ipfsUploadImage: ipfsUploadImage
 }

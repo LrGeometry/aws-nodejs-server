@@ -107,6 +107,8 @@ app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
 app.post('/api/ipfs/add/image', upload.single('agld_image'), ipfs.ipfsAddImage);
 app.post('/api/ipfs/upload/document', ipfs.ipfsUploadDocument);
+app.post('/api/ipfs/upload/image', ipfs.ipfsUploadImage);
+
 
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
