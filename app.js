@@ -54,6 +54,7 @@ var ipfs = require('./ipfs');
 var webThree = require('./webThree');
 var bitly = require('./bitly');
 var etherscan = require('./etherscan');
+var kutt = require('./kutt');
 
 app.use(express.static('public'));
 app.use(body_parser.urlencoded({
@@ -128,6 +129,8 @@ app.get('/api/etherscan/transactions/normal', etherscan.getNormalTransactions);
 app.get('/api/etherscan/transactions/internal', etherscan.getInternalTransactions);
 
 // app.get('/test', test.megaFunction)
+
+app.post('/api/kutt/customHyperlink', kutt.customHyperlink);
 
 app.listen(port, function () {
   console.log('listening on port ' + port)
