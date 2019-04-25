@@ -20,9 +20,11 @@ const body_parser = require('body-parser');
 const port = process.env.PORT || 8000;
 var multer  = require('multer')
 var upload = multer({ dest: 'upload-files/' })
+var logger = require('morgan');
 
 require('dotenv').config();
 
+app.use(logger('dev'));
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND

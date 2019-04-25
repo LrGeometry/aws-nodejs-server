@@ -300,12 +300,13 @@ function latestApk(req, res){
   return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
 }
 
-function writeUserToDb(username, address, toggleFlag){
+function writeUserToDb(username, address){
+  var id = uuidv4()
   rootRef.child('users').child(username).set({
     address: address,
     username: username,
-    registeredENS: toggleFlag, // in the future if someone wants to deactivate.
-    registeredENSAt: Date.now()
+    registeredAt: Date.now(),
+    userId: id
   })
 }
 
@@ -315,13 +316,12 @@ function addUser(req, res) {
 
   var username = req.body.username //helmsleyspearkent
   var address = req.body.address //0xaddress
-  var toggleFlag = req.body.registered
 
   rootRef.child('users').child(username).once("value")
   .then(snapshot => {
     if (snapshot.exists() !== true){
       console.log("user does not exist.")
-      writeUserToDb(username, address, toggleFlag)
+      writeUserToDb(username, address)
       return res.status(200).send(false)
     } else {
       console.log("user exists.")
