@@ -42,7 +42,6 @@ function testStorjUpload(req, res) {
 }
 
 function uploadImage(req, res, next) {
-  console.log("uploadImage jm req.body", req.body)
   var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   firebase.auth().signInWithCustomToken(token)
@@ -95,6 +94,7 @@ function downloadFile(req, res, next) {
       var downloadFilePath = 'download-files/storj-test-download.jpg';
       var bucketId = '2443acd6222d73b373cbf18e';
       var fileId = 'f9fc0b6971bacd786a19d7a4';
+      // var fileId = req.body.hash
       // storj.resolveFile(bucketId, fileId, downloadFilePath)
 
       storj.resolveFile(bucketId, fileId, downloadFilePath, {
@@ -133,7 +133,6 @@ function uploadDocument(req, res, next) {
       var content = cleanedBody.data.content
       var type = cleanedBody.data.type
       var name = cleanedBody.data.name // splice off last 4 characters, save as var.
-      debugger;
       if (typeof(name) === 'string') {
         var fileExtension = name.split('.')[1]
         // let fileExtension = [tempFileExtension.length - 1]

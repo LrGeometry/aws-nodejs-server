@@ -230,7 +230,7 @@ function token(req, res, next) {
   }
   admin.auth().createCustomToken(uid)
     .then((customToken) => {
-      console.log("Made it into the Token: ", customToken)
+      // console.log("Made it into the Token: ", customToken)
       res.status(200).json(customToken);
     })
     .catch(err => { console.log(err) })
@@ -296,12 +296,46 @@ function logError(message){
 function latestApk(req, res){
   if (!req.params.version) throw err;
   var version = req.params.version
-  var latestVersion = "0.9.5" // hardcoding for now. In the future, this should be a global variable.
+  var latestVersion = "0.10.2" // hardcoding for now. In the future, this should be a global variable.
   return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
+}
+
+function writeUserToDb(username, address){
+  if (!address || !username) { return null }
+  var id = uuidv4()
+  rootRef.child('users').child(username).set({
+    address: address,
+    username: username,
+    registeredAt: Date.now(),
+    userId: id
+  })
+  return id
+}
+
+function addUser(req, res) {
+  //check if user exists in list... if not, add it.
+  console.log("AddUser Received raw data: ", req.body)
+
+  var username = req.body.username
+  var address = req.body.address
+
+  rootRef.child('users').child(username).once("value")
+  .then(snapshot => {
+    if (snapshot.exists() !== true){
+      console.log("user does not exist.")
+      var id = writeUserToDb(username, address)
+      if (!id){ return res.status(500).send({response: "error registering new user"})}
+      return res.status(200).send({ response: false, id: id })
+    } else {
+      console.log("user exists.")
+      return res.status(200).send({ response: true })
+    }
+  });
 }
 
 module.exports = {
   token: token,
   logError: logError,
-  latestApk: latestApk
+  latestApk: latestApk,
+  addUser: addUser
 };

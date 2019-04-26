@@ -89,7 +89,7 @@ function createEntry(req, res, next) {
       } catch (err) {
         queries.logError("HERC: Invalid JSON, possible malicious code; createEntry", err) /*TODO: must error out elegantly for end user */
       }
-      var extIdString = data.assetInfo;
+      // var extIdString = data.assetInfo;
       var chainId = data.chainId
       var hash = data.hash
       var hashString = JSON.stringify(hash)
@@ -99,7 +99,6 @@ function createEntry(req, res, next) {
         .chainId(chainId)
         .extId(Date.now().toString())
         .extId("HerculesQ42018", 'utf8')
-        .extId(extIdString, 'utf8')
         .content(hashString, 'utf8')
         .build();
 
