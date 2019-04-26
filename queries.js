@@ -296,11 +296,12 @@ function logError(message){
 function latestApk(req, res){
   if (!req.params.version) throw err;
   var version = req.params.version
-  var latestVersion = "0.9.5" // hardcoding for now. In the future, this should be a global variable.
+  var latestVersion = "0.10.2" // hardcoding for now. In the future, this should be a global variable.
   return version == latestVersion ? res.status(200).send(true) : res.status(200).send(false)
 }
 
 function writeUserToDb(username, address){
+  if (!address || !username) { return null }
   var id = uuidv4()
   rootRef.child('users').child(username).set({
     address: address,
@@ -308,24 +309,26 @@ function writeUserToDb(username, address){
     registeredAt: Date.now(),
     userId: id
   })
+  return id
 }
 
 function addUser(req, res) {
   //check if user exists in list... if not, add it.
   console.log("AddUser Received raw data: ", req.body)
 
-  var username = req.body.username //helmsleyspearkent
-  var address = req.body.address //0xaddress
+  var username = req.body.username
+  var address = req.body.address
 
   rootRef.child('users').child(username).once("value")
   .then(snapshot => {
     if (snapshot.exists() !== true){
       console.log("user does not exist.")
-      writeUserToDb(username, address)
-      return res.status(200).send(false)
+      var id = writeUserToDb(username, address)
+      if (!id){ return res.status(500).send({response: "error registering new user"})}
+      return res.status(200).send({ response: false, id: id })
     } else {
       console.log("user exists.")
-      return res.status(200).send(true)
+      return res.status(200).send({ response: true })
     }
   });
 }
