@@ -230,7 +230,7 @@ function token(req, res, next) {
   }
   admin.auth().createCustomToken(uid)
     .then((customToken) => {
-      console.log("Made it into the Token: ", customToken)
+      // console.log("Made it into the Token: ", customToken)
       res.status(200).json(customToken);
     })
     .catch(err => { console.log(err) })

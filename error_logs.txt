@@ -1,3 +1,4 @@
+HERC: Failed to authenticate token; ipfsGetFile Fri, 26 Apr 2019 05:12:51 GMT
 HERC: Invalid JSON, possible malicious code. ipfsAddFile Sun, 24 Feb 2019 07:46:05 GMT
 HERC: Failed to authenticate token; ipfsAddFile Sun, 24 Feb 2019 07:24:50 GMT
 HERC: Failed to authenticate token; ipfsAddFile Sun, 24 Feb 2019 07:24:49 GMT
