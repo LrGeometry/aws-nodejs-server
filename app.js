@@ -18,8 +18,13 @@ var app = express()
 var Web3 = require('web3');
 const body_parser = require('body-parser');
 const port = process.env.PORT || 8000;
+var multer  = require('multer')
+var upload = multer({ dest: 'upload-files/' })
+var logger = require('morgan');
+
 require('dotenv').config();
 
+app.use(logger('dev'));
 if (app.get('env') === 'development') {
   // no stacktraces leaked to user
   /* TEST WITH COMMAND
@@ -61,24 +66,26 @@ app.use(body_parser.json({
   limit: '10mb',
   extended: false
 }))
-app.set('view engine', 'hbs');
+// app.set('view engine', 'hbs');
 
-app.get('/', function (req, res) {
-  response = '';
-  res.render('index.hbs', {
-    'response': response
-  });
-});
+// app.get('/', function (req, res) {
+//   response = '';
+//   res.render('index.hbs', {
+//     'response': response
+//   });
+// });
 
 // app.post('/api/identities', db.createIdentity);
 // app.get('/api/firebase/:slug', db.readUserData);
 app.get('/api/token/:username', db.token);
 app.get('/api/logerror', db.logError);
+app.post('/api/users', db.addUser);
 // app.get('/api/parsetoken', db.parseToken);
 // app.get('/api/questions', db.sendQuestions);
 // app.post('/api/submitanswers', db.submitAnswers);
 // app.get('/api/check', db.checkIfUserSubmittedIdologyWithinLastThreeMonths);
 // app.post('/api/csv', db.csvParser);
+
 
 app.post('/api/storj/upload/image', storj.uploadImage);
 app.get('/api/storj/download', storj.downloadFile);
@@ -100,6 +107,10 @@ app.get('/api/factom/chain/search', factom.searchChain);
 
 app.get('/api/ipfs/get', ipfs.ipfsGetFile);
 app.post('/api/ipfs/add', ipfs.ipfsAddFile);
+app.post('/api/ipfs/add/image', upload.single('agld_image'), ipfs.ipfsAddImage);
+app.post('/api/ipfs/upload/document', ipfs.ipfsUploadDocument);
+app.post('/api/ipfs/upload/image', ipfs.ipfsUploadImage);
+
 
 app.get('/api/web3/latest', webThree.getLatestBlock);
 app.get('/api/web3/balance', webThree.balanceOf);
